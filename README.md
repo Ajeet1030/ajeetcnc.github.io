@@ -1,1 +1,0 @@
-# ajeetcnc.github.io
