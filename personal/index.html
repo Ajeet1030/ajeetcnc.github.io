@@ -247,11 +247,23 @@
       .work{ padding:clamp(70px,9vw,110px) 0; }
       .work-list{ border-top:1px solid var(--line-soft); }
       .work-row{
+        position:relative;
         display:grid; grid-template-columns:88px 1fr auto; align-items:center; gap:clamp(16px,3vw,40px);
         padding:clamp(26px,4vw,44px) clamp(6px,1.5vw,18px);
         border-bottom:1px solid var(--line-soft);
         transition:background .3s ease;
       }
+      /* Stretched main link: the whole row still opens the game page,
+         while the secondary download link sits above it and stays clickable. */
+      .work-main::after{ content:""; position:absolute; inset:0; }
+      .work-dl{
+        position:relative; z-index:1; display:inline-flex; align-items:center; gap:6px;
+        margin-top:12px; padding:6px 0;
+        font-size:11px; font-weight:700; letter-spacing:.24em; color:var(--gold);
+        border-bottom:1px solid var(--line);
+        transition:color .25s ease, border-color .25s ease;
+      }
+      .work-dl:hover{ color:#e8c65a; border-bottom-color:var(--gold); }
       .work-row:hover{ background:rgba(212,175,55,.05); }
       .work-num{
         font-family:var(--display); font-size:clamp(30px,3.4vw,44px); line-height:1;
@@ -517,14 +529,15 @@
               </div>
               <div class="work-arrow" aria-hidden="true">&#8599;</div>
             </a>
-            <a class="work-row reveal" href="https://ajeet1030.github.io/ajeetcnc.github.io/game/" target="_blank" rel="noopener">
+            <div class="work-row reveal">
               <div class="work-num">05</div>
               <div>
-                <h3 class="work-title">CAR RACING GAME</h3>
+                <h3 class="work-title"><a class="work-main" href="https://ajeet1030.github.io/ajeetcnc.github.io/game/" target="_blank" rel="noopener">CAR RACING GAME</a></h3>
                 <p class="work-desc">Offline highway racing &mdash; traffic dodge karo, coins looto, badhti speed, gyroscope tilt aur remote-button steering, best score save hota hai.</p>
+                <a class="work-dl" href="https://ajeet1030.github.io/ajeetcnc.github.io/game/car-racing-game.html" download="car-racing-game.html">DOWNLOAD GAME &#8595;</a>
               </div>
               <div class="work-arrow" aria-hidden="true">&#8599;</div>
-            </a>
+            </div>
           </div>
         </div>
       </section>
@@ -642,6 +655,14 @@
                 <span class="link-handle" style="display:block;">Play &mdash; Offline Racing</span>
               </span>
               <span class="link-arrow" aria-hidden="true">&#8599;</span>
+            </a>
+            <a class="link-card reveal d1" href="https://ajeet1030.github.io/ajeetcnc.github.io/game/car-racing-game.html" download="car-racing-game.html">
+              <span class="fav"><span class="tile">D</span><img src="https://www.google.com/s2/favicons?domain=ajeet1030.github.io&amp;sz=128" alt="" width="128" height="128" loading="lazy" onerror="this.remove()" /></span>
+              <span class="link-meta">
+                <span class="link-name">Car Racing Game &mdash; Download</span>
+                <span class="link-handle" style="display:block;">Game Download &mdash; Kisi bhi phone me khelo</span>
+              </span>
+              <span class="link-arrow" aria-hidden="true">&#8595;</span>
             </a>
           </div>
           <footer>
