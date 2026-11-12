@@ -1,0 +1,1041 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark" />
+    <link rel="icon" href="data:," />
+    <title>AttendPro LCD Edition (Public)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      button, [role="button"], select, summary, input:not([type="checkbox"], [type="radio"]) { min-height: 2.25rem; }
+      * { box-sizing: border-box; }
+      :root{
+        --bg:#06080b; --bg2:#0a0e13; --panel:rgba(148,197,255,.055); --panel2:rgba(148,197,255,.09);
+        --line:rgba(125,211,252,.16); --line2:rgba(125,211,252,.28);
+        --ink:#dbe7f3; --muted:#8fa3b8; --faint:#5d7186;
+        --cyan:#38e1ff; --green:#2effa0; --red:#ff5468; --amber:#ffb02e; --blue:#4db2ff; --purple:#c084fc;
+        --lcd:#7dfcd4;
+      }
+      html{ -webkit-text-size-adjust:100%; }
+      body{
+        margin:0; color:var(--ink); font-family:"Rajdhani",system-ui,sans-serif; font-size:17px; line-height:1.45;
+        background:
+          radial-gradient(900px 480px at 85% -10%, rgba(56,225,255,.07), transparent 60%),
+          radial-gradient(700px 420px at -10% 110%, rgba(46,255,160,.05), transparent 60%),
+          linear-gradient(180deg,var(--bg2),var(--bg));
+        min-height:100vh;
+      }
+      .lcd{ font-family:"Orbitron",monospace; letter-spacing:.04em; }
+      button{ font-family:inherit; cursor:pointer; }
+      input,select,textarea{ font-family:inherit; color:var(--ink); background:rgba(0,0,0,.42); border:1px solid var(--line); border-radius:9px; padding:.45rem .6rem; font-size:1rem; }
+      input:focus,select:focus{ outline:2px solid rgba(56,225,255,.45); outline-offset:1px; border-color:var(--line2); }
+      label{ font-size:.82rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); display:block; margin-bottom:.3rem; }
+      ::placeholder{ color:var(--faint); }
+
+      /* ---------- top bar ---------- */
+      .topbar{
+        position:sticky; top:0; z-index:40; display:flex; flex-wrap:wrap; gap:.6rem 1rem; align-items:center; justify-content:space-between;
+        padding:.65rem clamp(.7rem,3vw,1.4rem); background:rgba(6,9,13,.88); backdrop-filter:blur(10px); border-bottom:1px solid var(--line);
+      }
+      .brand{ font-family:"Orbitron",monospace; font-weight:800; font-size:1.12rem; letter-spacing:.12em; color:#eaf6ff; }
+      .brand b{ color:var(--cyan); font-weight:800; }
+      .brand small{ display:block; font-family:"Rajdhani",sans-serif; font-size:.66rem; letter-spacing:.42em; color:var(--muted); font-weight:700; }
+      .clockbox{ text-align:center; }
+      .clockbox .lcd{ font-size:clamp(1.35rem,4.5vw,1.9rem); font-weight:700; color:var(--lcd); text-shadow:0 0 14px rgba(46,255,190,.28); line-height:1; }
+      .clockbox .dateline{ font-size:.8rem; letter-spacing:.18em; color:var(--muted); font-weight:600; text-transform:uppercase; margin-top:.2rem; }
+      .top-actions{ display:flex; gap:.5rem; align-items:center; flex-wrap:wrap; }
+      .seg{ display:flex; background:rgba(0,0,0,.45); border:1px solid var(--line); border-radius:10px; padding:3px; gap:3px; }
+      .seg button{ border:0; background:transparent; color:var(--muted); font-weight:700; letter-spacing:.06em; padding:.35rem .8rem; border-radius:7px; font-size:.92rem; }
+      .seg button.on{ background:rgba(56,225,255,.16); color:var(--cyan); box-shadow:inset 0 0 0 1px rgba(56,225,255,.35); }
+      .rolechip{ border:1px solid var(--line2); background:rgba(56,225,255,.08); color:var(--cyan); border-radius:999px; padding:.35rem .8rem; font-weight:700; letter-spacing:.08em; font-size:.85rem; }
+
+      /* ---------- tabs ---------- */
+      .tabs{ display:flex; gap:.35rem; flex-wrap:wrap; padding:.5rem clamp(.7rem,3vw,1.4rem); background:rgba(6,9,13,.85); border-bottom:1px solid var(--line); }
+      .tabs button{ border:1px solid transparent; background:transparent; color:var(--muted); font-weight:700; letter-spacing:.07em; padding:.45rem .85rem; border-radius:9px; font-size:.95rem; text-transform:uppercase; }
+      .tabs button.on{ color:#eaf6ff; background:var(--panel2); border-color:var(--line); }
+      .tabs button.on .dot{ color:var(--green); }
+
+      main{ max-width:1180px; margin:0 auto; padding:1.1rem clamp(.7rem,3vw,1.4rem) 3rem; }
+      h2.sec{ font-family:"Orbitron",monospace; font-size:1rem; letter-spacing:.22em; color:#eaf6ff; margin:1.4rem 0 .7rem; text-transform:uppercase; }
+      h2.sec:first-child{ margin-top:.2rem; }
+      .muted{ color:var(--muted); } .small{ font-size:.88rem; }
+
+      /* ---------- panels & cards ---------- */
+      .panel{ background:linear-gradient(165deg,var(--panel2),var(--panel)); border:1px solid var(--line); border-radius:14px; padding:1rem 1.1rem; backdrop-filter:blur(8px); }
+      .hero{
+        border-radius:16px; padding:1.3rem 1.2rem 1.15rem; text-align:center; position:relative; overflow:hidden;
+        background:linear-gradient(170deg, rgba(46,255,190,.10), rgba(10,16,22,.65) 55%), #0a0f14;
+        border:1px solid rgba(46,255,190,.30);
+        box-shadow:inset 0 0 42px rgba(46,255,190,.06);
+      }
+      .hero .cap{ font-size:.8rem; letter-spacing:.34em; font-weight:700; color:var(--muted); text-transform:uppercase; }
+      .hero .big{ font-family:"Orbitron",monospace; font-weight:800; font-size:clamp(2.6rem,9vw,4.4rem); color:var(--lcd); text-shadow:0 0 22px rgba(46,255,190,.35); line-height:1.08; margin:.25rem 0 .1rem; }
+      .hero .big small{ font-size:.38em; color:var(--cyan); letter-spacing:.2em; }
+      .hero .sub{ color:var(--muted); font-weight:600; letter-spacing:.06em; }
+      .grid{ display:grid; gap:.7rem; grid-template-columns:repeat(auto-fit,minmax(158px,1fr)); margin-top:.7rem; }
+      .stat{ border-radius:12px; padding:.85rem .9rem .75rem; background:linear-gradient(165deg,var(--panel2),var(--panel)); border:1px solid var(--line); }
+      .stat .cap{ font-size:.72rem; letter-spacing:.22em; font-weight:700; color:var(--muted); text-transform:uppercase; }
+      .stat .val{ font-family:"Orbitron",monospace; font-weight:700; font-size:1.55rem; margin-top:.3rem; color:#eaf6ff; line-height:1.1; }
+      .stat .val small{ font-size:.55em; color:var(--muted); letter-spacing:.12em; }
+      .stat .hint{ font-size:.85rem; color:var(--faint); font-weight:600; }
+      .c-green{ color:var(--green)!important; } .c-red{ color:var(--red)!important; } .c-cyan{ color:var(--cyan)!important; }
+      .c-amber{ color:var(--amber)!important; } .c-purple{ color:var(--purple)!important; } .c-blue{ color:var(--blue)!important; }
+
+      /* ---------- buttons ---------- */
+      .btn{ border:1px solid var(--line2); background:rgba(56,225,255,.10); color:#dff4ff; font-weight:700; letter-spacing:.05em; border-radius:9px; padding:.5rem 1rem; font-size:.98rem; }
+      .btn:hover{ background:rgba(56,225,255,.18); }
+      .btn.ghost{ background:transparent; color:var(--muted); border-color:var(--line); }
+      .btn.green{ background:rgba(46,255,160,.12); border-color:rgba(46,255,160,.4); color:#c9ffe6; }
+      .btn.red{ background:rgba(255,84,104,.10); border-color:rgba(255,84,104,.4); color:#ffd7dc; }
+      .btn.sm{ padding:.32rem .7rem; font-size:.9rem; min-height:2rem; }
+      .btn:disabled{ opacity:.45; cursor:not-allowed; }
+      .rowflex{ display:flex; gap:.55rem; flex-wrap:wrap; align-items:center; }
+      .grow{ flex:1 1 auto; }
+
+      /* ---------- attendance rows ---------- */
+      .datebar{ display:flex; gap:.6rem; flex-wrap:wrap; align-items:flex-end; margin-bottom:.8rem; }
+      .arow{ border:1px solid var(--line); border-radius:12px; background:linear-gradient(165deg,var(--panel2),var(--panel)); padding:.8rem .9rem; margin-bottom:.6rem; }
+      .arow .head{ display:flex; gap:.7rem; align-items:center; flex-wrap:wrap; }
+      .arow .nm{ font-weight:700; font-size:1.08rem; }
+      .arow .meta{ color:var(--muted); font-size:.88rem; font-weight:600; }
+      .arow .hrs{ margin-left:auto; text-align:right; }
+      .arow .hrs .lcd{ font-size:1.3rem; font-weight:700; color:var(--lcd); }
+      .arow .hrs .ot{ font-size:.82rem; color:var(--amber); font-weight:700; letter-spacing:.05em; }
+      .ticks{ display:flex; gap:.4rem; flex-wrap:wrap; margin-top:.6rem; }
+      .tick{ border-radius:9px; border:1px solid var(--line); background:rgba(0,0,0,.35); color:var(--muted); font-weight:700; padding:.42rem .7rem; font-size:.95rem; letter-spacing:.03em; }
+      .tick[data-s="P"].on{ background:rgba(46,255,160,.16); border-color:var(--green); color:var(--green); }
+      .tick[data-s="A"].on{ background:rgba(255,84,104,.16); border-color:var(--red); color:var(--red); }
+      .tick[data-s="H"].on{ background:rgba(255,176,46,.16); border-color:var(--amber); color:var(--amber); }
+      .tick[data-s="WO"].on{ background:rgba(77,178,255,.16); border-color:var(--blue); color:var(--blue); }
+      .tick[data-s="L"].on{ background:rgba(192,132,252,.16); border-color:var(--purple); color:var(--purple); }
+      .editor{ margin-top:.8rem; border-top:1px dashed var(--line); padding-top:.8rem; }
+      .fgrid{ display:grid; gap:.7rem; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); }
+      .calcbox{ margin-top:.7rem; border:1px solid rgba(46,255,190,.25); background:rgba(46,255,190,.05); border-radius:10px; padding:.6rem .8rem; font-weight:600; }
+      .calcbox .lcd{ color:var(--lcd); font-size:1.15rem; }
+
+      /* ---------- employees ---------- */
+      .ecard{ display:flex; gap:.8rem; align-items:center; flex-wrap:wrap; border:1px solid var(--line); border-radius:12px; background:linear-gradient(165deg,var(--panel2),var(--panel)); padding:.75rem .9rem; margin-bottom:.55rem; }
+      .avatar{ width:44px; height:44px; border-radius:10px; display:grid; place-items:center; font-family:"Orbitron",monospace; font-weight:700; color:#04121a; background:linear-gradient(140deg,var(--cyan),var(--green)); flex:0 0 auto; }
+
+      /* ---------- calendar ---------- */
+      .cal{ display:grid; grid-template-columns:repeat(7,1fr); gap:.4rem; }
+      .cal .dow{ text-align:center; font-size:.75rem; letter-spacing:.2em; color:var(--faint); font-weight:700; padding:.2rem 0; }
+      .cal .cell{ min-height:74px; border:1px solid var(--line); border-radius:10px; background:rgba(0,0,0,.3); padding:.4rem .45rem; cursor:pointer; text-align:left; color:var(--ink); width:100%; }
+      .cal .cell:hover{ border-color:var(--line2); }
+      .cal .cell.off{ opacity:.32; cursor:default; }
+      .cal .cell.today{ border-color:var(--cyan); box-shadow:inset 0 0 0 1px rgba(56,225,255,.4); }
+      .cal .cell .d{ font-family:"Orbitron",monospace; font-weight:700; font-size:.95rem; }
+      .cal .cell .h{ font-size:.78rem; color:var(--lcd); font-weight:700; }
+      .dots{ display:flex; gap:3px; flex-wrap:wrap; margin-top:3px; }
+      .dots i{ width:9px; height:9px; border-radius:3px; display:block; }
+      .legend{ display:flex; gap:1rem; flex-wrap:wrap; margin-top:.7rem; font-size:.88rem; font-weight:600; color:var(--muted); }
+      .legend i{ width:11px; height:11px; border-radius:3px; display:inline-block; margin-right:.35rem; vertical-align:-1px; }
+
+      /* ---------- tables ---------- */
+      .tblwrap{ border:1px solid var(--line); border-radius:12px; overflow:hidden; background:rgba(0,0,0,.25); }
+      table{ width:100%; border-collapse:collapse; font-size:.98rem; }
+      th{ text-align:left; font-size:.74rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); background:rgba(56,225,255,.06); padding:.6rem .7rem; border-bottom:1px solid var(--line); }
+      td{ padding:.55rem .7rem; border-bottom:1px solid rgba(125,211,252,.07); font-weight:600; }
+      tr:last-child td{ border-bottom:0; }
+      td.num, th.num{ text-align:right; font-variant-numeric:tabular-nums; }
+      tr.total td{ background:rgba(46,255,190,.06); font-weight:700; color:#eafff5; }
+      @media (max-width:820px){
+        .tblwrap{ border:0; background:transparent; overflow:visible; }
+        table, tbody, tr, td{ display:block; width:100%; }
+        thead{ display:none; }
+        tr{ border:1px solid var(--line); border-radius:12px; margin-bottom:.6rem; background:linear-gradient(165deg,var(--panel2),var(--panel)); padding:.5rem .4rem; }
+        td{ border:0; display:flex; justify-content:space-between; gap:1rem; padding:.32rem .6rem; text-align:right; }
+        td::before{ content:attr(data-l); color:var(--muted); font-size:.78rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; text-align:left; }
+        td:first-child{ font-size:1.08rem; }
+        td:first-child::before{ content:""; }
+      }
+
+      /* ---------- modal / lock / toast ---------- */
+      .overlay{ position:fixed; inset:0; z-index:80; background:rgba(2,4,7,.78); backdrop-filter:blur(6px); display:grid; place-items:center; padding:1rem; }
+      .sheet{ width:min(430px,100%); border-radius:16px; border:1px solid var(--line2); background:linear-gradient(170deg,#101820,#0a0f14); padding:1.4rem 1.3rem; box-shadow:0 24px 60px rgba(0,0,0,.6); }
+      .sheet h3{ font-family:"Orbitron",monospace; letter-spacing:.14em; margin:.1rem 0 .6rem; font-size:1.05rem; }
+      #toast{ position:fixed; left:50%; bottom:22px; transform:translateX(-50%) translateY(20px); z-index:99; background:#0d1620; border:1px solid rgba(46,255,190,.45); color:#d9ffee; font-weight:700; padding:.6rem 1.1rem; border-radius:10px; opacity:0; pointer-events:none; transition:.25s; max-width:92vw; text-align:center; }
+      #toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+      .empty{ border:1px dashed var(--line2); border-radius:12px; padding:1.4rem 1rem; text-align:center; color:var(--muted); font-weight:600; }
+      .switchrow{ display:flex; justify-content:space-between; align-items:center; gap:1rem; padding:.7rem 0; border-bottom:1px solid rgba(125,211,252,.08); }
+      .switchrow:last-child{ border-bottom:0; }
+      .tgl{ position:relative; width:52px; height:30px; flex:0 0 auto; }
+      .tgl input{ position:absolute; opacity:0; inset:0; margin:0; cursor:pointer; }
+      .tgl span{ position:absolute; inset:0; border-radius:999px; background:rgba(255,255,255,.12); border:1px solid var(--line); transition:.2s; pointer-events:none; }
+      .tgl span::after{ content:""; position:absolute; top:3px; left:3px; width:22px; height:22px; border-radius:50%; background:#9fb4c8; transition:.2s; }
+      .tgl input:checked + span{ background:rgba(46,255,160,.25); border-color:var(--green); }
+      .tgl input:checked + span::after{ left:25px; background:var(--green); }
+
+      /* ---------- print sheet ---------- */
+      #printSheet{ display:none; }
+      body.printing main, body.printing .topbar, body.printing .tabs{ display:none; }
+      body.printing #printSheet{ display:block; background:#fff; color:#111; padding:24px; font-family:Arial,sans-serif; }
+      #printSheet table{ font-size:12px; } #printSheet th{ background:#eee; color:#111; } #printSheet td{ border-bottom:1px solid #ccc; }
+      @media print{
+        body{ background:#fff; }
+        .topbar,.tabs,main,#toast{ display:none!important; }
+        #printSheet{ display:block!important; }
+      }
+      @media (prefers-reduced-motion: reduce){ *{ transition:none!important; } }
+    </style>
+  </head>
+  <body>
+
+    <div id="lockRoot"></div>
+
+    <header class="topbar">
+      <div class="brand">ATTEND<b>PRO</b><small>LCD EDITION</small></div>
+      <div class="clockbox">
+        <div class="lcd" id="clock">00:00:00</div>
+        <div class="dateline" id="dateline">—</div>
+      </div>
+      <div class="top-actions">
+        <div class="seg" role="group" aria-label="Mode">
+          <button id="modeCompany" type="button">COMPANY</button>
+          <button id="modePersonal" type="button">PERSONAL</button>
+        </div>
+        <button class="rolechip" id="roleBtn" type="button">ADMIN</button>
+      </div>
+    </header>
+
+    <nav class="tabs" id="tabs">
+      <button data-tab="dash" type="button">Dashboard</button>
+      <button data-tab="mark" type="button">Attendance</button>
+      <button data-tab="emps" type="button" id="tabEmps">Employees</button>
+      <button data-tab="cal" type="button">Calendar</button>
+      <button data-tab="rep" type="button">Reports</button>
+      <button data-tab="set" type="button">Settings</button>
+    </nav>
+
+    <main id="view"></main>
+    <section id="printSheet"></section>
+    <div id="modalRoot"></div>
+    <div id="toast" role="status"></div>
+    <input type="file" id="restoreFile" accept="application/json,.json" hidden />
+
+    <script>
+    "use strict";
+    /* ================= storage ================= */
+    var LS_KEY = "attendpro_lcd_public_v1";
+    function defaultState(){
+      return {
+        settings: {
+          mode: "company",            // company | personal
+          role: "admin",              // admin | employee
+          pin: "",                    // optional admin PIN
+          myEmpId: "",                // employee-role: own employee code
+          stdMin: 480,                // standard day = 8h, stored in minutes
+          otMultiplier: 1,            // overtime pay multiplier
+          woPaid: true,               // weekly off counts as paid day
+          leavePaid: false,           // leave counts as paid day
+          personalName: "My Attendance",
+          personalSalary: 0
+        },
+        employees: [],                // {code,name,dept,desig,joining,salary}
+        att: { company: {}, personal: {} } // company: {dateKey:{code:rec}}  personal: {dateKey:rec}
+      };
+    }
+    var S;
+    try { S = JSON.parse(localStorage.getItem(LS_KEY)) || defaultState(); }
+    catch(e){ S = defaultState(); }
+    if(!S.settings || !S.att) S = defaultState();
+    function save(){ try { localStorage.setItem(LS_KEY, JSON.stringify(S)); } catch(e){ toast("Storage full — backup your data from Settings."); } }
+
+    /* ================= ui session state ================= */
+    var UI = {
+      tab: "dash",
+      markDate: todayKey(),
+      calY: null, calM: null,
+      repY: null, repM: null,
+      repDate: todayKey(),
+      search: "",
+      openEd: null,        // employee code (or "me") whose hours editor is open
+      showEmpForm: false,
+      editEmp: null,       // code being edited
+      unlocked: false      // admin PIN entered this session
+    };
+    var nowD = new Date();
+    UI.calY = nowD.getFullYear(); UI.calM = nowD.getMonth();
+    UI.repY = nowD.getFullYear(); UI.repM = nowD.getMonth();
+
+    /* ================= date / time helpers ================= */
+    function pad(n){ return (n<10?"0":"")+n; }
+    function keyOf(d){ return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
+    function todayKey(){ return keyOf(new Date()); }
+    function parseKey(k){ var p=k.split("-"); return new Date(+p[0], +p[1]-1, +p[2]); }
+    function daysInMonth(y,m){ return new Date(y, m+1, 0).getDate(); }
+    function monthName(m){ return ["January","February","March","April","May","June","July","August","September","October","November","December"][m]; }
+    function prettyDate(k){ var d=parseKey(k); return d.getDate()+" "+monthName(d.getMonth()).slice(0,3)+" "+d.getFullYear(); }
+    function t2m(t){ if(!t) return null; var p=t.split(":"); return (+p[0])*60 + (+p[1]); }
+    /* minutes -> direct decimal hours string, e.g. 690 -> "11.5", 480 -> "8" */
+    function dec(mins){
+      var v = Math.round((mins/60)*100)/100;
+      var s = (Math.round(v*100)/100).toString();
+      return s;
+    }
+    function hrs(mins){ return dec(mins)+" HRS"; }
+    function parseHours(str){
+      if(str===null||str===undefined) return null;
+      var v = parseFloat(String(str).replace(",", "."));
+      if(isNaN(v) || v<0 || v>24) return null;
+      return Math.round(v*60);
+    }
+
+    /* ================= attendance engine (all math in minutes) ================= */
+    var STATUSES = [
+      {k:"P",  sym:"✓",  label:"Present",   cls:"c-green"},
+      {k:"A",  sym:"✗",  label:"Absent",    cls:"c-red"},
+      {k:"H",  sym:"½",  label:"Half Day",  cls:"c-amber"},
+      {k:"WO", sym:"WO", label:"Weekly Off",cls:"c-blue"},
+      {k:"L",  sym:"L",  label:"Leave",     cls:"c-purple"}
+    ];
+    var SCOLOR = { P:"#2effa0", A:"#ff5468", H:"#ffb02e", WO:"#4db2ff", L:"#c084fc" };
+
+    function getRec(scope, dk, code){
+      if(scope==="personal") return S.att.personal[dk] || null;
+      var day = S.att.company[dk]; return day ? (day[code]||null) : null;
+    }
+    function setRec(scope, dk, code, rec){
+      if(scope==="personal"){ if(rec) S.att.personal[dk]=rec; else delete S.att.personal[dk]; }
+      else {
+        if(!S.att.company[dk]) S.att.company[dk]={};
+        if(rec) S.att.company[dk][code]=rec; else delete S.att.company[dk][code];
+        if(!rec && Object.keys(S.att.company[dk]).length===0) delete S.att.company[dk];
+      }
+      save();
+    }
+    /* worked / overtime / absent minutes for one record */
+    function recCalc(rec){
+      var std = S.settings.stdMin, work=0, ot=0, absent=0;
+      if(!rec) return {work:0, ot:0, absent:0};
+      if(rec.status==="P" || rec.status==="H"){
+        if(rec.manualMin!==null && rec.manualMin!==undefined && rec.manualMin!=="") work = +rec.manualMin;
+        else if(rec.inT && rec.outT){
+          var a=t2m(rec.inT), b=t2m(rec.outT); if(b<a) b+=1440; // overnight shift
+          work = Math.max(0, b-a-(+rec.breakMin||0));
+        } else work = rec.status==="P" ? std : Math.round(std/2);
+        ot = Math.max(0, work-std);
+      }
+      if(rec.status==="A") absent = std;
+      return {work:work, ot:ot, absent:absent};
+    }
+    /* aggregate one employee (or personal) over a month */
+    function monthStats(scope, code, y, m){
+      var dim = daysInMonth(y,m), st = {P:0,A:0,H:0,WO:0,L:0, work:0, ot:0, absent:0, marked:0};
+      for(var d=1; d<=dim; d++){
+        var dk = y+"-"+pad(m+1)+"-"+pad(d);
+        var rec = getRec(scope, dk, code);
+        if(rec && rec.status){ st[rec.status]++; st.marked++; var c=recCalc(rec); st.work+=c.work; st.ot+=c.ot; st.absent+=c.absent; }
+      }
+      var denom = st.P + st.A + st.H + st.L;
+      st.pct = denom>0 ? Math.round(((st.P + st.H*0.5)/denom)*1000)/10 : 0;
+      return st;
+    }
+    function rangeStats(scope, code, fromKey, toKey){
+      var st = {work:0, ot:0, absent:0}, d = parseKey(fromKey), end = parseKey(toKey);
+      while(d<=end){ var c = recCalc(getRec(scope, keyOf(d), code)); st.work+=c.work; st.ot+=c.ot; st.absent+=c.absent; d.setDate(d.getDate()+1); }
+      return st;
+    }
+    function weekStats(scope, code){
+      var d = new Date(); var dow = (d.getDay()+6)%7; // Monday start
+      var mon = new Date(d); mon.setDate(d.getDate()-dow);
+      var sun = new Date(mon); sun.setDate(mon.getDate()+6);
+      return rangeStats(scope, code, keyOf(mon), keyOf(sun));
+    }
+    function yearStats(scope, code, y){
+      var t = {work:0, ot:0, absent:0};
+      for(var m=0;m<12;m++){ var s=monthStats(scope,code,y,m); t.work+=s.work; t.ot+=s.ot; t.absent+=s.absent; }
+      return t;
+    }
+    function salaryEstimate(monthlySalary, st, y, m){
+      var dim = daysInMonth(y,m), set = S.settings;
+      var paidDays = st.P + st.H*0.5 + (set.woPaid?st.WO:0) + (set.leavePaid?st.L:0);
+      var unpaidDays = (set.leavePaid?0:st.L) + st.A + st.H*0.5;
+      var perDay = dim>0 ? monthlySalary/dim : 0;
+      var base = perDay * paidDays;
+      var hourly = set.stdMin>0 ? monthlySalary/(dim*(set.stdMin/60)) : 0;
+      var otPay = (st.ot/60) * hourly * (+set.otMultiplier||1);
+      return { paidDays: Math.round(paidDays*100)/100, unpaidDays: Math.round(unpaidDays*100)/100,
+               otPay: Math.round(otPay), est: Math.round(base+otPay) };
+    }
+    function money(n){ return "₹" + Number(Math.round(n)).toLocaleString("en-IN"); }
+    function esc(s){ return String(s===null||s===undefined?"":s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+    function empByCode(code){ for(var i=0;i<S.employees.length;i++) if(S.employees[i].code===code) return S.employees[i]; return null; }
+    function isAdmin(){ return S.settings.role==="admin"; }
+    function canEdit(){ return isAdmin() || UI.markDate===todayKey(); }
+
+    /* ================= toast / modal ================= */
+    var toastTimer=null;
+    function toast(msg){
+      var t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show");
+      clearTimeout(toastTimer); toastTimer=setTimeout(function(){ t.classList.remove("show"); }, 2600);
+    }
+    function openModal(html){
+      document.getElementById("modalRoot").innerHTML =
+        '<div class="overlay" id="ovl"><div class="sheet">'+html+'</div></div>';
+      document.getElementById("ovl").addEventListener("click", function(e){ if(e.target.id==="ovl") closeModal(); });
+    }
+    function closeModal(){ document.getElementById("modalRoot").innerHTML=""; }
+
+    /* ================= clock (only place that shows HH:MM:SS) ================= */
+    function tickClock(){
+      var d=new Date();
+      document.getElementById("clock").textContent = pad(d.getHours())+":"+pad(d.getMinutes())+":"+pad(d.getSeconds());
+      var days=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+      document.getElementById("dateline").textContent =
+        days[d.getDay()]+" · "+d.getDate()+" "+monthName(d.getMonth())+" "+d.getFullYear();
+    }
+    setInterval(tickClock, 1000); tickClock();
+
+    /* ================= top bar / tabs ================= */
+    function syncChrome(){
+      document.getElementById("modeCompany").classList.toggle("on", S.settings.mode==="company");
+      document.getElementById("modePersonal").classList.toggle("on", S.settings.mode==="personal");
+      document.getElementById("roleBtn").textContent = isAdmin() ? "👤 ADMIN" : "👤 EMPLOYEE";
+      document.getElementById("tabEmps").style.display = S.settings.mode==="company" ? "" : "none";
+      var btns=document.querySelectorAll("#tabs button");
+      for(var i=0;i<btns.length;i++) btns[i].classList.toggle("on", btns[i].getAttribute("data-tab")===UI.tab);
+      if(S.settings.mode==="personal" && UI.tab==="emps") UI.tab="dash";
+    }
+    document.getElementById("modeCompany").addEventListener("click", function(){ S.settings.mode="company"; save(); render(); });
+    document.getElementById("modePersonal").addEventListener("click", function(){ S.settings.mode="personal"; save(); render(); });
+    document.getElementById("tabs").addEventListener("click", function(e){
+      var b=e.target.closest("button"); if(!b) return; UI.tab=b.getAttribute("data-tab"); UI.openEd=null; render();
+    });
+    document.getElementById("roleBtn").addEventListener("click", function(){
+      var pinSet = !!S.settings.pin;
+      openModal(
+        '<h3>SWITCH ROLE</h3>'+
+        '<p class="muted small">Admin can edit everything. Employee can view data and mark only their own attendance for today.</p>'+
+        '<div class="fgrid">'+
+        '<div><label>Role</label><select id="mRole" style="width:100%">'+
+          '<option value="employee"'+(isAdmin()?"":" selected")+'>Employee</option>'+
+          '<option value="admin"'+(isAdmin()?" selected":"")+'>Admin</option></select></div>'+
+        (pinSet ? '<div><label>Admin PIN</label><input id="mPin" type="password" inputmode="numeric" placeholder="Enter PIN" style="width:100%"></div>' : '')+
+        '</div>'+
+        '<div class="rowflex" style="margin-top:1rem"><button class="btn green grow" id="mGo" type="button">Continue</button>'+
+        '<button class="btn ghost" id="mCancel" type="button">Cancel</button></div>'
+      );
+      document.getElementById("mCancel").addEventListener("click", closeModal);
+      document.getElementById("mGo").addEventListener("click", function(){
+        var role=document.getElementById("mRole").value;
+        if(role==="admin" && pinSet){
+          var pin=document.getElementById("mPin").value;
+          if(pin!==S.settings.pin){ toast("Wrong PIN."); return; }
+          UI.unlocked=true;
+        }
+        S.settings.role=role; save(); closeModal(); toast("Role: "+role.toUpperCase()); render();
+      });
+    });
+
+    /* ================= lock screen (PIN set + admin not unlocked) ================= */
+    function maybeLock(){
+      var root=document.getElementById("lockRoot");
+      if(S.settings.pin && !UI.unlocked && isAdmin()){
+        root.innerHTML =
+        '<div class="overlay"><div class="sheet" style="text-align:center">'+
+          '<div class="lcd" style="font-size:1.5rem;color:var(--lcd)">ATTEND<span style="color:var(--cyan)">PRO</span></div>'+
+          '<p class="muted" style="letter-spacing:.25em;font-size:.75rem;font-weight:700">LCD EDITION · LOCKED</p>'+
+          '<div style="text-align:left;margin-top:1rem"><label>Admin PIN</label>'+
+          '<input id="lockPin" type="password" inputmode="numeric" placeholder="••••" style="width:100%;text-align:center;font-size:1.3rem;letter-spacing:.4em"></div>'+
+          '<button class="btn green" id="lockGo" type="button" style="width:100%;margin-top:1rem">UNLOCK</button>'+
+          '<button class="btn ghost" id="lockEmp" type="button" style="width:100%;margin-top:.5rem">Continue as Employee (view + mark today)</button>'+
+        '</div></div>';
+        document.getElementById("lockGo").addEventListener("click", tryUnlock);
+        document.getElementById("lockPin").addEventListener("keydown", function(e){ if(e.key==="Enter") tryUnlock(); });
+        document.getElementById("lockEmp").addEventListener("click", function(){
+          S.settings.role="employee"; save(); root.innerHTML=""; render();
+        });
+        function tryUnlock(){
+          if(document.getElementById("lockPin").value===S.settings.pin){ UI.unlocked=true; root.innerHTML=""; render(); }
+          else toast("Wrong PIN.");
+        }
+      } else root.innerHTML="";
+    }
+
+    /* ================= shared fragments ================= */
+    function statCard(cap, valHtml, hint, cls){
+      return '<div class="stat"><div class="cap">'+cap+'</div><div class="val '+(cls||"")+'">'+valHtml+'</div>'+(hint?'<div class="hint">'+hint+'</div>':"")+'</div>';
+    }
+    function statusTicks(scope, dk, code, rec, disabled){
+      var h="";
+      for(var i=0;i<STATUSES.length;i++){
+        var s=STATUSES[i];
+        h+='<button type="button" class="tick'+(rec&&rec.status===s.k?" on":"")+'" data-s="'+s.k+'" '+
+           'data-act="tick" data-scope="'+scope+'" data-date="'+dk+'" data-code="'+esc(code)+'" '+(disabled?"disabled":"")+'>'+
+           s.sym+" "+s.label+"</button>";
+      }
+      return h;
+    }
+    function hoursEditor(scope, dk, code, rec){
+      rec = rec || {};
+      var mode = rec.mode || (rec.manualMin!==null && rec.manualMin!==undefined ? "manual" : "auto");
+      var c = recCalc(rec.status?rec:null);
+      var std = S.settings.stdMin;
+      var h = '<div class="editor">'+
+        '<div class="rowflex" style="margin-bottom:.6rem"><span class="muted small" style="font-weight:700;letter-spacing:.1em">DAY HOURS MODE:</span>'+
+        '<div class="seg"><button type="button" data-act="mode" data-m="auto" data-scope="'+scope+'" data-date="'+dk+'" data-code="'+esc(code)+'" class="'+(mode==="auto"?"on":"")+'">AUTO (In − Out)</button>'+
+        '<button type="button" data-act="mode" data-m="manual" data-scope="'+scope+'" data-date="'+dk+'" data-code="'+esc(code)+'" class="'+(mode==="manual"?"on":"")+'">MANUAL (Decimal)</button></div></div>';
+      if(mode==="auto"){
+        h += '<div class="fgrid">'+
+          '<div><label>In Time</label><input type="time" style="width:100%" data-f="inT" value="'+esc(rec.inT||"")+'"></div>'+
+          '<div><label>Out Time</label><input type="time" style="width:100%" data-f="outT" value="'+esc(rec.outT||"")+'"></div>'+
+          '<div><label>Break (minutes)</label><input type="number" min="0" max="720" step="5" style="width:100%" data-f="breakMin" value="'+(rec.breakMin===undefined?60:rec.breakMin)+'"></div>'+
+        '</div><p class="muted small" style="margin:.5rem 0 0">Working Hours = Out − In − Break. Example: 09:00 → 18:00 with 60 min break = 8 HRS.</p>';
+      } else {
+        h += '<div class="fgrid"><div><label>Hours (decimal — e.g. 11.5)</label>'+
+          '<input type="text" inputmode="decimal" placeholder="11.5" style="width:100%" data-f="manualHrs" value="'+(rec.manualMin!==null&&rec.manualMin!==undefined?dec(+rec.manualMin):"")+'"></div></div>'+
+          '<p class="muted small" style="margin:.5rem 0 0">Type hours directly: 5, 7.5, 8, 11.5 — shown exactly as typed, in decimal.</p>';
+      }
+      h += '<div class="calcbox">Worked <span class="lcd">'+hrs(c.work)+'</span> &nbsp;·&nbsp; Overtime <span class="lcd" style="color:var(--amber)">'+hrs(c.ot)+'</span>'+
+           (c.absent? ' &nbsp;·&nbsp; Absent <span class="lcd" style="color:var(--red)">'+hrs(c.absent)+'</span>':"")+
+           ' &nbsp;·&nbsp; <span class="muted">Standard day: '+dec(std)+' HRS</span></div>'+
+           '<div class="rowflex" style="margin-top:.6rem"><button type="button" class="btn sm green" data-act="saveEd" data-scope="'+scope+'" data-date="'+dk+'" data-code="'+esc(code)+'">Save Hours</button>'+
+           '<button type="button" class="btn sm ghost" data-act="closeEd">Close</button>'+
+           (rec.status? '<button type="button" class="btn sm red" data-act="clearRec" data-scope="'+scope+'" data-date="'+dk+'" data-code="'+esc(code)+'">Clear Day</button>':"")+
+           '</div></div>';
+      return h;
+    }
+
+    /* ================= DASHBOARD ================= */
+    function viewDashboard(){
+      var set=S.settings, y=UI.repY, m=UI.repM, tk=todayKey(), h="";
+      if(set.mode==="company"){
+        var t={P:0,A:0,H:0,WO:0,L:0,work:0,ot:0,absent:0,marked:0}, todayWork=0, todayOt=0;
+        var perEmp=[];
+        S.employees.forEach(function(e){
+          var s=monthStats("company", e.code, y, m);
+          perEmp.push({e:e, s:s});
+          ["P","A","H","WO","L","work","ot","absent","marked"].forEach(function(k){ t[k]+=s[k]; });
+          var c=recCalc(getRec("company", tk, e.code)); todayWork+=c.work; todayOt+=c.ot;
+        });
+        var tRec=S.att.company[tk]||{};
+        var presentToday=0, absentToday=0;
+        Object.keys(tRec).forEach(function(code){ if(tRec[code].status==="P"||tRec[code].status==="H") presentToday++; if(tRec[code].status==="A") absentToday++; });
+        var denom=t.P+t.A+t.H+t.L, pct=denom>0?Math.round(((t.P+t.H*0.5)/denom)*1000)/10:0;
+        h += '<div class="hero"><div class="cap">Total Monthly Hours · '+monthName(m)+' '+y+'</div>'+
+             '<div class="big">'+dec(t.work)+'<small> HRS</small></div>'+
+             '<div class="sub">All employees combined · '+monthName(m)+' '+y+' · Year total '+hrs(companyYear(y))+'</div></div>';
+        h += '<div class="grid">'+
+          statCard("Total Employees", S.employees.length, S.employees.length? "on roll" : "add from Employees tab")+
+          statCard("Present Today", presentToday, prettyDate(tk), "c-green")+
+          statCard("Absent Today", absentToday, prettyDate(tk), "c-red")+
+          statCard("Total Day Hours", dec(todayWork)+"<small> HRS</small>", "today · overtime "+dec(todayOt)+" HRS", "c-cyan")+
+          statCard("Total Monthly Hours", dec(t.work)+"<small> HRS</small>", monthName(m)+" "+y)+
+          statCard("Total Overtime Hours", dec(t.ot)+"<small> HRS</small>", monthName(m)+" "+y, "c-amber")+
+          statCard("Total Absent Hours", dec(t.absent)+"<small> HRS</small>", monthName(m)+" "+y, "c-purple")+
+          statCard("Attendance %", pct+"<small> %</small>", monthName(m)+" "+y, "c-green")+
+        '</div>';
+        h += '<h2 class="sec">Employee Hours · '+monthName(m)+' '+y+'</h2>';
+        if(!S.employees.length) h += '<div class="empty">No employees yet. Add your first employee from the <b>Employees</b> tab, then mark attendance.</div>';
+        else {
+          h += '<div class="tblwrap"><table><thead><tr><th>Employee</th><th class="num">Present</th><th class="num">Absent</th><th class="num">Month Hours</th><th class="num">Overtime</th><th class="num">Attendance %</th></tr></thead><tbody>';
+          perEmp.forEach(function(p){
+            h += '<tr><td data-l="Employee"><b>'+esc(p.e.name)+'</b> <span class="muted small">'+esc(p.e.code)+'</span></td>'+
+                 '<td class="num" data-l="Present">'+p.s.P+'</td><td class="num" data-l="Absent">'+p.s.A+'</td>'+
+                 '<td class="num" data-l="Month Hours">'+dec(p.s.work)+' HRS</td><td class="num" data-l="Overtime">'+dec(p.s.ot)+' HRS</td>'+
+                 '<td class="num" data-l="Attendance %">'+p.s.pct+'%</td></tr>';
+          });
+          h += '</tbody></table></div>';
+        }
+      } else {
+        var ps=monthStats("personal", null, y, m), wk=weekStats("personal", null), yr=yearStats("personal", null, y);
+        var tc=recCalc(getRec("personal", tk, null));
+        var trec=getRec("personal", tk, null);
+        h += '<div class="hero"><div class="cap">My Total Hours · '+monthName(m)+' '+y+'</div>'+
+             '<div class="big">'+dec(ps.work)+'<small> HRS</small></div>'+
+             '<div class="sub">'+esc(set.personalName)+' · This week '+hrs(wk.work)+' · This year '+hrs(yr.work)+'</div></div>';
+        h += '<div class="grid">'+
+          statCard("Today", dec(tc.work)+"<small> HRS</small>", trec? statusLabel(trec.status)+" · "+prettyDate(tk) : "not marked yet", "c-cyan")+
+          statCard("This Week", dec(wk.work)+"<small> HRS</small>", "Mon – Sun")+
+          statCard("This Month", dec(ps.work)+"<small> HRS</small>", monthName(m)+" "+y)+
+          statCard("Overtime (Month)", dec(ps.ot)+"<small> HRS</small>", "above "+dec(set.stdMin)+" HRS/day", "c-amber")+
+          statCard("Present Days", ps.P, monthName(m)+" "+y, "c-green")+
+          statCard("Absent Hours", dec(ps.absent)+"<small> HRS</small>", monthName(m)+" "+y, "c-purple")+
+          statCard("Attendance %", ps.pct+"<small> %</small>", monthName(m)+" "+y, "c-green")+
+          statCard("Year Total", dec(yr.work)+"<small> HRS</small>", String(y))+
+        '</div>';
+        h += '<h2 class="sec">Today · '+prettyDate(tk)+'</h2>'+ personalDayCard(tk, trec, true);
+      }
+      return h;
+    }
+    function companyYear(y){ var t=0; S.employees.forEach(function(e){ t+=yearStats("company", e.code, y).work; }); return t; }
+    function statusLabel(k){ for(var i=0;i<STATUSES.length;i++) if(STATUSES[i].k===k) return STATUSES[i].label; return "—"; }
+    function personalDayCard(dk, rec, showQuick){
+      var c=recCalc(rec), dis=!canEditFor(dk);
+      var h='<div class="arow"><div class="head"><div><div class="nm">'+esc(S.settings.personalName)+'</div>'+
+            '<div class="meta">'+prettyDate(dk)+(rec?' · '+statusLabel(rec.status):' · Not marked')+'</div></div>'+
+            '<div class="hrs"><div class="lcd">'+hrs(c.work)+'</div>'+(c.ot?'<div class="ot">OT '+hrs(c.ot)+'</div>':"")+'</div></div>';
+      if(showQuick && !dis){
+        h+='<div class="rowflex" style="margin-top:.6rem"><button type="button" class="btn sm green" data-act="checkin">⏱ Check In Now</button>'+
+           '<button type="button" class="btn sm" data-act="checkout">⏱ Check Out Now</button></div>';
+      }
+      h+='<div class="ticks">'+statusTicks("personal", dk, "me", rec, dis)+'</div>';
+      if(rec && (rec.inT||rec.outT)) h+='<div class="meta" style="margin-top:.45rem">In '+(rec.inT||"—")+' · Out '+(rec.outT||"—")+' · Break '+(rec.breakMin||0)+' min</div>';
+      if(!dis) h+='<div style="margin-top:.55rem"><button type="button" class="btn sm ghost" data-act="openEd" data-code="me">'+(UI.openEd==="me"?"Close Hours Editor":"Edit Day Hours")+'</button></div>';
+      if(UI.openEd==="me" && !dis) h+=hoursEditorInPlace("personal", dk, "me", rec);
+      return h+'</div>';
+    }
+    function canEditFor(dk){ return isAdmin() || dk===todayKey(); }
+    /* editor needs inputs scoped to its row; wrap with data attrs via container */
+    function hoursEditorInPlace(scope, dk, code, rec){
+      return '<div class="edwrap" data-scope="'+scope+'" data-date="'+dk+'" data-code="'+esc(code)+'">'+hoursEditor(scope, dk, code, rec)+'</div>';
+    }
+
+    /* ================= ATTENDANCE (MARK) ================= */
+    function viewMark(){
+      var dk=UI.markDate, set=S.settings, h="";
+      h += '<div class="datebar"><div><label>Date</label><input type="date" id="markDate" value="'+dk+'"></div>'+
+           '<div class="muted" style="padding-bottom:.4rem;font-weight:600">'+prettyDate(dk)+(dk===todayKey()?" · Today":"")+(isAdmin()?"":" · Employee role: only today can be marked")+'</div></div>';
+      if(set.mode==="personal"){
+        h += personalDayCard(dk, getRec("personal", dk, null), dk===todayKey());
+        h += '<h2 class="sec">History · '+monthName(UI.repM)+' '+UI.repY+'</h2>'+ personalHistory();
+      } else {
+        if(!isAdmin() && !S.settings.myEmpId){
+          h += '<div class="panel" style="margin-bottom:.8rem"><label>Employee role — select yourself</label>'+
+               '<div class="rowflex"><select id="selfPick" class="grow"><option value="">— Select your name —</option>'+
+               S.employees.map(function(e){ return '<option value="'+esc(e.code)+'">'+esc(e.name)+' ('+esc(e.code)+')</option>'; }).join("")+
+               '</select><button type="button" class="btn" id="selfSave">Save</button></div></div>';
+        }
+        if(!S.employees.length) h += '<div class="empty">No employees yet. Add employees from the <b>Employees</b> tab first.</div>';
+        S.employees.forEach(function(e){
+          if(!isAdmin() && S.settings.myEmpId && e.code!==S.settings.myEmpId) return;
+          var rec=getRec("company", dk, e.code), c=recCalc(rec), dis=!canEditFor(dk);
+          h += '<div class="arow"><div class="head"><div class="avatar">'+esc(initials(e.name))+'</div><div>'+
+               '<div class="nm">'+esc(e.name)+'</div><div class="meta">'+esc(e.code)+(e.dept?' · '+esc(e.dept):"")+(rec?' · '+statusLabel(rec.status):' · Not marked')+'</div></div>'+
+               '<div class="hrs"><div class="lcd">'+hrs(c.work)+'</div>'+(c.ot?'<div class="ot">OT '+hrs(c.ot)+'</div>':"")+(c.absent?'<div class="ot" style="color:var(--red)">ABSENT '+hrs(c.absent)+'</div>':"")+'</div></div>'+
+               '<div class="ticks">'+statusTicks("company", dk, e.code, rec, dis)+'</div>';
+          if(rec && (rec.inT||rec.outT)) h+='<div class="meta" style="margin-top:.45rem">In '+(rec.inT||"—")+' · Out '+(rec.outT||"—")+' · Break '+(rec.breakMin||0)+' min</div>';
+          if(!dis) h+='<div style="margin-top:.55rem"><button type="button" class="btn sm ghost" data-act="openEd" data-code="'+esc(e.code)+'">'+(UI.openEd===e.code?"Close Hours Editor":"Edit Day Hours")+'</button></div>';
+          if(UI.openEd===e.code && !dis) h+=hoursEditorInPlace("company", dk, e.code, rec);
+          h += '</div>';
+        });
+      }
+      return h;
+    }
+    function initials(name){ var p=String(name||"?").trim().split(/\s+/); return (p[0][0]||"?")+(p[1]?p[1][0]:""); }
+    function personalHistory(){
+      var y=UI.repY, m=UI.repM, dim=daysInMonth(y,m), rows="", any=false;
+      for(var d=dim; d>=1; d--){
+        var dk=y+"-"+pad(m+1)+"-"+pad(d), rec=getRec("personal", dk, null);
+        if(!rec) continue; any=true; var c=recCalc(rec);
+        rows += '<tr><td data-l="Date">'+prettyDate(dk)+'</td><td data-l="Status"><span style="color:'+SCOLOR[rec.status]+';font-weight:700">'+statusLabel(rec.status)+'</span></td>'+
+                '<td class="num" data-l="Hours">'+dec(c.work)+' HRS</td><td class="num" data-l="Overtime">'+dec(c.ot)+' HRS</td>'+
+                '<td data-l="In / Out">'+(rec.inT||"—")+' / '+(rec.outT||"—")+'</td></tr>';
+      }
+      if(!any) return '<div class="empty">No personal records in '+monthName(m)+' '+y+' yet.</div>';
+      return '<div class="tblwrap"><table><thead><tr><th>Date</th><th>Status</th><th class="num">Hours</th><th class="num">Overtime</th><th>In / Out</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+    }
+
+    /* ================= EMPLOYEES ================= */
+    function viewEmployees(){
+      var h="", admin=isAdmin();
+      h += '<div class="datebar"><div class="grow"><label>Search employees</label><input type="search" id="empSearch" placeholder="Name, ID, department…" value="'+esc(UI.search)+'" style="width:100%"></div>'+
+           (admin? '<button type="button" class="btn green" id="addEmpBtn">+ Add Employee</button>' : '<div class="muted small" style="padding-bottom:.4rem">Employee role: view only</div>')+'</div>';
+      if(admin && (UI.showEmpForm || UI.editEmp)){
+        var e = UI.editEmp ? empByCode(UI.editEmp) : null;
+        h += '<div class="panel" style="margin-bottom:.9rem"><h2 class="sec" style="margin-top:0">'+(e?"Edit Employee":"New Employee")+'</h2>'+
+          '<div class="fgrid">'+
+          '<div><label>Employee ID *</label><input id="fCode" style="width:100%" value="'+esc(e?e.code:"")+'" '+(e?"disabled":"")+' placeholder="EMP001"></div>'+
+          '<div><label>Full Name *</label><input id="fName" style="width:100%" value="'+esc(e?e.name:"")+'" placeholder="Full name"></div>'+
+          '<div><label>Department</label><input id="fDept" style="width:100%" value="'+esc(e?e.dept:"")+'" placeholder="Production"></div>'+
+          '<div><label>Designation</label><input id="fDesig" style="width:100%" value="'+esc(e?e.desig:"")+'" placeholder="Operator"></div>'+
+          '<div><label>Joining Date</label><input id="fJoin" type="date" style="width:100%" value="'+esc(e?e.joining:"")+'"></div>'+
+          '<div><label>Monthly Salary (₹)</label><input id="fSalary" type="number" min="0" step="any" style="width:100%" value="'+(e?e.salary:"")+'" placeholder="25000"></div>'+
+          '</div><div class="rowflex" style="margin-top:.9rem"><button type="button" class="btn green" id="empSave">'+(e?"Save Changes":"Add Employee")+'</button>'+
+          '<button type="button" class="btn ghost" id="empCancel">Cancel</button></div></div>';
+      }
+      var q=UI.search.trim().toLowerCase();
+      var list=S.employees.filter(function(e){ return !q || (e.name+" "+e.code+" "+(e.dept||"")+" "+(e.desig||"")).toLowerCase().indexOf(q)>=0; });
+      if(!S.employees.length) h += '<div class="empty">No employees yet. Tap <b>+ Add Employee</b> to add your team.</div>';
+      else if(!list.length) h += '<div class="empty">No employees match “'+esc(UI.search)+'”.</div>';
+      list.forEach(function(e){
+        var s=monthStats("company", e.code, UI.repY, UI.repM);
+        h += '<div class="ecard"><div class="avatar">'+esc(initials(e.name))+'</div><div class="grow">'+
+             '<div class="nm" style="font-weight:700;font-size:1.05rem">'+esc(e.name)+' <span class="muted small">'+esc(e.code)+'</span></div>'+
+             '<div class="meta muted small" style="font-weight:600">'+esc(e.dept||"—")+(e.desig?' · '+esc(e.desig):"")+(e.joining?' · Joined '+prettyDate(e.joining):"")+' · Salary '+money(e.salary||0)+'/mo</div>'+
+             '<div class="small" style="font-weight:600">'+monthName(UI.repM)+' '+UI.repY+': <span style="color:var(--lcd)">'+dec(s.work)+' HRS</span> · '+s.P+' present · '+s.pct+'%</div></div>'+
+             (admin? '<button type="button" class="btn sm" data-act="editEmp" data-code="'+esc(e.code)+'">Edit</button><button type="button" class="btn sm red" data-act="delEmp" data-code="'+esc(e.code)+'">Delete</button>' : "")+
+             '</div>';
+      });
+      return h;
+    }
+
+    /* ================= CALENDAR ================= */
+    function viewCalendar(){
+      var y=UI.calY, m=UI.calM, set=S.settings, h="";
+      h += '<div class="datebar"><button type="button" class="btn" id="calPrev">‹ Prev</button>'+
+           '<div class="grow" style="text-align:center"><span class="lcd" style="font-size:1.25rem;color:#eaf6ff">'+monthName(m)+' '+y+'</span></div>'+
+           '<button type="button" class="btn" id="calNext">Next ›</button></div>';
+      var first=new Date(y,m,1), startDow=(first.getDay()+6)%7, dim=daysInMonth(y,m);
+      var dows=["MON","TUE","WED","THU","FRI","SAT","SUN"];
+      h += '<div class="cal">'+dows.map(function(d){ return '<div class="dow">'+d+'</div>'; }).join("");
+      for(var i=0;i<startDow;i++) h += '<div class="cell off"></div>';
+      for(var d=1; d<=dim; d++){
+        var dk=y+"-"+pad(m+1)+"-"+pad(d), inner='<div class="d">'+d+'</div>', dots="";
+        if(set.mode==="personal"){
+          var rec=getRec("personal", dk, null);
+          if(rec){ var c=recCalc(rec); dots='<span class="dots"><i style="background:'+SCOLOR[rec.status]+'"></i></span>'; inner+='<div class="h">'+dec(c.work)+' HRS</div>'+dots; }
+        } else {
+          var day=S.att.company[dk]||{}, codes=Object.keys(day), tw=0, seen={};
+          codes.forEach(function(code){ var r=day[code]; tw+=recCalc(r).work; if(!seen[r.status]){ seen[r.status]=1; dots+='<i style="background:'+SCOLOR[r.status]+'"></i>'; } });
+          if(codes.length) inner+='<div class="h">'+dec(tw)+' HRS</div><span class="dots">'+dots+'</span>';
+        }
+        h += '<button type="button" class="cell'+(dk===todayKey()?" today":"")+'" data-act="calDay" data-date="'+dk+'">'+inner+'</button>';
+      }
+      h += '</div><div class="legend">'+
+        STATUSES.map(function(s){ return '<span><i style="background:'+SCOLOR[s.k]+'"></i>'+s.label+'</span>'; }).join("")+
+        '<span class="muted">Tap a date to mark / edit attendance.</span></div>';
+      return h;
+    }
+
+    /* ================= REPORTS ================= */
+    function reportRows(y, m){
+      return S.employees.map(function(e){ return { e:e, s:monthStats("company", e.code, y, m) }; });
+    }
+    function viewReports(){
+      var y=UI.repY, m=UI.repM, set=S.settings, h="";
+      var mOpts="", yOpts="";
+      for(var i=0;i<12;i++) mOpts+='<option value="'+i+'"'+(i===m?" selected":"")+'>'+monthName(i)+'</option>';
+      for(var yy=y-3; yy<=y+1; yy++) yOpts+='<option value="'+yy+'"'+(yy===y?" selected":"")+'>'+yy+'</option>';
+      h += '<div class="datebar"><div><label>Month</label><select id="repMonth">'+mOpts+'</select></div>'+
+           '<div><label>Year</label><select id="repYear">'+yOpts+'</select></div>'+
+           '<div><label>Daily report date</label><input type="date" id="repDate" value="'+UI.repDate+'"></div></div>';
+
+      if(set.mode==="personal"){
+        var ps=monthStats("personal", null, y, m), sal=salaryEstimate(+set.personalSalary||0, ps, y, m);
+        h += '<h2 class="sec">My Monthly Report · '+monthName(m)+' '+y+'</h2><div class="grid">'+
+          statCard("Present Days", ps.P, "", "c-green")+ statCard("Absent Days", ps.A, "", "c-red")+
+          statCard("Half Days", ps.H, "", "c-amber")+ statCard("Leave Days", ps.L, "", "c-purple")+
+          statCard("Weekly Off", ps.WO, "", "c-blue")+ statCard("Total Day Hours (today)", dec(recCalc(getRec("personal", todayKey(), null)).work)+"<small> HRS</small>", prettyDate(todayKey()))+
+          statCard("Total Monthly Hours", dec(ps.work)+"<small> HRS</small>", monthName(m)+" "+y)+
+          statCard("Total Overtime", dec(ps.ot)+"<small> HRS</small>", "", "c-amber")+
+          statCard("Total Absent Hours", dec(ps.absent)+"<small> HRS</small>", "", "c-purple")+
+          statCard("Attendance %", ps.pct+"<small> %</small>", "", "c-green")+'</div>';
+        h += '<h2 class="sec">Salary Estimate</h2><div class="panel"><div class="fgrid">'+
+          '<div><div class="cap muted small" style="font-weight:700;letter-spacing:.15em">MONTHLY SALARY</div><div class="lcd" style="font-size:1.3rem">'+money(set.personalSalary||0)+'</div></div>'+
+          '<div><div class="cap muted small" style="font-weight:700;letter-spacing:.15em">PAID DAYS</div><div class="lcd" style="font-size:1.3rem">'+sal.paidDays+'</div></div>'+
+          '<div><div class="cap muted small" style="font-weight:700;letter-spacing:.15em">UNPAID DAYS</div><div class="lcd" style="font-size:1.3rem">'+sal.unpaidDays+'</div></div>'+
+          '<div><div class="cap muted small" style="font-weight:700;letter-spacing:.15em">OVERTIME PAY</div><div class="lcd" style="font-size:1.3rem;color:var(--amber)">'+money(sal.otPay)+'</div></div>'+
+          '<div><div class="cap muted small" style="font-weight:700;letter-spacing:.15em">ESTIMATED SALARY</div><div class="lcd" style="font-size:1.3rem;color:var(--lcd)">'+money(sal.est)+'</div></div>'+
+          '</div><p class="muted small" style="margin:.6rem 0 0">Set your monthly salary in Settings. Overtime pay uses your salary’s hourly rate × '+esc(set.otMultiplier)+' multiplier.</p></div>';
+      } else {
+        var rows=reportRows(y,m);
+        var T={P:0,A:0,H:0,WO:0,L:0,work:0,ot:0,absent:0};
+        h += '<h2 class="sec">Monthly Report · '+monthName(m)+' '+y+'</h2>';
+        if(!rows.length) h += '<div class="empty">No employees yet — nothing to report.</div>';
+        else {
+          h += '<div class="tblwrap"><table><thead><tr><th>Employee</th><th>ID</th><th class="num">Present</th><th class="num">Absent</th><th class="num">Half</th><th class="num">Leave</th><th class="num">WO</th><th class="num">Day Hrs (today)</th><th class="num">Month Hours</th><th class="num">Overtime</th><th class="num">Absent Hrs</th><th class="num">Att %</th></tr></thead><tbody>';
+          rows.forEach(function(r){
+            ["P","A","H","WO","L","work","ot","absent"].forEach(function(k){ T[k]+=r.s[k]; });
+            var todayH=recCalc(getRec("company", todayKey(), r.e.code)).work;
+            h += '<tr><td data-l="Employee"><b>'+esc(r.e.name)+'</b></td><td data-l="ID">'+esc(r.e.code)+'</td>'+
+              '<td class="num" data-l="Present">'+r.s.P+'</td><td class="num" data-l="Absent">'+r.s.A+'</td><td class="num" data-l="Half">'+r.s.H+'</td>'+
+              '<td class="num" data-l="Leave">'+r.s.L+'</td><td class="num" data-l="WO">'+r.s.WO+'</td>'+
+              '<td class="num" data-l="Day Hrs">'+dec(todayH)+'</td><td class="num" data-l="Month Hours">'+dec(r.s.work)+' HRS</td>'+
+              '<td class="num" data-l="Overtime">'+dec(r.s.ot)+' HRS</td><td class="num" data-l="Absent Hrs">'+dec(r.s.absent)+' HRS</td>'+
+              '<td class="num" data-l="Att %">'+r.s.pct+'%</td></tr>';
+          });
+          var denom=T.P+T.A+T.H+T.L, tpct=denom>0?Math.round(((T.P+T.H*0.5)/denom)*1000)/10:0;
+          h += '<tr class="total"><td data-l="Employee">TOTAL</td><td data-l="ID">—</td><td class="num" data-l="Present">'+T.P+'</td><td class="num" data-l="Absent">'+T.A+'</td><td class="num" data-l="Half">'+T.H+'</td><td class="num" data-l="Leave">'+T.L+'</td><td class="num" data-l="WO">'+T.WO+'</td><td class="num" data-l="Day Hrs">—</td><td class="num" data-l="Month Hours">'+dec(T.work)+' HRS</td><td class="num" data-l="Overtime">'+dec(T.ot)+' HRS</td><td class="num" data-l="Absent Hrs">'+dec(T.absent)+' HRS</td><td class="num" data-l="Att %">'+tpct+'%</td></tr>';
+          h += '</tbody></table></div>';
+          h += '<h2 class="sec">Salary Estimates · '+monthName(m)+' '+y+'</h2><div class="tblwrap"><table><thead><tr><th>Employee</th><th class="num">Monthly Salary</th><th class="num">Paid Days</th><th class="num">Unpaid Days</th><th class="num">Overtime Pay</th><th class="num">Est. Salary</th></tr></thead><tbody>';
+          rows.forEach(function(r){
+            var sal=salaryEstimate(+r.e.salary||0, r.s, y, m);
+            h += '<tr><td data-l="Employee"><b>'+esc(r.e.name)+'</b></td><td class="num" data-l="Monthly Salary">'+money(r.e.salary||0)+'</td>'+
+              '<td class="num" data-l="Paid Days">'+sal.paidDays+'</td><td class="num" data-l="Unpaid Days">'+sal.unpaidDays+'</td>'+
+              '<td class="num" data-l="Overtime Pay">'+money(sal.otPay)+'</td><td class="num" data-l="Est. Salary">'+money(sal.est)+'</td></tr>';
+          });
+          h += '</tbody></table></div>';
+        }
+      }
+      h += '<h2 class="sec">Export</h2><div class="panel"><div class="rowflex">'+
+        '<button type="button" class="btn" id="expMonthly">Monthly Report CSV</button>'+
+        '<button type="button" class="btn" id="expDaily">Daily Report CSV</button>'+
+        '<button type="button" class="btn" id="expHours">Employee Hours CSV</button>'+
+        '<button type="button" class="btn" id="expOT">Overtime Report CSV</button>'+
+        '<button type="button" class="btn green" id="expPrint">Print / PDF View</button>'+
+        '</div><p class="muted small" style="margin:.6rem 0 0">CSV files open in Excel / Google Sheets. Print view opens a clean sheet — use your browser’s Print → Save as PDF.</p></div>';
+      return h;
+    }
+
+    /* ================= SETTINGS ================= */
+    function viewSettings(){
+      var set=S.settings, h="";
+      if(!isAdmin()){
+        return '<div class="empty">Settings are available to <b>Admin</b> only. Use the role button at the top to switch'+(set.pin?" (PIN required).":".")+'</div>'+
+               '<h2 class="sec">Backup</h2><div class="panel"><div class="rowflex"><button type="button" class="btn" id="backupBtn">Download Backup (JSON)</button></div></div>';
+      }
+      h += '<h2 class="sec">Working Rules</h2><div class="panel">'+
+        '<div class="fgrid">'+
+        '<div><label>Standard Hours / Day (decimal)</label><input id="sStd" type="text" inputmode="decimal" style="width:100%" value="'+dec(set.stdMin)+'"></div>'+
+        '<div><label>Overtime Pay Multiplier</label><input id="sOtMult" type="text" inputmode="decimal" style="width:100%" value="'+esc(set.otMultiplier)+'"></div>'+
+        '</div>'+
+        '<div class="switchrow"><div><b>Weekly Off is a paid day</b><div class="muted small">WO days count in paid days for salary.</div></div><label class="tgl"><input type="checkbox" id="sWoPaid" '+(set.woPaid?"checked":"")+'><span></span></label></div>'+
+        '<div class="switchrow"><div><b>Leave is a paid day</b><div class="muted small">Leave days count in paid days for salary.</div></div><label class="tgl"><input type="checkbox" id="sLeavePaid" '+(set.leavePaid?"checked":"")+'><span></span></label></div>'+
+        '<p class="muted small" style="margin:.5rem 0 0">Overtime = worked − standard, when worked is higher. On Absent, absent hours = standard day hours ('+dec(set.stdMin)+' HRS). Absent hours never count as working hours.</p>'+
+        '<div class="rowflex" style="margin-top:.8rem"><button type="button" class="btn green" id="saveRules">Save Rules</button></div></div>';
+
+      h += '<h2 class="sec">Personal Profile</h2><div class="panel"><div class="fgrid">'+
+        '<div><label>Display Name (Personal mode)</label><input id="sPName" style="width:100%" value="'+esc(set.personalName)+'"></div>'+
+        '<div><label>My Monthly Salary (₹)</label><input id="sPSalary" type="number" min="0" step="any" style="width:100%" value="'+(set.personalSalary||"")+'"></div>'+
+        '</div><div class="rowflex" style="margin-top:.8rem"><button type="button" class="btn green" id="saveProfile">Save Profile</button></div></div>';
+
+      h += '<h2 class="sec">Role & PIN</h2><div class="panel"><div class="fgrid">'+
+        '<div><label>My Employee ID (for Employee role)</label><select id="sMyEmp" style="width:100%"><option value="">— None —</option>'+
+        S.employees.map(function(e){ return '<option value="'+esc(e.code)+'"'+(set.myEmpId===e.code?" selected":"")+'>'+esc(e.name)+' ('+esc(e.code)+')</option>'; }).join("")+'</select></div>'+
+        '<div><label>Admin PIN (blank = no PIN)</label><input id="sPin" type="password" inputmode="numeric" style="width:100%" placeholder="e.g. 1234" value=""></div>'+
+        '</div><div class="rowflex" style="margin-top:.8rem"><button type="button" class="btn green" id="saveRole">Save</button>'+
+        (set.pin? '<button type="button" class="btn red" id="clearPin">Remove PIN</button>' : "")+
+        '<span class="muted small">Current role: <b>'+(isAdmin()?"ADMIN":"EMPLOYEE")+'</b>. Company and personal data are stored separately.</span></div></div>';
+
+      h += '<h2 class="sec">Backup & Restore</h2><div class="panel">'+
+        '<p class="muted small" style="margin-top:0">Backup downloads everything — employees, attendance, personal records and settings — as one JSON file. Restore loads it back on any device or browser.</p>'+
+        '<div class="rowflex"><button type="button" class="btn" id="backupBtn">⬇ Download Backup (JSON)</button>'+
+        '<button type="button" class="btn" id="restoreBtn">⬆ Restore from Backup</button></div></div>';
+
+      h += '<h2 class="sec">Danger Zone</h2><div class="panel"><div class="rowflex">'+
+        '<button type="button" class="btn red" id="wipeBtn">Erase All Data</button>'+
+        '<span class="muted small">Deletes employees, attendance and settings from this browser. Take a backup first.</span></div></div>';
+      return h;
+    }
+
+    /* ================= EXPORT ================= */
+    function download(name, text, type){
+      var blob=new Blob([text], {type:type||"text/plain;charset=utf-8"});
+      var a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name;
+      document.body.appendChild(a); a.click();
+      setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 400);
+    }
+    function csvCell(v){ v=String(v===null||v===undefined?"":v); return /[",\n]/.test(v) ? '"'+v.replace(/"/g,'""')+'"' : v; }
+    function toCSV(rows){ return rows.map(function(r){ return r.map(csvCell).join(","); }).join("\n"); }
+    function exportMonthly(){
+      var y=UI.repY, m=UI.repM, rows=[["Employee Name","Employee ID","Present Days","Absent Days","Half Days","Leave Days","Weekly Off","Total Day Hours (today)","Total Monthly Hours","Total Overtime","Total Absent Hours","Attendance %"]];
+      if(S.settings.mode==="personal"){
+        var ps=monthStats("personal", null, y, m);
+        rows.push([S.settings.personalName,"ME",ps.P,ps.A,ps.H,ps.L,ps.WO,dec(recCalc(getRec("personal",todayKey(),null)).work),dec(ps.work),dec(ps.ot),dec(ps.absent),ps.pct]);
+      } else reportRows(y,m).forEach(function(r){
+        rows.push([r.e.name, r.e.code, r.s.P, r.s.A, r.s.H, r.s.L, r.s.WO, dec(recCalc(getRec("company",todayKey(),r.e.code)).work), dec(r.s.work), dec(r.s.ot), dec(r.s.absent), r.s.pct]);
+      });
+      download("attendpro-monthly-"+y+"-"+pad(m+1)+".csv", toCSV(rows), "text/csv;charset=utf-8");
+      toast("Monthly report CSV downloaded.");
+    }
+    function exportDaily(){
+      var dk=UI.repDate, rows=[["Date","Employee Name","Employee ID","Status","In Time","Out Time","Break (min)","Day Hours","Overtime Hours","Absent Hours"]];
+      if(S.settings.mode==="personal"){
+        var rec=getRec("personal", dk, null); if(rec){ var c=recCalc(rec); rows.push([dk, S.settings.personalName, "ME", statusLabel(rec.status), rec.inT||"", rec.outT||"", rec.breakMin||0, dec(c.work), dec(c.ot), dec(c.absent)]); }
+      } else S.employees.forEach(function(e){
+        var rec=getRec("company", dk, e.code); if(rec){ var c=recCalc(rec); rows.push([dk, e.name, e.code, statusLabel(rec.status), rec.inT||"", rec.outT||"", rec.breakMin||0, dec(c.work), dec(c.ot), dec(c.absent)]); }
+      });
+      if(rows.length===1){ toast("No records on "+prettyDate(dk)+"."); return; }
+      download("attendpro-daily-"+dk+".csv", toCSV(rows), "text/csv;charset=utf-8");
+      toast("Daily report CSV downloaded.");
+    }
+    function exportHours(){
+      var y=UI.repY, rows=[["Employee Name","Employee ID","Month","Hours"]];
+      var codes = S.settings.mode==="personal" ? [null] : S.employees.map(function(e){ return e.code; });
+      codes.forEach(function(code){
+        var nm = code? (empByCode(code)||{}).name : S.settings.personalName;
+        for(var m=0;m<12;m++){ var s=monthStats(S.settings.mode, code, y, m); if(s.marked) rows.push([nm, code||"ME", monthName(m)+" "+y, dec(s.work)]); }
+      });
+      download("attendpro-employee-hours-"+y+".csv", toCSV(rows), "text/csv;charset=utf-8");
+      toast("Employee hours CSV downloaded.");
+    }
+    function exportOT(){
+      var y=UI.repY, m=UI.repM, dim=daysInMonth(y,m), rows=[["Date","Employee Name","Employee ID","Worked Hours","Overtime Hours"]];
+      var codes = S.settings.mode==="personal" ? [null] : S.employees.map(function(e){ return e.code; });
+      codes.forEach(function(code){
+        var nm = code? (empByCode(code)||{}).name : S.settings.personalName;
+        for(var d=1; d<=dim; d++){ var dk=y+"-"+pad(m+1)+"-"+pad(d); var c=recCalc(getRec(S.settings.mode, dk, code)); if(c.ot>0) rows.push([dk, nm, code||"ME", dec(c.work), dec(c.ot)]); }
+      });
+      if(rows.length===1){ toast("No overtime in "+monthName(m)+" "+y+"."); return; }
+      download("attendpro-overtime-"+y+"-"+pad(m+1)+".csv", toCSV(rows), "text/csv;charset=utf-8");
+      toast("Overtime report CSV downloaded.");
+    }
+    function showPrint(){
+      var y=UI.repY, m=UI.repM, html='<button onclick="document.body.classList.remove(\'printing\');window.scrollTo(0,0)" style="margin-bottom:14px;padding:8px 16px">← Back to App</button>';
+      html += '<h2 style="font-family:Arial">AttendPro LCD Edition — Monthly Report · '+monthName(m)+' '+y+'</h2>';
+      html += '<table><tr><th>Employee</th><th>ID</th><th>Present</th><th>Absent</th><th>Half</th><th>Leave</th><th>WO</th><th>Month Hours</th><th>Overtime</th><th>Absent Hrs</th><th>Att %</th><th>Est. Salary</th></tr>';
+      if(S.settings.mode==="personal"){
+        var ps=monthStats("personal", null, y, m), sal=salaryEstimate(+S.settings.personalSalary||0, ps, y, m);
+        html += '<tr><td>'+esc(S.settings.personalName)+'</td><td>ME</td><td>'+ps.P+'</td><td>'+ps.A+'</td><td>'+ps.H+'</td><td>'+ps.L+'</td><td>'+ps.WO+'</td><td>'+dec(ps.work)+' HRS</td><td>'+dec(ps.ot)+' HRS</td><td>'+dec(ps.absent)+' HRS</td><td>'+ps.pct+'%</td><td>'+money(sal.est)+'</td></tr>';
+      } else reportRows(y,m).forEach(function(r){
+        var sal=salaryEstimate(+r.e.salary||0, r.s, y, m);
+        html += '<tr><td>'+esc(r.e.name)+'</td><td>'+esc(r.e.code)+'</td><td>'+r.s.P+'</td><td>'+r.s.A+'</td><td>'+r.s.H+'</td><td>'+r.s.L+'</td><td>'+r.s.WO+'</td><td>'+dec(r.s.work)+' HRS</td><td>'+dec(r.s.ot)+' HRS</td><td>'+dec(r.s.absent)+' HRS</td><td>'+r.s.pct+'%</td><td>'+money(sal.est)+'</td></tr>';
+      });
+      html += '</table><p style="font-size:12px;color:#555">Generated '+prettyDate(todayKey())+' · Hours shown in direct decimal format. Use your browser Print → Save as PDF to save this sheet.</p>';
+      document.getElementById("printSheet").innerHTML=html;
+      document.body.classList.add("printing"); window.scrollTo(0,0);
+    }
+
+    /* ================= ACTIONS (event delegation) ================= */
+    function blankRec(){ return { status:"", mode:"auto", inT:"", outT:"", breakMin:60, manualMin:null }; }
+    function collectEditor(wrap, rec){
+      rec = rec || blankRec();
+      var f=function(n){ return wrap.querySelector('[data-f="'+n+'"]'); };
+      if(rec.mode==="manual"){
+        var el=f("manualHrs"); if(el){ var mins=parseHours(el.value); rec.manualMin = (mins===null ? null : mins); }
+      } else {
+        var i=f("inT"), o=f("outT"), b=f("breakMin");
+        if(i) rec.inT=i.value; if(o) rec.outT=o.value; if(b) rec.breakMin=Math.max(0, +b.value||0);
+        rec.manualMin=null;
+      }
+      return rec;
+    }
+    document.getElementById("view").addEventListener("click", function(e){
+      var el=e.target.closest("[data-act]"); if(!el) return;
+      var act=el.getAttribute("data-act"), scope=el.getAttribute("data-scope"), dk=el.getAttribute("data-date"), code=el.getAttribute("data-code");
+      var realCode = scope==="personal" ? null : code;
+
+      if(act==="tick"){
+        if(el.disabled) return;
+        var rec=getRec(scope, dk, realCode) || blankRec();
+        if(rec.status===el.getAttribute("data-s")){ setRec(scope, dk, realCode, null); toast("Cleared — "+prettyDate(dk)); }
+        else { rec.status=el.getAttribute("data-s"); if(rec.manualMin===undefined) rec.manualMin=null; setRec(scope, dk, realCode, rec); toast(statusLabel(rec.status)+" — "+prettyDate(dk)); }
+        render(); return;
+      }
+      if(act==="openEd"){ UI.openEd = (UI.openEd===code ? null : code); render(); return; }
+      if(act==="closeEd"){ UI.openEd=null; render(); return; }
+      if(act==="mode"){
+        var wrap=el.closest(".edwrap"); var r2=getRec(scope, dk, realCode) || blankRec();
+        if(wrap) r2=collectEditor(wrap, r2);
+        r2.mode=el.getAttribute("data-m"); if(!r2.status) r2.status="P";
+        setRec(scope, dk, realCode, r2); render(); return;
+      }
+      if(act==="saveEd"){
+        var wrap2=el.closest(".edwrap"); var r3=getRec(scope, dk, realCode) || blankRec();
+        if(wrap2) r3=collectEditor(wrap2, r3);
+        if(!r3.status) r3.status="P";
+        setRec(scope, dk, realCode, r3);
+        var cc=recCalc(r3); UI.openEd=null; toast("Saved — "+hrs(cc.work)+(cc.ot?" · OT "+hrs(cc.ot):"")); render(); return;
+      }
+      if(act==="clearRec"){ setRec(scope, dk, realCode, null); UI.openEd=null; toast("Day cleared."); render(); return; }
+      if(act==="checkin" || act==="checkout"){
+        var d=new Date(), t=pad(d.getHours())+":"+pad(d.getMinutes());
+        var r4=getRec("personal", todayKey(), null) || blankRec();
+        if(act==="checkin"){ r4.inT=t; if(!r4.status) r4.status="P"; r4.mode="auto"; }
+        else { r4.outT=t; if(!r4.status) r4.status="P"; r4.mode="auto"; }
+        setRec("personal", todayKey(), null, r4); toast((act==="checkin"?"Checked in at ":"Checked out at ")+t); render(); return;
+      }
+      if(act==="calDay"){ UI.markDate=dk; UI.tab="mark"; UI.openEd=null; render(); window.scrollTo(0,0); return; }
+      if(act==="editEmp"){ UI.editEmp=code; UI.showEmpForm=false; render(); window.scrollTo(0,0); return; }
+      if(act==="delEmp"){
+        var emp=empByCode(code); if(!emp) return;
+        openModal('<h3>DELETE EMPLOYEE</h3><p class="muted">Delete <b style="color:var(--ink)">'+esc(emp.name)+'</b> ('+esc(emp.code)+') and all their attendance records? This cannot be undone.</p>'+
+          '<div class="rowflex" style="margin-top:1rem"><button type="button" class="btn red grow" id="delYes">Yes, Delete</button><button type="button" class="btn ghost" id="delNo">Cancel</button></div>');
+        document.getElementById("delNo").addEventListener("click", closeModal);
+        document.getElementById("delYes").addEventListener("click", function(){
+          S.employees=S.employees.filter(function(x){ return x.code!==code; });
+          Object.keys(S.att.company).forEach(function(k){ delete S.att.company[k][code]; });
+          if(S.settings.myEmpId===code) S.settings.myEmpId="";
+          save(); closeModal(); toast("Employee deleted."); render();
+        });
+        return;
+      }
+    });
+    document.getElementById("view").addEventListener("change", function(e){
+      var id=e.target.id;
+      if(id==="markDate"){ UI.markDate=e.target.value||todayKey(); UI.openEd=null; var p=parseKey(UI.markDate); UI.repY=p.getFullYear(); UI.repM=p.getMonth(); render(); }
+      if(id==="repMonth"){ UI.repM=+e.target.value; render(); }
+      if(id==="repYear"){ UI.repY=+e.target.value; render(); }
+      if(id==="repDate"){ UI.repDate=e.target.value||todayKey(); }
+    });
+    document.getElementById("view").addEventListener("input", function(e){
+      if(e.target.id==="empSearch"){ UI.search=e.target.value; var pos=e.target.selectionStart; render(); var s=document.getElementById("empSearch"); if(s){ s.focus(); try{ s.setSelectionRange(pos,pos); }catch(err){} } }
+    });
+    document.getElementById("view").addEventListener("click", function(e){
+      var id=e.target.id;
+      if(id==="calPrev"){ UI.calM--; if(UI.calM<0){ UI.calM=11; UI.calY--; } render(); }
+      if(id==="calNext"){ UI.calM++; if(UI.calM>11){ UI.calM=0; UI.calY++; } render(); }
+      if(id==="addEmpBtn"){ UI.showEmpForm=true; UI.editEmp=null; render(); }
+      if(id==="empCancel"){ UI.showEmpForm=false; UI.editEmp=null; render(); }
+      if(id==="selfSave"){ var sp=document.getElementById("selfPick"); if(sp && sp.value){ S.settings.myEmpId=sp.value; save(); toast("Saved — you can now mark your attendance."); render(); } }
+      if(id==="empSave"){
+        var code=(document.getElementById("fCode").value||"").trim(), name=(document.getElementById("fName").value||"").trim();
+        if(!code || !name){ toast("Employee ID and Name are required."); return; }
+        var data={ code:code, name:name,
+          dept:(document.getElementById("fDept").value||"").trim(), desig:(document.getElementById("fDesig").value||"").trim(),
+          joining:document.getElementById("fJoin").value||"", salary:Math.max(0, +document.getElementById("fSalary").value||0) };
+        if(UI.editEmp){ var ex=empByCode(UI.editEmp); if(ex){ ex.name=data.name; ex.dept=data.dept; ex.desig=data.desig; ex.joining=data.joining; ex.salary=data.salary; } toast("Employee updated."); }
+        else {
+          if(empByCode(code)){ toast("Employee ID already exists."); return; }
+          S.employees.push(data); toast("Employee added.");
+        }
+        UI.showEmpForm=false; UI.editEmp=null; save(); render();
+      }
+      if(id==="expMonthly") exportMonthly();
+      if(id==="expDaily") exportDaily();
+      if(id==="expHours") exportHours();
+      if(id==="expOT") exportOT();
+      if(id==="expPrint") showPrint();
+      if(id==="saveRules"){
+        var std=parseHours(document.getElementById("sStd").value);
+        if(std===null || std<=0){ toast("Enter standard hours like 8 or 8.5"); return; }
+        S.settings.stdMin=std;
+        var om=parseFloat(String(document.getElementById("sOtMult").value).replace(",","."));
+        S.settings.otMultiplier = (isNaN(om)||om<0) ? 1 : om;
+        S.settings.woPaid=document.getElementById("sWoPaid").checked;
+        S.settings.leavePaid=document.getElementById("sLeavePaid").checked;
+        save(); toast("Rules saved."); render();
+      }
+      if(id==="saveProfile"){
+        S.settings.personalName=(document.getElementById("sPName").value||"My Attendance").trim()||"My Attendance";
+        S.settings.personalSalary=Math.max(0, +document.getElementById("sPSalary").value||0);
+        save(); toast("Profile saved."); render();
+      }
+      if(id==="saveRole"){
+        S.settings.myEmpId=document.getElementById("sMyEmp").value||"";
+        var pin=document.getElementById("sPin").value.trim();
+        if(pin){ S.settings.pin=pin; UI.unlocked=true; toast("PIN set and role details saved."); }
+        else toast("Role details saved.");
+        save(); render();
+      }
+      if(id==="clearPin"){ S.settings.pin=""; save(); toast("PIN removed."); render(); }
+      if(id==="backupBtn"){
+        download("attendpro-backup-"+todayKey()+".json", JSON.stringify(S, null, 2), "application/json");
+        toast("Backup downloaded.");
+      }
+      if(id==="restoreBtn"){ document.getElementById("restoreFile").click(); }
+      if(id==="wipeBtn"){
+        openModal('<h3>ERASE ALL DATA</h3><p class="muted">This deletes all employees, attendance, personal records and settings stored in this browser. This cannot be undone.</p>'+
+          '<div class="rowflex" style="margin-top:1rem"><button type="button" class="btn red grow" id="wipeYes">Yes, Erase Everything</button><button type="button" class="btn ghost" id="wipeNo">Cancel</button></div>');
+        document.getElementById("wipeNo").addEventListener("click", closeModal);
+        document.getElementById("wipeYes").addEventListener("click", function(){
+          S=defaultState(); UI.unlocked=false; save(); closeModal(); toast("All data erased."); UI.tab="dash"; render();
+        });
+      }
+    });
+    document.getElementById("restoreFile").addEventListener("change", function(e){
+      var file=e.target.files[0]; if(!file) return;
+      var reader=new FileReader();
+      reader.onload=function(){
+        try {
+          var data=JSON.parse(reader.result);
+          if(!data.settings || !data.att || !Array.isArray(data.employees)) throw new Error("bad");
+          S=data; save(); UI.unlocked=false; toast("Backup restored."); maybeLock(); render();
+        } catch(err){ toast("Invalid backup file."); }
+        e.target.value="";
+      };
+      reader.readAsText(file);
+    });
+
+    /* ================= RENDER ================= */
+    function render(){
+      syncChrome();
+      var v=document.getElementById("view"), html="";
+      if(UI.tab==="dash") html=viewDashboard();
+      else if(UI.tab==="mark") html=viewMark();
+      else if(UI.tab==="emps") html=viewEmployees();
+      else if(UI.tab==="cal") html=viewCalendar();
+      else if(UI.tab==="rep") html=viewReports();
+      else if(UI.tab==="set") html=viewSettings();
+      v.innerHTML=html;
+    }
+    maybeLock();
+    render();
+    </script>
+  </body>
+</html>
