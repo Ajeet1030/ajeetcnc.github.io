@@ -31,6 +31,7 @@
       body {
         font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         color: var(--text);
+        overflow-x: hidden;
         -webkit-tap-highlight-color: transparent;
       }
       .lcd {
@@ -42,15 +43,17 @@
       button, [role="button"] { min-height: 2rem; }
 
       #app {
+        position: relative;
         margin: 0 auto;
         display: flex;
         flex-direction: column;
+        height: 100vh;
         height: 100dvh;
         width: 100%;
         max-width: 520px;
         overflow: hidden;
         background: var(--bg);
-        padding: 0 12px 12px;
+        padding: 0 12px calc(12px + env(safe-area-inset-bottom, 0px));
         padding-top: env(safe-area-inset-top, 0px);
       }
 
@@ -76,7 +79,7 @@
         color: var(--dim);
       }
       .hud-value {
-        font-size: 24px;
+        font-size: clamp(19px, 5vmin, 26px);
         font-weight: 700;
         line-height: 28px;
         color: var(--text);
@@ -153,10 +156,10 @@
 
       .game-title {
         text-align: center;
-        font-size: 34px;
+        font-size: clamp(27px, 9vmin, 40px);
         font-weight: 900;
         font-style: italic;
-        line-height: 36px;
+        line-height: 1.06;
         letter-spacing: -0.01em;
         margin: 0;
         color: var(--text);
@@ -321,7 +324,7 @@
         align-items: center;
         justify-content: center;
         pointer-events: none;
-        font-size: 92px;
+        font-size: clamp(60px, 24vmin, 110px);
         font-weight: 900;
         color: #fff;
         text-shadow: 0 4px 24px rgba(232, 53, 44, 0.8);
@@ -339,8 +342,8 @@
       #controls.show { display: flex; }
       .steer-btn {
         display: flex;
-        width: 118px;
-        height: 84px;
+        width: clamp(96px, 30vmin, 124px);
+        height: clamp(64px, 20vmin, 88px);
         touch-action: none;
         align-items: center;
         justify-content: center;
@@ -384,32 +387,94 @@
         color: var(--cyan);
       }
 
-      /* ---------- Landscape phones: compact chrome so the road stays big ---------- */
-      @media (orientation: landscape) and (max-height: 540px) {
-        #app { max-width: 900px; padding: 0 10px 8px; }
+      /* ---------- Rotate gate: portrait phones play in landscape ---------- */
+      #rotateGate {
+        position: fixed;
+        inset: 0;
+        z-index: 60;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        padding: 24px;
+        text-align: center;
+        background: var(--bg);
+      }
+      @media (orientation: portrait) and (max-width: 600px) {
+        #rotateGate { display: flex; }
+      }
+      .gate-phone { animation: gateTurn 1.5s ease-in-out infinite alternate; }
+      @keyframes gateTurn {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(90deg); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .gate-phone { animation: none; }
+      }
+      .gate-title { margin: 0; font-size: clamp(19px, 5.5vw, 24px); font-weight: 800; line-height: 1.3; }
+      .gate-sub { margin: 0; max-width: 430px; font-size: 14px; line-height: 1.55; color: var(--dim); }
+      .gate-note { margin: 0; font-size: 12px; color: var(--dim); }
+
+      /* ---------- Menu wrappers: invisible in the normal single-column menu,
+         real columns in short landscape so nothing is cut off ---------- */
+      .menu-main, .menu-side { display: contents; }
+
+      /* ---------- Landscape stage: wide screens get the full-width layout.
+         HUD stays in a slim top bar (in flow, never over the road) and the
+         driving controls float over the bottom corners, thumbs left/right. ---------- */
+      @media (orientation: landscape) and (max-height: 940px) {
+        #app { max-width: 1180px; padding: 0 calc(10px + env(safe-area-inset-right, 0px)) 8px calc(10px + env(safe-area-inset-left, 0px)); }
         .hud { padding: 4px 0; gap: 6px; }
         .hud-box { padding: 4px 10px; }
-        .hud-value { font-size: 19px; line-height: 23px; }
-        .hud-box.coins { flex-basis: 74px; }
-        .nitro-row { padding: 0 2px 4px; }
+        .hud-value { font-size: 20px; line-height: 24px; }
+        .hud-box.coins { flex-basis: 76px; }
+        .sound-btn { flex-basis: 40px; }
+        .nitro-row { padding: 0 2px 5px; }
         #wrap { min-height: 0; border-radius: 12px; }
-        #controls { padding-top: 8px; gap: 10px; }
-        .steer-btn { width: 104px; height: 60px; border-radius: 16px; }
-        .nitro-btn { height: 52px; }
-        .nitro-btn.wide { width: 104px; flex-basis: 104px; height: 60px; }
-        .tilt-plate { height: 60px; }
+        #controls {
+          position: absolute;
+          left: 10px;
+          right: 10px;
+          bottom: calc(6px + env(safe-area-inset-bottom, 0px));
+          z-index: 6;
+          padding-top: 0;
+          pointer-events: none;
+        }
+        #controls > * { pointer-events: auto; }
+        .steer-btn { width: 110px; height: 62px; border-radius: 16px; background: rgba(35, 40, 51, 0.92); }
+        .nitro-btn { flex: 0 1 190px; height: 54px; margin: 0 auto; background: rgba(35, 40, 51, 0.92); }
+        .nitro-btn.wide { width: 110px; flex: 0 0 110px; height: 62px; margin: 0 0 0 auto; }
+        .tilt-plate { display: none !important; }
         .overlay { padding: 12px 18px; }
-        .game-title { font-size: 26px; line-height: 28px; }
+      }
+
+      /* ---------- Short landscape (phones): two-column menu, tighter chrome ---------- */
+      @media (orientation: landscape) and (max-height: 620px) {
+        .game-title { font-size: 26px; line-height: 29px; }
         .tagline { font-size: 13px; line-height: 18px; }
-        .stats-grid { margin-top: 10px; }
-        .section-label { margin-top: 12px; }
+        #menuOverlay { flex-direction: row; flex-wrap: wrap; align-items: flex-start; align-content: center; column-gap: 22px; }
+        .menu-main { display: block; flex: 1 1 220px; min-width: 0; }
+        .menu-side { display: block; flex: 1.35 1 300px; min-width: 0; }
+        .menu-main .game-title, .menu-main .tagline { text-align: left; }
+        #menuOverlay .play-btn { flex: 1 1 100%; min-height: 48px; margin-top: 12px; }
+        #menuOverlay .hint { flex: 1 1 100%; }
+        .stats-grid { margin-top: 12px; }
+        .section-label { margin-top: 0; }
         .mode-btn { padding: 8px 10px; }
         .mode-desc { line-height: 17px; }
-        .play-btn { min-height: 48px; margin-top: 12px; }
+        .note-box, .gyro-msg, .permit-btn { margin-top: 8px; }
         .paused-title { font-size: 24px; }
         .crash-title { font-size: 28px; }
         .result-grid { margin-top: 12px; }
         .btn-primary { margin-top: 14px; min-height: 46px; }
+      }
+
+      /* ---------- Very short landscape: shrink the corner controls a touch ---------- */
+      @media (orientation: landscape) and (max-height: 460px) {
+        .steer-btn { width: 98px; height: 56px; }
+        .nitro-btn.wide { width: 98px; flex-basis: 98px; height: 56px; }
+        .hud-value { font-size: 18px; line-height: 22px; }
       }
     </style>
   </head>
@@ -456,26 +521,29 @@
 
         <!-- Menu -->
         <div class="overlay show" id="menuOverlay">
-          <h1 class="game-title">CAR <span>RACING</span></h1>
-          <p class="tagline">Traffic se bachho, coins uthao, best score banao — bina internet ke bhi chalega.</p>
+          <div class="menu-main">
+            <h1 class="game-title">CAR <span>RACING</span></h1>
+            <p class="tagline">Traffic se bachho, coins uthao, best score banao — bina internet ke bhi chalega.</p>
 
-          <div class="stats-grid">
-            <div class="stat-card">
-              <div class="lcd stat-num amber" id="statBest">0</div>
-              <div class="stat-cap">Best Score</div>
-            </div>
-            <div class="stat-card">
-              <div class="lcd stat-num" id="statRaces">0</div>
-              <div class="stat-cap">Races</div>
-            </div>
-            <div class="stat-card">
-              <div class="lcd stat-num" id="statCoins">0</div>
-              <div class="stat-cap">Coins Total</div>
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="lcd stat-num amber" id="statBest">0</div>
+                <div class="stat-cap">Best Score</div>
+              </div>
+              <div class="stat-card">
+                <div class="lcd stat-num" id="statRaces">0</div>
+                <div class="stat-cap">Races</div>
+              </div>
+              <div class="stat-card">
+                <div class="lcd stat-num" id="statCoins">0</div>
+                <div class="stat-cap">Coins Total</div>
+              </div>
             </div>
           </div>
 
-          <div class="section-label">Steering Control Chuno</div>
-          <div class="mode-grid">
+          <div class="menu-side">
+            <div class="section-label">Steering Control Chuno</div>
+            <div class="mode-grid">
             <button type="button" class="mode-btn" id="modeRemote" aria-pressed="true">
               <div class="mode-head">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="6" /><path d="M7 12h.01M17 10.5v3M15.5 12h3" /><path d="M6.5 10.5v3M5 12h3" /></svg>
@@ -496,6 +564,7 @@
           <div class="note-box" id="gyroFallback" style="display:none">Is device par tilt sensor ka signal nahi mila — race me apne aap Remote Control chal jayega.</div>
           <div class="note-box gyro-ready" id="gyroReady" style="display:none">Gyroscope ready hai — phone tilt karke steer karo.</div>
           <p class="gyro-msg" id="gyroMsg" style="display:none"></p>
+          </div>
 
           <button type="button" class="play-btn" id="playBtn">Race Start Karo</button>
           <p class="hint">Computer par: ◀ ▶ arrow keys steering, ↑ / Space = Nitro</p>
@@ -546,6 +615,23 @@
         </button>
         <div class="tilt-plate" id="tiltPlate" style="display:none">Phone tilt karo — left / right</div>
       </div>
+    </div>
+
+    <!-- Rotate gate: portrait phones (and very narrow windows) get this
+         full-screen notice instead of a squeezed game. Pure CSS shows and
+         hides it with orientation — rotating the phone removes it by
+         itself, no tap and no reload. The game underneath stays paused. -->
+    <div id="rotateGate" role="alert">
+      <svg class="gate-phone" width="110" height="110" viewBox="0 0 120 120" fill="none" aria-hidden="true">
+        <path d="M22 80 A42 42 0 0 1 96 38" stroke="#ffb020" stroke-width="5" stroke-linecap="round" />
+        <path d="M83 32 L99.5 37.5 L94 54" stroke="#ffb020" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+        <rect x="43" y="16" width="34" height="88" rx="8" fill="#1a1d24" stroke="#38e1ff" stroke-width="3" />
+        <rect x="49" y="28" width="22" height="58" rx="3" fill="#232833" />
+        <circle cx="60" cy="96" r="2.6" fill="#9aa3b2" />
+      </svg>
+      <p class="gate-title">Phone ghumao 📱➡️ — Game landscape me chalega</p>
+      <p class="gate-sub">Landscape me road bada dikhega aur steering button dono anguthon ke bilkul paas honge. Phone ghumate hi ye screen khud hat jayegi — kuch dabana nahi hai. Race chal rahi ho to wo pause ho jayegi.</p>
+      <p class="gate-note">Computer par ho to window thodi chaudi kar lo.</p>
     </div>
 
     <script>
@@ -820,6 +906,21 @@
       function resumeRace() { setPhase("racing"); }
       function toMenu() { setPhase("menu"); setEngine(0, false); }
 
+      /* ---------- Rotate gate ----------
+         Mirrors the CSS media query that shows #rotateGate. While the gate
+         is up the frame loop freezes (countdown holds, nothing moves) and a
+         running race is auto-paused, so rotating back to landscape lands
+         exactly where the player left off — menu, pause screen or race. */
+      var gateMQ = window.matchMedia("(orientation: portrait) and (max-width: 600px)");
+      var gateOn = false;
+      function applyGate() {
+        gateOn = gateMQ.matches;
+        if (gateOn && phase === "racing") pauseRace();
+      }
+      if (gateMQ.addEventListener) gateMQ.addEventListener("change", applyGate);
+      else if (gateMQ.addListener) gateMQ.addListener(applyGate);
+      window.addEventListener("resize", applyGate);
+
       $("playBtn").addEventListener("click", startRace);
       $("againBtn").addEventListener("click", startRace);
       $("restartBtn").addEventListener("click", startRace);
@@ -992,17 +1093,26 @@
       if (window.screen && window.screen.orientation && window.screen.orientation.addEventListener) {
         window.screen.orientation.addEventListener("change", function () { setTimeout(resize, 40); });
       }
+      // Mobile browser chrome showing/hiding changes the visible height
+      // without a window resize on some phones — follow the visual viewport
+      // too so the stage re-fits instantly in every case.
+      if (window.visualViewport) window.visualViewport.addEventListener("resize", resize);
 
       function frame(now) {
         requestAnimationFrame(frame);
         var dt = Math.min(0.05, (now - last) / 1000);
         last = now;
+        if (gateOn) return; // rotate gate is up: hold the game exactly as-is
         var s = S;
 
-        var roadW = Math.min(W * 0.88, W > H ? 600 : 430);
+        var roadW = Math.min(W * 0.88, W > H ? 640 : 430);
         var roadX = (W - roadW) / 2;
         var laneW = roadW / 3;
-        var carW = laneW * 0.6;
+        // Cars are sized from the lane in portrait; in a short wide stage the
+        // height cap takes over so a car always fits the landscape height
+        // and the road stays large. All hitboxes derive from these two vars,
+        // so gameplay stays identical at every size.
+        var carW = Math.min(laneW * 0.6, H * 0.175);
         var carH = carW * 1.85;
         var playerY = H * 0.78;
         function laneCenter(lane, off) { return roadX + laneW * (lane + 0.5) + off; }
@@ -1293,6 +1403,7 @@
       pickMode(mode, false);
       refreshMenuStats();
       setPhase("menu");
+      applyGate();
       requestAnimationFrame(frame);
     </script>
   </body>
