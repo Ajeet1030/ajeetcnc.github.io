@@ -279,8 +279,6 @@
         border-radius: 999px;
         background: rgba(0, 0, 0, 0.55);
         color: #fff;
-        backdrop-filter: blur(4px);
-        -webkit-backdrop-filter: blur(4px);
       }
       .pause-btn.show { display: flex; }
 
@@ -341,8 +339,8 @@
       #controls.show { display: flex; }
       .steer-btn {
         display: flex;
-        width: 104px;
-        height: 76px;
+        width: 118px;
+        height: 84px;
         touch-action: none;
         align-items: center;
         justify-content: center;
@@ -368,12 +366,12 @@
         color: var(--cyan);
         box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
       }
-      .nitro-btn.wide { width: 104px; flex: 0 0 104px; height: 76px; }
+      .nitro-btn.wide { width: 118px; flex: 0 0 118px; height: 84px; }
       .nitro-btn.pressed { background: var(--cyan); color: #06222b; }
       .nitro-btn span { font-size: 12px; }
       .tilt-plate {
         display: flex;
-        height: 76px;
+        height: 84px;
         flex: 1;
         align-items: center;
         justify-content: center;
@@ -384,6 +382,34 @@
         font-size: 14px;
         font-weight: 600;
         color: var(--cyan);
+      }
+
+      /* ---------- Landscape phones: compact chrome so the road stays big ---------- */
+      @media (orientation: landscape) and (max-height: 540px) {
+        #app { max-width: 900px; padding: 0 10px 8px; }
+        .hud { padding: 4px 0; gap: 6px; }
+        .hud-box { padding: 4px 10px; }
+        .hud-value { font-size: 19px; line-height: 23px; }
+        .hud-box.coins { flex-basis: 74px; }
+        .nitro-row { padding: 0 2px 4px; }
+        #wrap { min-height: 0; border-radius: 12px; }
+        #controls { padding-top: 8px; gap: 10px; }
+        .steer-btn { width: 104px; height: 60px; border-radius: 16px; }
+        .nitro-btn { height: 52px; }
+        .nitro-btn.wide { width: 104px; flex-basis: 104px; height: 60px; }
+        .tilt-plate { height: 60px; }
+        .overlay { padding: 12px 18px; }
+        .game-title { font-size: 26px; line-height: 28px; }
+        .tagline { font-size: 13px; line-height: 18px; }
+        .stats-grid { margin-top: 10px; }
+        .section-label { margin-top: 12px; }
+        .mode-btn { padding: 8px 10px; }
+        .mode-desc { line-height: 17px; }
+        .play-btn { min-height: 48px; margin-top: 12px; }
+        .paused-title { font-size: 24px; }
+        .crash-title { font-size: 28px; }
+        .result-grid { margin-top: 12px; }
+        .btn-primary { margin-top: 14px; min-height: 46px; }
       }
     </style>
   </head>
@@ -568,7 +594,8 @@
       var TRAFFIC_COLORS = ["#38b6c9", "#e8e4da", "#f28c28", "#7fb069", "#c94f7c", "#5b8def"];
       var phase = "menu"; // menu | countdown | racing | paused | over
       var mode = store.controlMode; // remote | gyro
-      var gyroGranted = false, sensorLive = false, tilt = 0, soundOn = true;
+      var gyroGranted = false, sensorLive = false, soundOn = true;
+      var tiltTarget = 0, tiltCur = 0, gyroGraceUntil = 0;
       var keys = { left: false, right: false };
       var remote = { left: false, right: false };
       var nitroHeld = false;
@@ -579,7 +606,7 @@
       function freshState() {
         return {
           time: 0, scroll: 250, distance: 0, score: 0, coins: 0,
-          playerFrac: 0.5, nitro: 0.5, nitroActive: false,
+          playerFrac: 0.5, latVel: 0, lean: 0, nitro: 0.5, nitroActive: false,
           spawnTimer: 0.8, coinTimer: 1.6,
           obstacles: [], coinList: [], particles: [], floats: [],
           shake: 0, crashed: false, crashTimer: 0, saved: false
@@ -644,16 +671,30 @@
         engineNode.osc.frequency.setTargetAtTime(50 + kmh * 0.55, audioCtx.currentTime, 0.1);
       }
 
-      /* ---------- Gyroscope ---------- */
+      /* ---------- Gyroscope ----------
+         The listener is registered once at load, so on Android tilt data
+         starts flowing the moment Gyroscope mode is picked — no permission
+         tap exists there. Only browsers exposing requestPermission (iOS
+         Safari) ever show the "Tilt Permission" button. */
       window.addEventListener("deviceorientation", function (e) {
-        var landscape = window.innerWidth > window.innerHeight;
-        var raw = landscape ? e.beta : e.gamma;
+        // Pick the axis that means "tilt left / right" for the CURRENT
+        // rotation, with the correct sign for all four orientations.
+        var angle = 0;
+        if (window.screen && window.screen.orientation && typeof window.screen.orientation.angle === "number") angle = window.screen.orientation.angle;
+        else if (typeof window.orientation === "number") angle = window.orientation;
+        var raw;
+        if (angle === 90) raw = e.beta;
+        else if (angle === 270 || angle === -90) raw = e.beta == null ? null : -e.beta;
+        else if (angle === 180) raw = e.gamma == null ? null : -e.gamma;
+        else raw = e.gamma;
         if (raw == null) return;
-        sensorLive = true;
-        var dead = 3, mag = Math.abs(raw);
-        tilt = mag <= dead ? 0 : Math.sign(raw) * Math.min(1, (mag - dead) / 20);
-        tiltDot.style.left = (50 + tilt * 46) + "%";
-        updateGyroNotes();
+        if (!sensorLive) { sensorLive = true; updateGyroNotes(); }
+        // Small dead-zone, then a gentle curve: a small tilt steers gently,
+        // a bigger tilt steers progressively faster. Full lock at ~18 deg.
+        // The frame loop smooths tiltTarget into tiltCur (no jitter, no lag).
+        var dead = 2, mag = Math.abs(raw);
+        var norm = mag <= dead ? 0 : Math.min(1, (mag - dead) / 16);
+        tiltTarget = Math.sign(raw) * norm * (0.55 + 0.45 * norm);
       });
 
       function gyroNeedsPermission() {
@@ -670,14 +711,24 @@
               return;
             }
             gyroGranted = true;
+            armGyroGrace();
             updateGyroNotes();
           }).catch(function () {
             showGyroMsg("Tilt permission nahi mili. Remote Control se khelo.");
           });
         } else {
+          // Android / desktop browsers: no permission step at all — the
+          // deviceorientation listener above is already live.
           gyroGranted = true;
+          armGyroGrace();
           updateGyroNotes();
         }
+      }
+      function armGyroGrace() {
+        // Give the sensor a moment to deliver its first event before the
+        // "no signal" fallback note is allowed to appear.
+        gyroGraceUntil = performance.now() + 2500;
+        setTimeout(updateGyroNotes, 2600);
       }
       function showGyroMsg(msg) {
         var el = $("gyroMsg");
@@ -687,7 +738,7 @@
       function updateGyroNotes() {
         var isGyro = mode === "gyro";
         $("gyroPermit").style.display = isGyro && gyroNeedsPermission() ? "block" : "none";
-        $("gyroFallback").style.display = isGyro && !gyroNeedsPermission() && !sensorLive ? "block" : "none";
+        $("gyroFallback").style.display = isGyro && !gyroNeedsPermission() && !sensorLive && performance.now() >= gyroGraceUntil ? "block" : "none";
         $("gyroReady").style.display = isGyro && sensorLive ? "block" : "none";
       }
       function effectiveMode() {
@@ -822,7 +873,7 @@
 
       /* ---------- Swipe steering on the road ---------- */
       function canvasFrac(e) {
-        var rect = canvas.getBoundingClientRect();
+        var rect = wrapRect || canvas.getBoundingClientRect();
         var roadW = Math.min(rect.width * 0.88, 430);
         var roadX = (rect.width - roadW) / 2;
         return Math.max(0, Math.min(1, (e.clientX - rect.left - roadX) / roadW));
@@ -839,6 +890,13 @@
       canvas.addEventListener("pointercancel", function () { swipe.active = false; });
 
       /* ---------- Canvas drawing ---------- */
+      // In-place array compaction: same result as .filter() but allocates
+      // nothing, so spawning/collecting never triggers GC hitches mid-race.
+      function compactInPlace(arr, keep) {
+        var w = 0;
+        for (var i = 0; i < arr.length; i++) { if (keep(arr[i])) arr[w++] = arr[i]; }
+        arr.length = w;
+      }
       function roundRect(c, x, y, w, h, r) {
         var rr = Math.min(r, w / 2, h / 2);
         c.beginPath();
@@ -903,12 +961,18 @@
       /* ---------- Main loop ---------- */
       var ctx = canvas.getContext("2d");
       var W = 0, H = 0, last = performance.now(), hudTimer = 0;
+      var wrapRect = null, beamCache = null;
 
       function resize() {
         var rect = wrap.getBoundingClientRect();
-        var dpr = Math.min(2, window.devicePixelRatio || 1);
-        W = Math.max(280, rect.width);
-        H = Math.max(320, rect.height);
+        wrapRect = rect;
+        beamCache = null;
+        // Cap the pixel ratio at 1.5: on budget/mid-range Android GPUs a
+        // full 2x-3x backing store is the main cause of racing stutter,
+        // and 1.5x still looks sharp on phone screens.
+        var dpr = Math.min(1.5, window.devicePixelRatio || 1);
+        W = Math.max(240, rect.width);
+        H = Math.max(160, rect.height);
         canvas.width = Math.round(W * dpr);
         canvas.height = Math.round(H * dpr);
         canvas.style.width = W + "px";
@@ -918,6 +982,16 @@
       resize();
       if (window.ResizeObserver) new ResizeObserver(resize).observe(wrap);
       window.addEventListener("resize", resize);
+      // Auto-rotate: re-layout the instant the phone turns. Game state is
+      // kept in fractions (playerFrac, coin xFrac, lanes), so a resize
+      // mid-race loses nothing — the race simply continues in the new shape.
+      window.addEventListener("orientationchange", function () {
+        setTimeout(resize, 40);
+        setTimeout(resize, 260);
+      });
+      if (window.screen && window.screen.orientation && window.screen.orientation.addEventListener) {
+        window.screen.orientation.addEventListener("change", function () { setTimeout(resize, 40); });
+      }
 
       function frame(now) {
         requestAnimationFrame(frame);
@@ -925,7 +999,7 @@
         last = now;
         var s = S;
 
-        var roadW = Math.min(W * 0.88, 430);
+        var roadW = Math.min(W * 0.88, W > H ? 600 : 430);
         var roadX = (W - roadW) / 2;
         var laneW = roadW / 3;
         var carW = laneW * 0.6;
@@ -960,20 +1034,38 @@
             s.score += s.scroll * dt * 0.06;
           }
 
+          // Smooth the raw tilt every frame: fast enough to feel instant,
+          // filtered enough that hand tremor never reaches the car.
+          tiltCur += (tiltTarget - tiltCur) * Math.min(1, dt * 16);
+          if (Math.abs(tiltTarget - tiltCur) < 0.001) tiltCur = tiltTarget;
+          tiltDot.style.left = (50 + tiltCur * 46) + "%";
+
           var steer = 0;
-          if (effectiveMode() === "gyro") steer = tilt;
+          if (effectiveMode() === "gyro") steer = tiltCur;
           if (keys.left) steer -= 1;
           if (keys.right) steer += 1;
           if (remote.left) steer -= 1;
           if (remote.right) steer += 1;
           steer = Math.max(-1, Math.min(1, steer));
-          if (swipe.active) {
-            var diff = swipe.xFrac - s.playerFrac;
-            steer = Math.max(-1, Math.min(1, diff * 7));
-          }
+
+          /* Eased lateral physics: input sets a TARGET lateral velocity and
+             the car's velocity ramps toward it — the car starts moving the
+             same frame a button is held (zero input lag), accelerates
+             smoothly instead of jumping, and settles cleanly on release.
+             Top lateral speed is high enough to dodge late traffic even at
+             full game speed, and identical at every scroll speed. */
           if (!s.crashed) {
-            s.playerFrac += steer * dt * 1.55;
-            s.playerFrac = Math.max(0.09, Math.min(0.91, s.playerFrac));
+            var targetVel;
+            if (swipe.active) targetVel = Math.max(-2.6, Math.min(2.6, (swipe.xFrac - s.playerFrac) * 10));
+            else targetVel = steer * 1.9;
+            var rate = targetVel === 0 ? 16 : 13;
+            s.latVel += (targetVel - s.latVel) * Math.min(1, dt * rate);
+            if (Math.abs(targetVel - s.latVel) < 0.01) s.latVel = targetVel;
+            s.playerFrac += s.latVel * dt;
+            if (s.playerFrac <= 0.09) { s.playerFrac = 0.09; s.latVel = 0; }
+            else if (s.playerFrac >= 0.91) { s.playerFrac = 0.91; s.latVel = 0; }
+          } else {
+            s.latVel = 0;
           }
           var playerX = roadX + s.playerFrac * roadW;
 
@@ -1039,7 +1131,7 @@
               }
             }
           }
-          s.obstacles = s.obstacles.filter(function (ob) { return ob.y < H + carH * 2; });
+          compactInPlace(s.obstacles, function (ob) { return ob.y < H + carH * 2; });
 
           for (var ki = 0; ki < s.coinList.length; ki++) {
             var coin = s.coinList[ki];
@@ -1064,7 +1156,7 @@
               }
             }
           }
-          s.coinList = s.coinList.filter(function (cn) { return !cn.taken && cn.y < H + 40; });
+          compactInPlace(s.coinList, function (cn) { return !cn.taken && cn.y < H + 40; });
 
           if (s.crashed) {
             s.crashTimer -= dt;
@@ -1086,10 +1178,13 @@
           var p = s.particles[pj];
           p.life += dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 500 * dt;
         }
-        s.particles = s.particles.filter(function (pp) { return pp.life < pp.maxLife; });
+        compactInPlace(s.particles, function (pp) { return pp.life < pp.maxLife; });
         for (var fj = 0; fj < s.floats.length; fj++) { s.floats[fj].life += dt; s.floats[fj].y -= 42 * dt; }
-        s.floats = s.floats.filter(function (ff) { return ff.life < 0.9; });
+        compactInPlace(s.floats, function (ff) { return ff.life < 0.9; });
         s.shake = Math.max(0, s.shake - dt * 26);
+        // Car body lean follows lateral velocity, easing back to level.
+        var leanTarget = phase === "racing" && !s.crashed ? Math.max(-0.13, Math.min(0.13, s.latVel * 0.06)) : 0;
+        s.lean += (leanTarget - s.lean) * Math.min(1, dt * 10);
 
         setEngine(Math.round(s.scroll / 4.1), phase === "racing" && !s.crashed);
 
@@ -1131,10 +1226,15 @@
         }
         var px = roadX + s.playerFrac * roadW;
         if (phase !== "menu") {
-          var beam = c.createLinearGradient(0, playerY - carH / 2, 0, playerY - carH * 2.4);
-          beam.addColorStop(0, "rgba(255,240,180,0.20)");
-          beam.addColorStop(1, "rgba(255,240,180,0)");
-          c.fillStyle = beam;
+          // Headlight beam gradient is cached per size — rebuilding a
+          // gradient object every frame is pure allocation churn.
+          if (!beamCache || beamCache.y !== playerY || beamCache.h !== carH) {
+            var beamGrad = c.createLinearGradient(0, playerY - carH / 2, 0, playerY - carH * 2.4);
+            beamGrad.addColorStop(0, "rgba(255,240,180,0.20)");
+            beamGrad.addColorStop(1, "rgba(255,240,180,0)");
+            beamCache = { g: beamGrad, y: playerY, h: carH };
+          }
+          c.fillStyle = beamCache.g;
           c.beginPath();
           c.moveTo(px - carW * 0.42, playerY - carH / 2);
           c.lineTo(px + carW * 0.42, playerY - carH / 2);
@@ -1164,7 +1264,11 @@
           drawCar(c, laneCenter(ob2.lane, ob2.xOff), ob2.y, carW, carH, ob2.color, false, false, s.time);
         }
         if (phase !== "menu") {
-          drawCar(c, px, playerY, carW, carH, "#e8352c", true, s.nitroActive && phase === "racing", s.time);
+          c.save();
+          c.translate(px, playerY);
+          c.rotate(s.lean);
+          drawCar(c, 0, 0, carW, carH, "#e8352c", true, s.nitroActive && phase === "racing", s.time);
+          c.restore();
         }
         for (var pk = 0; pk < s.particles.length; pk++) {
           var pp2 = s.particles[pk];
