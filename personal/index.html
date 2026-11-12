@@ -58,6 +58,33 @@ h2{font-family:var(--font-display);font-size:24px;line-height:1.25;font-weight:7
 .link-title{display:block;word-break:break-word;font-size:16px;font-weight:600;line-height:1.4}
 .link-host{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px;color:var(--dim)}
 .arrow{margin-left:auto;flex-shrink:0;color:var(--accent)}
+.link-card{flex-direction:column}
+.link-empty{border-radius:var(--radius);padding:16px;font-size:14px;line-height:1.6;color:var(--dim);text-align:center}
+.links-bar{margin-top:14px;display:flex;justify-content:flex-end}
+.edit-toggle{display:inline-flex;align-items:center;gap:8px;border-radius:9999px;border:1px solid rgba(232,194,104,.5);background:rgba(232,194,104,.1);color:var(--gold);padding:6px 14px;min-height:38px;font-size:13px;font-weight:700;cursor:pointer}
+.edit-toggle:hover{background:rgba(232,194,104,.2)}
+body.editing .edit-toggle{background:rgba(232,194,104,.28)}
+.edit-panel{margin-top:12px;border-radius:var(--radius);padding:16px}
+.edit-note{margin:0;font-size:13px;line-height:1.65;color:var(--dim)}
+.edit-note strong{color:var(--text)}
+.edit-panel h3{font-family:var(--font-display);margin:16px 0 10px;font-size:16px;font-weight:700}
+.edit-field{display:block;width:100%;margin-bottom:10px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,.08);padding:10px 14px;font-size:14px;color:var(--text);outline:none}
+.edit-field::placeholder{color:var(--dim)}
+.edit-field:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(94,234,212,.25)}
+.add-btn{width:100%;border:none;border-radius:12px;background:linear-gradient(140deg,#0891b2,#0d9488);color:#fff;font-size:14px;font-weight:700;padding:10px 16px;cursor:pointer}
+.form-err{margin:0 0 10px;font-size:13px;line-height:1.5;color:var(--danger)}
+.edit-panel-foot{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
+.ghost-btn{border-radius:9999px;border:1px solid var(--border);background:rgba(255,255,255,.06);color:var(--text);padding:6px 14px;min-height:38px;font-size:13px;font-weight:600;cursor:pointer}
+.ghost-btn.danger{border-color:rgba(248,113,113,.5);color:var(--danger)}
+.card-actions{display:none;gap:8px;padding:2px 4px 4px}
+body.editing .card-actions{display:flex}
+.mini-btn{flex:1;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,.08);color:var(--text);font-size:13px;font-weight:600;padding:8px 10px;min-height:36px;cursor:pointer}
+.mini-btn.del{border-color:rgba(248,113,113,.5);color:var(--danger)}
+.mini-btn.del.confirm{background:rgba(248,113,113,.22);color:#fecaca}
+.mini-btn.save{border:none;background:linear-gradient(140deg,#0891b2,#0d9488);color:#fff;font-weight:700}
+.card-edit{width:100%;padding:6px 4px 2px}
+.card-edit .edit-field{margin-bottom:8px}
+.card-edit-row{display:flex;gap:8px}
 .chat{border-radius:var(--radius);padding:16px}
 @media(min-width:640px){.chat{padding:20px}}
 .chat-head{position:relative;z-index:1;display:flex;align-items:center;gap:12px}
@@ -142,7 +169,7 @@ html[data-page-hidden] .wave-layer,html[data-page-hidden] .typing-dot,html[data-
       <h1 class="enter" style="animation-delay:120ms">Ajeet</h1>
       <span class="enter badge" style="animation-delay:230ms">AJEET BHAI</span>
       <p class="enter hero-desc" style="animation-delay:330ms">Content creator aur app maker — Instagram page <strong>@insta_wallpaper4k</strong> par roz Free Fire updates aur 4K wallpapers, aur apni banayi hui <strong>AttendPro LCD Edition</strong> app.</p>
-      <p class="enter lcd hero-lcd" style="animation-delay:430ms" aria-label="Total 4 links">LINKS&nbsp;04</p>
+      <p class="enter lcd hero-lcd" id="links-count-hero" style="animation-delay:430ms" aria-label="Total 4 links">LINKS&nbsp;04</p>
     </div>
   </header>
 
@@ -150,7 +177,26 @@ html[data-page-hidden] .wave-layer,html[data-page-hidden] .typing-dot,html[data-
     <div class="reveal">
       <div class="sec-head">
         <div><h2 class="text-gold">Mere Links</h2><p class="sec-sub">Kisi bhi card par tap karo — link seedha khul jayega.</p></div>
-        <span class="lcd" aria-hidden="true" style="font-size:18px">04</span>
+        <span class="lcd" id="links-count-sec" aria-hidden="true" style="font-size:18px">04</span>
+      </div>
+    </div>
+    <div class="links-bar">
+      <button type="button" class="edit-toggle" id="edit-toggle" aria-expanded="false" aria-controls="edit-panel"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span id="edit-toggle-txt">Links Edit Karo</span></button>
+    </div>
+    <div class="glass edit-panel" id="edit-panel" hidden>
+      <p class="edit-note"><strong>Edit mode ON hai.</strong> Yaha kiye gaye saare badlav isi device ke browser me turant save ho jate hain — page dobara kholne par bhi wahi links dikhenge, bilkul app ki tarah. Har card par Edit / Delete button hai, aur neeche se naya link add kar sakte ho.</p>
+      <form id="add-form" novalidate>
+        <h3>Naya Link Add Karo</h3>
+        <label class="sr-only" for="add-title">Naye link ka naam</label>
+        <input class="edit-field" id="add-title" placeholder="Link ka naam — jaise YouTube Channel" autocomplete="off">
+        <label class="sr-only" for="add-url">Naye link ka URL</label>
+        <input class="edit-field" id="add-url" placeholder="URL — jaise youtube.com/@mychannel" autocomplete="off" inputmode="url">
+        <p class="form-err" id="add-err" hidden></p>
+        <button type="submit" class="add-btn">+ Link Add Karo</button>
+      </form>
+      <div class="edit-panel-foot">
+        <button type="button" class="ghost-btn danger" id="reset-links">Default links par wapas</button>
+        <button type="button" class="ghost-btn" id="edit-done">Ho Gaya — Band Karo</button>
       </div>
     </div>
     <div class="links" id="links"></div>
@@ -177,28 +223,125 @@ html[data-page-hidden] .wave-layer,html[data-page-hidden] .typing-dot,html[data-
 </main>
 
 <script>
-var LINKS=[
+var DEFAULT_LINKS=[
  {title:"Instagram — @insta_wallpaper4k",url:"https://www.instagram.com/insta_wallpaper4k"},
- {title:"AttendPro App — Direct Use",url:"https://muse.ai/s/attendpro-lcd-edition-public-xtxk6fxemspbxj3/T3_UrnzSwbpFIqLceexoCNXNss1BZVUbMf9gYVhhWJY"},
+ {title:"AttendPro App — Direct Use",url:"https://ajeet1030.github.io/ajeetcnc.github.io/attendpro/"},
  {title:"GitHub — Ajeet1030",url:"https://github.com/Ajeet1030"},
  {title:"Theajeetbhai",url:"https://www.instagram.com/theajeetbhai?mdxt=bWdpcGt2ZGx4MXRn"}
 ];
+var LS_KEY="ajeetPersonalLinksV1";
+function cloneLinks(a){return a.map(function(l){return{title:l.title,url:l.url}})}
+function loadLinks(){
+  try{
+    var raw=localStorage.getItem(LS_KEY);
+    if(raw){var arr=JSON.parse(raw);if(Array.isArray(arr)){var clean=arr.filter(function(l){return l&&typeof l.title==="string"&&typeof l.url==="string"&&l.title.trim()&&l.url.trim()});if(clean.length||arr.length===0)return clean}}
+  }catch(e){}
+  return cloneLinks(DEFAULT_LINKS);
+}
+var LINKS=loadLinks();
+function saveLinks(){try{localStorage.setItem(LS_KEY,JSON.stringify(LINKS))}catch(e){}}
 function hostOf(u){try{return new URL(u).hostname.replace(/^www\./,"")}catch(e){return u}}
+function normUrl(u){
+  u=(u||"").trim();if(!u)return "";
+  var m=u.match(/^([a-zA-Z][a-zA-Z0-9+.-]*):/);
+  if(m){if(!/^https?$/i.test(m[1]))return ""}
+  else u="https://"+u;
+  try{new URL(u)}catch(e){return ""}
+  return u;
+}
 var linksEl=document.getElementById("links");
-LINKS.forEach(function(l,i){
-  var wrap=document.createElement("div");wrap.className="reveal";wrap.style.transitionDelay=Math.min(i*60,180)+"ms";
-  wrap.innerHTML='<div class="glass link-card"><a href="" target="_blank" rel="noreferrer"><span class="link-ico" aria-hidden="true"></span><span class="link-txt"><span class="link-title"></span><span class="link-host"></span></span><span class="arrow" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M17 7H9M17 7v8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a></div>';
-  var a=wrap.querySelector("a");a.href=l.url;a.setAttribute("aria-label",l.title+" — link kholo");
-  var ico=wrap.querySelector(".link-ico");
+var editIndex=-1,armDelete=-1,armTimer=null;
+function pad2(n){return (n<10?"0":"")+n}
+function updateCounts(){
+  var h=document.getElementById("links-count-hero"),s=document.getElementById("links-count-sec");
+  if(h){h.innerHTML="LINKS&nbsp;"+pad2(LINKS.length);h.setAttribute("aria-label","Total "+LINKS.length+" links")}
+  if(s)s.textContent=pad2(LINKS.length);
+}
+function armRevealEl(el){
+  var r=el.getBoundingClientRect();
+  if(r.top<window.innerHeight*2.2&&r.bottom>0){el.classList.add("is-in");return}
+  if(typeof IntersectionObserver==="undefined"){el.classList.add("is-in");return}
+  var obs=new IntersectionObserver(function(en){if(en[0].isIntersecting){el.classList.add("is-in");obs.disconnect()}},{threshold:0.01,rootMargin:"0px 0px 120% 0px"});
+  obs.observe(el);setTimeout(function(){el.classList.add("is-in")},1500);
+}
+function buildCard(l,i){
+  var card=document.createElement("div");card.className="glass link-card";
+  if(i===editIndex){
+    card.innerHTML='<form class="card-edit"><label class="sr-only">Link ka naam</label><input class="edit-field" data-f="title" placeholder="Link ka naam" autocomplete="off"><label class="sr-only">Link ka URL</label><input class="edit-field" data-f="url" placeholder="URL — jaise example.com" autocomplete="off" inputmode="url"><p class="form-err" data-err hidden></p><div class="card-edit-row"><button type="submit" class="mini-btn save">Save Karo</button><button type="button" class="mini-btn" data-cancel>Cancel</button></div></form>';
+    var tIn=card.querySelector('[data-f="title"]'),uIn=card.querySelector('[data-f="url"]'),err=card.querySelector("[data-err]");
+    tIn.value=l.title;uIn.value=l.url;
+    card.querySelector("form").addEventListener("submit",function(e){
+      e.preventDefault();
+      var url=normUrl(uIn.value);
+      if(!url){err.textContent="URL sahi se likho — jaise example.com ya https://example.com";err.hidden=false;return}
+      LINKS[i]={title:tIn.value.trim()||hostOf(url),url:url};saveLinks();editIndex=-1;renderLinks();
+    });
+    card.querySelector("[data-cancel]").addEventListener("click",function(){editIndex=-1;renderLinks()});
+    return card;
+  }
+  card.innerHTML='<a target="_blank" rel="noreferrer"><span class="link-ico" aria-hidden="true"></span><span class="link-txt"><span class="link-title"></span><span class="link-host"></span></span><span class="arrow" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M17 7H9M17 7v8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a><div class="card-actions"><button type="button" class="mini-btn" data-edit>Edit Karo</button><button type="button" class="mini-btn del" data-del>Delete Karo</button></div>';
+  var a=card.querySelector("a");a.href=l.url;a.setAttribute("aria-label",l.title+" — link kholo");
+  var ico=card.querySelector(".link-ico");
   ico.textContent=(l.title.trim().charAt(0)||"L").toUpperCase();
   var logo=document.createElement("img");
   logo.className="link-logo";logo.alt="";logo.width=44;logo.height=44;logo.loading="lazy";logo.decoding="async";
   logo.src="https://www.google.com/s2/favicons?domain="+encodeURIComponent(hostOf(l.url))+"&sz=128";
   logo.addEventListener("error",function(){logo.remove()});
   ico.appendChild(logo);
-  wrap.querySelector(".link-title").textContent=l.title;
-  wrap.querySelector(".link-host").textContent=hostOf(l.url);
-  linksEl.appendChild(wrap);
+  card.querySelector(".link-title").textContent=l.title;
+  card.querySelector(".link-host").textContent=hostOf(l.url);
+  card.querySelector("[data-edit]").addEventListener("click",function(){editIndex=i;armDelete=-1;renderLinks();var inp=linksEl.querySelector(".card-edit [data-f='title']");if(inp){inp.focus();inp.select()}});
+  var delBtn=card.querySelector("[data-del]");
+  if(armDelete===i){delBtn.textContent="Pakka Delete?";delBtn.classList.add("confirm")}
+  delBtn.addEventListener("click",function(){
+    if(armDelete===i){clearTimeout(armTimer);armDelete=-1;LINKS.splice(i,1);saveLinks();renderLinks()}
+    else{armDelete=i;renderLinks();clearTimeout(armTimer);armTimer=setTimeout(function(){armDelete=-1;renderLinks()},3000)}
+  });
+  return card;
+}
+function renderLinks(){
+  linksEl.innerHTML="";
+  if(!LINKS.length){
+    var empty=document.createElement("div");empty.className="glass link-empty";
+    empty.textContent="Abhi koi link nahi hai — edit mode me 'Naya Link Add Karo' se pehla link jodo.";
+    linksEl.appendChild(empty);
+  }
+  LINKS.forEach(function(l,i){
+    var wrap=document.createElement("div");wrap.className="reveal";wrap.style.transitionDelay=Math.min(i*60,180)+"ms";
+    wrap.appendChild(buildCard(l,i));
+    linksEl.appendChild(wrap);armRevealEl(wrap);
+  });
+  updateCounts();
+}
+renderLinks();
+
+/* Edit mode */
+var editToggle=document.getElementById("edit-toggle"),editPanel=document.getElementById("edit-panel"),editToggleTxt=document.getElementById("edit-toggle-txt");
+function setEditMode(on){
+  document.body.classList.toggle("editing",on);
+  editPanel.hidden=!on;editToggle.setAttribute("aria-expanded",on?"true":"false");
+  editToggleTxt.textContent=on?"Edit Mode ON — Band Karo":"Links Edit Karo";
+  if(!on){editIndex=-1;armDelete=-1;renderLinks()}
+}
+editToggle.addEventListener("click",function(){setEditMode(!document.body.classList.contains("editing"))});
+document.getElementById("edit-done").addEventListener("click",function(){setEditMode(false)});
+var addForm=document.getElementById("add-form"),addTitle=document.getElementById("add-title"),addUrl=document.getElementById("add-url"),addErr=document.getElementById("add-err");
+addForm.addEventListener("submit",function(e){
+  e.preventDefault();
+  var url=normUrl(addUrl.value);
+  if(!url){addErr.textContent="URL sahi se likho — jaise youtube.com/@channel ya https://example.com";addErr.hidden=false;return}
+  LINKS.push({title:addTitle.value.trim()||hostOf(url),url:url});saveLinks();
+  addTitle.value="";addUrl.value="";addErr.hidden=true;renderLinks();
+});
+var resetBtn=document.getElementById("reset-links"),armReset=false,armResetTimer=null;
+resetBtn.addEventListener("click",function(){
+  if(armReset){
+    clearTimeout(armResetTimer);armReset=false;resetBtn.textContent="Default links par wapas";
+    LINKS=cloneLinks(DEFAULT_LINKS);editIndex=-1;armDelete=-1;saveLinks();renderLinks();
+  }else{
+    armReset=true;resetBtn.textContent="Pakka? Abhi ke saare links hat jayenge";
+    clearTimeout(armResetTimer);armResetTimer=setTimeout(function(){armReset=false;resetBtn.textContent="Default links par wapas"},3500);
+  }
 });
 
 /* Reveal */
@@ -220,7 +363,7 @@ function richText(text){
   return out;
 }
 
-var ATTENDPRO_URL="https://muse.ai/s/attendpro-lcd-edition-public-xtxk6fxemspbxj3/T3_UrnzSwbpFIqLceexoCNXNss1BZVUbMf9gYVhhWJY";
+var ATTENDPRO_URL="https://ajeet1030.github.io/ajeetcnc.github.io/attendpro/";
 var INSTA_URL="https://www.instagram.com/insta_wallpaper4k";
 
 /* ============ RIYA ENGINE ============ */
