@@ -5,7 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="color-scheme" content="dark" />
     <meta name="theme-color" content="#101216" />
-    <link rel="icon" href="data:," />
+    <meta name="application-name" content="Car Racing Game" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Car Racing Game" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <!-- App icon / install support. icon.png and manifest.webmanifest live
+         in the same folder as this page (on the server and inside the ZIP).
+         They are decoration only: if either file is missing — e.g. this
+         page opened as a lone file — the game still runs exactly the same,
+         and the inline SVG favicon below keeps an icon visible. -->
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" type="image/png" href="icon.png" />
+    <link rel="apple-touch-icon" href="icon.png" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23101216'/%3E%3Crect x='22' y='7' width='20' height='50' rx='9' fill='%23e8352c'/%3E%3Crect x='25' y='19' width='14' height='8' rx='2' fill='%23141a22'/%3E%3Crect x='25' y='35' width='14' height='6' rx='2' fill='%231d2733'/%3E%3Crect x='30' y='9' width='4' height='46' fill='%23ffffff' fill-opacity='0.85'/%3E%3Crect x='24' y='9' width='5' height='3' rx='1' fill='%23fff6c9'/%3E%3Crect x='35' y='9' width='5' height='3' rx='1' fill='%23fff6c9'/%3E%3C/svg%3E" />
     <title>Car Racing Game</title>
     <style>
       :root {
@@ -224,6 +237,25 @@
         padding: 0 16px;
       }
       .play-btn:active { transform: scale(0.98); }
+      .download-btn {
+        margin-top: 10px;
+        min-height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        border-radius: var(--radius);
+        background: var(--surface-2);
+        font-size: 15px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--amber);
+        text-decoration: none;
+        padding: 0 16px;
+      }
+      .download-btn:active { transform: scale(0.98); }
+      .install-hint { margin-top: 8px; text-align: center; font-size: 11px; line-height: 16px; color: var(--dim); }
       .hint { margin-top: 8px; text-align: center; font-size: 11px; color: var(--dim); }
 
       .paused-title { font-size: 30px; font-weight: 900; color: #fff; }
@@ -458,6 +490,8 @@
         .menu-side { display: block; flex: 1.35 1 300px; min-width: 0; }
         .menu-main .game-title, .menu-main .tagline { text-align: left; }
         #menuOverlay .play-btn { flex: 1 1 100%; min-height: 48px; margin-top: 12px; }
+        #menuOverlay .download-btn { flex: 1 1 100%; min-height: 44px; margin-top: 8px; }
+        #menuOverlay .install-hint { flex: 1 1 100%; }
         #menuOverlay .hint { flex: 1 1 100%; }
         .stats-grid { margin-top: 12px; }
         .section-label { margin-top: 0; }
@@ -567,6 +601,11 @@
           </div>
 
           <button type="button" class="play-btn" id="playBtn">Race Start Karo</button>
+          <a class="download-btn" href="https://ajeet1030.github.io/ajeetcnc.github.io/game/car-racing-game.zip" download>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12" /><path d="m6.5 10.5 5.5 5.5 5.5-5.5" /><path d="M4 21h16" /></svg>
+            <span>Game Download Karo (ZIP)</span>
+          </a>
+          <p class="install-hint">Home screen par logo ke sath lagane ke liye browser menu se 'Add to Home screen' dabao</p>
           <p class="hint">Computer par: ◀ ▶ arrow keys steering, ↑ / Space = Nitro</p>
         </div>
 
