@@ -661,6 +661,7 @@ const APP_INIT = {
 
   images(win){
     const view = $('.js-img-view', win);
+    if (window.__AJEET_PHOTO) view.src = window.__AJEET_PHOTO;
     view.title = 'Photo par tap = bada / chhota';
     view.addEventListener('click', () => view.classList.toggle('zoomed'));
     toast('Photo par tap karne se bada hoga — phir scroll karke pura dekho.');
