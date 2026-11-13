@@ -59,11 +59,11 @@ a{color:var(--accent);text-decoration:none}
 .wp-glow{position:absolute;border-radius:50%;filter:blur(10px);opacity:.5;pointer-events:none}
 .wp-glow-a{width:340px;height:340px;right:6%;top:8%;background:radial-gradient(circle,rgba(56,189,248,.5),transparent 70%)}
 .wp-glow-b{width:260px;height:260px;left:32%;bottom:6%;background:radial-gradient(circle,rgba(167,139,250,.45),transparent 70%)}
-#wpPhoto{position:absolute;right:2%;bottom:16px;height:86%;max-width:56vw;object-fit:cover;object-position:top center;
+#wpPhoto{position:absolute;left:50%;transform:translateX(-50%);bottom:16px;height:86%;max-width:min(600px,92vw);object-fit:cover;object-position:top center;
   border-radius:28px;border:1px solid rgba(147,197,253,.45);
   box-shadow:0 22px 48px rgba(2,8,24,.5),0 0 0 6px rgba(255,255,255,.05);
   opacity:.97;z-index:1}
-.wp-title{position:absolute;z-index:2;left:50%;top:16%;transform:translateX(-18%);text-align:center;pointer-events:none;text-shadow:0 4px 24px rgba(0,0,0,.55)}
+.wp-title{position:absolute;z-index:2;left:50%;top:16%;transform:translateX(-50%);text-align:center;pointer-events:none;text-shadow:0 4px 24px rgba(0,0,0,.55)}
 .wp-crown{font-size:2rem;filter:drop-shadow(0 2px 8px rgba(251,191,36,.8))}
 .wp-title h1{font-size:clamp(2rem,5.2vw,3.6rem);letter-spacing:.06em;font-weight:800}
 .wp-title h1 span{color:var(--accent)}
@@ -412,3 +412,16 @@ input[type=range]{accent-color:var(--accent)}
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.01ms!important;transition-duration:.01ms!important}
 }
+
+/* ---------- real icon sizing ---------- */
+.dicon svg{width:31px;height:31px;display:block}
+.win-ico svg{width:19px;height:19px;display:block}
+.chip svg{width:14px;height:14px;vertical-align:-2px;margin-right:5px}
+.store-item span svg{width:34px;height:34px;display:block;margin:0 auto}
+.sp-quick button span svg{width:24px;height:24px;display:block;margin:0 auto}
+.task-pins button svg{width:20px;height:20px;display:block;margin:0 auto}
+.sb-chip svg{width:16px;height:16px;flex:none}
+.sp-socials button svg{width:22px;height:22px;display:block;margin:0 auto}
+.sc-ico svg{width:27px;height:27px;display:block}
+.sr-ico svg{width:17px;height:17px;vertical-align:-3px;margin-right:7px}
+.ma-btn svg{width:30px;height:30px;display:block;margin:0 auto}
