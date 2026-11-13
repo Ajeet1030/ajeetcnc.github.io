@@ -14,7 +14,7 @@
 <div id="wallpaper" aria-hidden="true">
   <div class="wp-glow wp-glow-a"></div>
   <div class="wp-glow wp-glow-b"></div>
-  <img id="wpPhoto" data-photo="1" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="">
+  <img id="wpPhoto" data-photo="1" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="" decoding="async" fetchpriority="high">
   <div class="wp-title">
     <div class="wp-crown">👑</div>
     <h1>AJEET <span>OS</span></h1>
@@ -30,7 +30,7 @@
     <div class="login-crown">👑</div>
     <h2 class="login-brand">AJEET OS</h2>
     <p class="login-sub" id="loginSub">Owner Login</p>
-    <img class="login-avatar" data-photo="1" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Ajeet Kumar">
+    <img class="login-avatar" data-photo="1" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Ajeet Kumar" width="92" height="92" loading="lazy" decoding="async">
     <label class="fld">
       <span class="fld-ico">👤</span>
       <input id="loginUser" type="text" value="Ajeet" autocomplete="username" placeholder="Username">
@@ -86,7 +86,7 @@
       <span class="tb-ico" title="Bluetooth">🌀</span>
       <span class="tb-ico" title="Sound">🔊</span>
       <button class="tb-ico tb-bell" id="topBell" title="Notifications">🔔</button>
-      <img class="tb-avatar" data-photo="1" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Ajeet Kumar" id="topAvatar" title="Ajeet Kumar – Super Admin">
+      <img class="tb-avatar" data-photo="1" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Ajeet Kumar" id="topAvatar" title="Ajeet Kumar – Super Admin" width="38" height="38" loading="lazy" decoding="async">
     </div>
   </header>
 
@@ -135,10 +135,13 @@
     </div>
   </section>
 
+  <!-- Social bar — saare accounts desktop par hi, samne (ek saath) -->
+  <div id="socialBar" class="glass-pill hidden"></div>
+
   <!-- Start panel -->
   <section id="startPanel" class="glass hidden">
     <div class="sp-profile">
-      <img data-photo="1" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Ajeet Kumar">
+      <img data-photo="1" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Ajeet Kumar" width="46" height="46" loading="lazy" decoding="async">
       <div>
         <strong>Ajeet Kumar <span class="verified">✓</span></strong>
         <small id="spRole">Guest View</small>
@@ -181,7 +184,7 @@
   <!-- Riya AI panel -->
   <section id="riyaPanel" class="glass">
     <div class="riya-head">
-      <img class="riya-avatar" data-photo="1" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Riya AI">
+      <img class="riya-avatar" data-photo="1" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Riya AI" width="38" height="38" loading="lazy" decoding="async">
       <div class="riya-title">
         <strong>Riya AI Assistant ✨</strong>
         <small><span class="dot"></span> Online</small>
@@ -253,7 +256,7 @@
 <!-- ================= APP TEMPLATES ================= -->
 <template id="tpl-thispc">
   <div class="app-body">
-    <div class="pc-hero"><img data-photo="1" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Ajeet Kumar"><div><h3>AJEET OS</h3><p>Personal Desktop 2027</p><p class="muted">Owner: Ajeet Kumar — Super Admin 👑</p></div></div>
+    <div class="pc-hero"><img data-photo="1" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Ajeet Kumar" width="70" height="70" loading="lazy" decoding="async"><div><h3>AJEET OS</h3><p>Personal Desktop 2027</p><p class="muted">Owner: Ajeet Kumar — Super Admin 👑</p></div></div>
     <div class="pc-stats">
       <div><strong>Device</strong><span>Web Desktop (this browser)</span></div>
       <div><strong>Storage used</strong><span class="js-storage">—</span></div>
@@ -355,7 +358,7 @@
 <template id="tpl-images">
   <div class="app-body media">
     <div class="fm-bar"><label class="btn file-btn">Open Image<input type="file" accept="image/*" class="js-img-file" hidden></label></div>
-    <img class="media-view js-img-view" data-photo="1" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Image viewer">
+    <img class="media-view js-img-view" data-photo="1" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Image viewer" decoding="async">
   </div>
 </template>
 
@@ -394,8 +397,6 @@
     <p class="muted">Main 1 se 100 ke beech ek number sochta hoon. Guess karo!</p>
     <div class="fm-bar"><input class="txt js-g-num" type="number" min="1" max="100" placeholder="Your guess"><button class="btn js-g-try">Guess</button><button class="btn js-g-new">New Game</button></div>
     <p class="js-g-msg game-msg"></p>
-    <h4>🧠 Memory Match</h4>
-    <p class="muted">Open the Memory Match from More Apps for the card game.</p>
   </div>
 </template>
 

@@ -87,8 +87,8 @@ function openApp(id){
   const win = document.createElement('section');
   win.className = 'win glass'; win.dataset.app = id;
   const off = (cascade++ % 6) * 26;
-  win.style.left = Math.min(230 + off, window.innerWidth - 320) + 'px';
-  win.style.top  = (92 + off) + 'px';
+  win.style.left = Math.max(8, Math.min(230 + off, window.innerWidth - 320)) + 'px';
+  win.style.top  = Math.min(92 + off, Math.max(76, window.innerHeight - 240)) + 'px';
   win.style.zIndex = ++zTop;
   win.innerHTML =
     '<div class="win-head"><span>' + app.icon + '</span><span class="win-title">' + app.title + '</span>' +
@@ -134,23 +134,44 @@ function renderChips(){
 function makeDraggable(win, handle){
   handle.addEventListener('pointerdown', e => {
     if (e.target.closest('.win-btns') || win.classList.contains('max')) return;
+    if (e.button !== undefined && e.button !== 0) return; /* primary button / touch only */
     const r = win.getBoundingClientRect();
-    const dx = e.clientX - r.left, dy = e.clientY - r.top;
-    handle.setPointerCapture && e.pointerId !== undefined && handle.setPointerCapture(e.pointerId);
-    function move(ev){
-      let x = ev.clientX - dx, y = ev.clientY - dy;
-      x = Math.max(-r.width + 90, Math.min(x, window.innerWidth - 70));
-      y = Math.max(70, Math.min(y, window.innerHeight - 90));
-      win.style.left = x + 'px'; win.style.top = y + 'px';
+    const baseLeft = r.left, baseTop = r.top;
+    const startX = e.clientX, startY = e.clientY;
+    const minX = -r.width + 90, maxX = window.innerWidth - 70;
+    const minY = 70, maxY = window.innerHeight - 90;
+    let tx = 0, ty = 0, rafId = 0, lastEv = null;
+    win.classList.add('dragging');
+    if (handle.setPointerCapture && e.pointerId !== undefined){ try{ handle.setPointerCapture(e.pointerId); }catch(err){} }
+    function apply(){
+      rafId = 0;
+      if (!lastEv) return;
+      let x = baseLeft + (lastEv.clientX - startX), y = baseTop + (lastEv.clientY - startY);
+      x = Math.max(minX, Math.min(x, maxX));
+      y = Math.max(minY, Math.min(y, maxY));
+      tx = x - baseLeft; ty = y - baseTop;
+      win.style.transform = 'translate3d(' + tx + 'px,' + ty + 'px,0)';
     }
-    function up(){ document.removeEventListener('pointermove', move); document.removeEventListener('pointerup', up); }
+    function move(ev){ lastEv = ev; if (!rafId) rafId = requestAnimationFrame(apply); }
+    function up(){
+      document.removeEventListener('pointermove', move);
+      document.removeEventListener('pointerup', up);
+      document.removeEventListener('pointercancel', up);
+      if (rafId){ cancelAnimationFrame(rafId); rafId = 0; apply(); }
+      win.style.left = (baseLeft + tx) + 'px';
+      win.style.top  = (baseTop + ty) + 'px';
+      win.style.transform = '';
+      win.classList.remove('dragging');
+    }
     document.addEventListener('pointermove', move);
     document.addEventListener('pointerup', up);
+    document.addEventListener('pointercancel', up);
   });
 }
 
 /* ---------------- clock ---------------- */
 function tickClock(){
+  if (document.hidden) return;
   const now = new Date();
   const t = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'});
   const tShort = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
@@ -160,7 +181,7 @@ function tickClock(){
   const tt = $('#tbTime'); if (tt) tt.textContent = tShort;
   const td = $('#tbDate'); if (td) td.textContent = d;
 }
-setInterval(tickClock, 1000);
+let clockTimer = setInterval(tickClock, 1000);
 
 /* ---------------- weather (Open-Meteo, no key) ---------------- */
 let weatherText = 'Weather abhi load nahi hua.';
@@ -169,10 +190,14 @@ async function loadWeather(){
   const city = settings.city || 'New Delhi';
   $('#wCity').textContent = city + ', India';
   try{
-    const g = await fetch('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(city) + '&count=1&language=en&format=json');
-    const gj = await g.json();
-    if (!gj.results || !gj.results.length) throw new Error('city');
-    const { latitude, longitude, name, country } = gj.results[0];
+    let latitude, longitude, name = city, country = 'India';
+    if (city.trim().toLowerCase() === 'new delhi'){ latitude = 28.6139; longitude = 77.2090; }
+    else {
+      const g = await fetch('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(city) + '&count=1&language=en&format=json');
+      const gj = await g.json();
+      if (!gj.results || !gj.results.length) throw new Error('city');
+      ({ latitude, longitude, name, country } = gj.results[0]);
+    }
     const f = await fetch('https://api.open-meteo.com/v1/forecast?latitude=' + latitude + '&longitude=' + longitude + '&current=temperature_2m,weather_code&timezone=auto');
     const fj = await f.json();
     const temp = Math.round(fj.current.temperature_2m);
@@ -193,6 +218,8 @@ async function loadWeather(){
 /* ---------------- performance gauges (live demo) ---------------- */
 const perf = { cpu:42, ram:68, disk:57, hist:[] };
 function stepPerf(){
+  if (document.hidden) return;
+  if (!document.getElementById('perfChart')) return; /* widget not present — no work */
   const walk = (v, min, max) => Math.max(min, Math.min(max, v + Math.round((Math.random() - .5) * 14)));
   perf.cpu = walk(perf.cpu, 8, 96); perf.ram = walk(perf.ram, 30, 92); perf.disk = walk(perf.disk, 40, 80);
   const set = (id, v, c) => { const el = $(id); if (!el) return; el.style.setProperty('--p', v); el.style.setProperty('--c', c); $('span', el).textContent = v + '%'; };
@@ -204,7 +231,18 @@ function stepPerf(){
   perf.hist.forEach((v, i) => { const x = i / 27 * cv.width, y = cv.height - (v / 100) * cv.height; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); });
   ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 2; ctx.stroke();
 }
-setInterval(stepPerf, 1600);
+let perfTimer = setInterval(stepPerf, 3000);
+/* Battery/perf: tab chhupa ho to clock aur perf dono ke timers band */
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden){
+    if (clockTimer){ clearInterval(clockTimer); clockTimer = null; }
+    if (perfTimer){ clearInterval(perfTimer); perfTimer = null; }
+  } else {
+    if (!clockTimer) clockTimer = setInterval(tickClock, 1000);
+    if (!perfTimer) perfTimer = setInterval(stepPerf, 3000);
+    tickClock(); stepPerf();
+  }
+});
 
 /* ---------------- auth (owner-only editing) ----------------
    Visitors land straight on the desktop (Guest View) — no login wall.
@@ -335,8 +373,26 @@ function getSocials(){
   }
   return s;
 }
+function renderSocialBar(){
+  /* Saare social accounts DESKTOP par hi, samne — ek slim glass strip me.
+     Wahi saved data jo Social Hub / Start panel use karte hain, isliye
+     owner ke add kiye hue accounts yahan bhi apne aap dikhte hain. */
+  const bar = $('#socialBar'); if (!bar) return;
+  const socials = getSocials();
+  bar.innerHTML = '';
+  bar.classList.toggle('hidden', !socials.length);
+  socials.forEach(s => {
+    const b = document.createElement('button');
+    b.className = 'sb-chip';
+    b.innerHTML = '<span>' + esc(s.icon || '🔗') + '</span>' + esc(s.name);
+    b.title = s.platform + ' — ' + s.url;
+    b.addEventListener('click', () => window.open(s.url, '_blank'));
+    bar.appendChild(b);
+  });
+}
 function renderStartSocials(){
   /* Saare accounts EK SAATH, ek hi row me — har account ka apna button. */
+  renderSocialBar();
   const box = $('#spSocials'); if (!box) return;
   const socials = getSocials();
   box.innerHTML = '';
@@ -500,6 +556,11 @@ const APP_INIT = {
     $('.js-np-save', win).addEventListener('click', () => {
       const nm = nameEl.value.trim(); if (!nm){ toast('Pehle note ka naam likho.'); return; }
       const n = notes(); n[nm] = textEl.value; store.set('notes', n); renderList(nm); toast('Note save ho gaya ✓');
+    });
+    /* auto-save while typing, so closing the window never loses text */
+    textEl.addEventListener('input', () => {
+      const nm = nameEl.value.trim(); if (!nm) return;
+      const n = notes(); n[nm] = textEl.value; store.set('notes', n);
     });
     $('.js-np-del', win).addEventListener('click', () => {
       const nm = nameEl.value.trim(); const n = notes();
@@ -783,7 +844,9 @@ function openFileEditor(fileId){
   if (openWins.has(id)) closeWin(id);
   const win = document.createElement('section');
   win.className = 'win glass'; win.dataset.app = id;
-  win.style.left = Math.min(300, window.innerWidth - 320) + 'px'; win.style.top = '120px'; win.style.zIndex = ++zTop;
+  win.style.left = Math.max(8, Math.min(300, window.innerWidth - 320)) + 'px';
+  win.style.top = Math.min(120, Math.max(76, window.innerHeight - 240)) + 'px';
+  win.style.zIndex = ++zTop;
   win.innerHTML = '<div class="win-head"><span>📄</span><span class="win-title">' + esc(item.name) + '</span>' +
     '<div class="win-btns"><button class="wb-min">—</button><button class="wb-max">▢</button><button class="wb-close">✕</button></div></div>' +
     '<div class="win-body"><div class="app-body"><div class="fm-bar"><button class="btn js-ed-save">Save</button></div>' +
@@ -800,7 +863,7 @@ function openFileEditor(fileId){
     const fs2 = getFS(); const t = fs2.items.find(i => i.id === fileId);
     if (t){ t.content = ta.value; saveFS(fs2); toast('File save ho gayi ✓'); }
   });
-  APPS[id] = APPS[id] || { title: item.name, icon: '📄' };
+  APPS[id] = { title: item.name, icon: '📄' }; /* hamesha current file ka naam (purana title stale rehta tha) */
   renderChips();
 }
 
@@ -899,7 +962,11 @@ function wireUI(){
   /* global open-app delegation */
   document.addEventListener('click', e => {
     const t = e.target.closest('[data-app]');
-    if (t && desktopActive){ openApp(t.dataset.app); $('#startPanel').classList.add('hidden'); }
+    /* IMPORTANT: an open window itself carries data-app — clicks inside it
+       (including its ✕ / — buttons) must never re-trigger openApp, or the
+       window would be recreated/reset instead of closing. Only launcher
+       elements (icons, chips, store items) may open apps. */
+    if (t && desktopActive && !t.classList.contains('win')){ openApp(t.dataset.app); $('#startPanel').classList.add('hidden'); }
   });
 
   /* top nav */
