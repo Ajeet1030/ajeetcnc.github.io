@@ -1085,6 +1085,7 @@ function wireUI(){
 document.addEventListener('DOMContentLoaded', () => {
   applySettings();
   wireUI();
+  radioInit();
   renderStartSocials();
   renderNotifs();
   getSocials(); getFS();
@@ -1099,3 +1100,51 @@ document.addEventListener('DOMContentLoaded', () => {
   updateOwnerUI();
   tickClock();
 });
+
+/* ---------------- Highway Radio (hidden YouTube playlist player) ----------------
+   Player bilkul hide rehta hai; screen par sirf Play icon wala pill dikhta hai.
+   YouTube API sirf pehle Play par load hota hai — site halki aur smooth rehti hai. */
+let radioPlayer = null, radioPlaying = false, radioStarted = false;
+function setRadioState(t){ const el = $('#radioState'); if (el) el.textContent = t; }
+function setRadioIcon(){
+  const p = $('.rb-play'), q = $('.rb-pause'), pill = $('#radioPill');
+  if (p) p.classList.toggle('hidden', radioPlaying);
+  if (q) q.classList.toggle('hidden', !radioPlaying);
+  if (pill) pill.classList.toggle('playing', radioPlaying);
+  const nx = $('#radioNext'); if (nx) nx.classList.toggle('hidden', !radioStarted);
+}
+function radioCreate(){
+  radioPlayer = new YT.Player('radioPlayer', {
+    width: '2', height: '2',
+    playerVars: { listType: 'playlist', list: 'PLVFLMYM1tErk', autoplay: 1, controls: 0, rel: 0, playsinline: 1, loop: 1 },
+    events: {
+      onReady: e => { try{ e.target.setShuffle(true); }catch(err){} e.target.playVideo(); },
+      onStateChange: e => {
+        if (e.data === YT.PlayerState.PLAYING){
+          radioPlaying = true; radioStarted = true; setRadioIcon();
+          setTimeout(() => { try{ const d = radioPlayer.getVideoData(); if (d && d.title) setRadioState(d.title); }catch(err){} }, 700);
+        } else if (e.data === YT.PlayerState.PAUSED){
+          radioPlaying = false; setRadioIcon(); setRadioState('Ruka hai \u2014 Play dabao, gaana chalega');
+        } else if (e.data === YT.PlayerState.ENDED){
+          try{ radioPlayer.nextVideo(); }catch(err){}
+        }
+      },
+      onError: () => setRadioState('Gaana load nahi hua \u2014 dobara Play dabao')
+    }
+  });
+}
+function radioToggle(){
+  if (!radioPlayer){
+    setRadioState('Load ho raha hai\u2026');
+    if (window.YT && YT.Player){ radioCreate(); return; }
+    const tag = document.createElement('script'); tag.src = 'https://www.youtube.com/iframe_api';
+    document.head.appendChild(tag);
+    window.onYouTubeIframeAPIReady = radioCreate;
+    return;
+  }
+  if (radioPlaying) radioPlayer.pauseVideo(); else radioPlayer.playVideo();
+}
+function radioInit(){
+  const b = $('#radioBtn'); if (b) b.addEventListener('click', radioToggle);
+  const n = $('#radioNext'); if (n) n.addEventListener('click', () => { if (radioPlayer) radioPlayer.nextVideo(); });
+}
