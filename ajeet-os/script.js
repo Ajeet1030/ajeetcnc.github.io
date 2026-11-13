@@ -668,8 +668,25 @@ const APP_INIT = {
     $('.js-img-file', win).addEventListener('change', e => { const f = e.target.files[0]; if (f) view.src = URL.createObjectURL(f); });
   },
   music(win){
+    const list = $('.js-song-list', win);
+    list.innerHTML = '';
+    SONGS.forEach((s, i) => {
+      const row = document.createElement('button'); row.className = 'song-row' + (i === radioIx ? ' playing' : ''); row.dataset.ix = i;
+      row.innerHTML = '<span class="song-rank">' + (i + 1) + '</span><span class="song-meta"><strong></strong><small></small></span><span class="song-go"><svg viewBox="0 0 24 24"><path d="M8.5 5.8v12.4c0 .9 1 1.5 1.8 1L19 13a1.2 1.2 0 0 0 0-2L10.3 4.9c-.8-.5-1.8 0-1.8.9z" fill="currentColor"/></svg></span>';
+      row.querySelector('strong').textContent = s.t;
+      row.querySelector('small').textContent = s.a;
+      row.addEventListener('click', () => radioPlaySong(i));
+      list.appendChild(row);
+    });
+    const pl = $('.js-mplay', win); if (pl) pl.addEventListener('click', radioToggle);
+    const nx = $('.js-mnext', win); if (nx) nx.addEventListener('click', () => { if (radioPlayer) radioPlayer.nextVideo(); });
+    const pv = $('.js-mprev', win); if (pv) pv.addEventListener('click', () => { if (radioPlayer) radioPlayer.previousVideo(); });
+    const sh = $('.js-mshuffle', win); if (sh) sh.addEventListener('click', () => { radioShuffle = !radioShuffle; sh.classList.toggle('on', radioShuffle); if (radioPlayer){ try{ radioPlayer.setShuffle(radioShuffle); }catch(err){} } toast(radioShuffle ? 'Mix ON \u2014 gaane ulte-seedhe chalenge' : 'Mix OFF \u2014 gaane list ke order me chalenge'); });
     const p = $('.js-aud-player', win), nm = $('.js-aud-name', win);
-    $('.js-aud-file', win).addEventListener('change', e => { const f = e.target.files[0]; if (f){ p.src = URL.createObjectURL(f); nm.textContent = f.name; } });
+    const fi = $('.js-aud-file', win); if (fi) fi.addEventListener('change', e => { const f = e.target.files[0]; if (f){ p.src = URL.createObjectURL(f); nm.textContent = f.name; } });
+    setRadioIcon();
+    const nt = $('.js-now-title', win);
+    if (nt && radioIx >= 0 && SONGS[radioIx]) nt.textContent = SONGS[radioIx].t + ' \u2014 ' + SONGS[radioIx].a;
   },
   video(win){
     const p = $('.js-vid-player', win);
@@ -1105,27 +1122,145 @@ document.addEventListener('DOMContentLoaded', () => {
   tickClock();
 });
 
-/* ---------------- Highway Radio (hidden YouTube playlist player) ----------------
-   Player bilkul hide rehta hai; screen par sirf Play icon wala pill dikhta hai.
+/* ---------------- Highway Radio — Insta Trending gaano ki list ----------------
+   Player bilkul hide rehta hai. Gaane SONGS list se chalte hain — sabse popular pehle.
+   Koi bhi Music app ki list se apni pasand ka koi bhi gaana tap karke baja sakta hai.
    YouTube API sirf pehle Play par load hota hai — site halki aur smooth rehti hai. */
-let radioPlayer = null, radioPlaying = false, radioStarted = false;
-function setRadioState(t){ const el = $('#radioState'); if (el) el.textContent = t; }
+const SONGS = [
+  { t: "Sahiba", a: "Aditya Rikhari", id: "n2dVFdqMYGA" },
+  { t: "Gehra Hua", a: "Arijit Singh • Dhurandhar", id: "GX9x62kFsVU" },
+  { t: "Saiyaara", a: "Faheem Abdullah • Saiyaara", id: "BSJa1UytM8w" },
+  { t: "Aaj Ki Raat", a: "Stree 2 • Madhubanti Bagchi", id: "hxMNYkLN7tI" },
+  { t: "Tainu Khabar Nahi", a: "Arijit Singh • Munjya", id: "6d5SS0gS5bU" },
+  { t: "Aayi Nai", a: "Pawan Singh • Stree 2", id: "nFgsBxw-zWQ" },
+  { t: "Tumhare Hi Rahenge Hum", a: "Varun Jain • Stree 2", id: "cxKAtmvf-uM" },
+  { t: "Tauba Tauba", a: "Karan Aujla • Bad Newz", id: "LK7-_dgAVQE" },
+  { t: "Taras", a: "Jasmine Sandlas • Munjya", id: "kfXy4W0aD40" },
+  { t: "Akhiyaan Gulaab", a: "Mitraz", id: "GvXDq-P1NB8" },
+  { t: "Jo Tum Mere Ho", a: "Anuv Jain", id: "ilNt2bikxDI" },
+  { t: "Zaroor", a: "Aparshakti Khurana x Savi Kahlon", id: "YrJ6OZ7VVWc" },
+  { t: "Suniyan Suniyan", a: "Juss", id: "AKH6ZNSnWOA" },
+  { t: "Ve Haaniyaan", a: "Avvy Sra", id: "E_SbwSe15y0" },
+  { t: "Raanjhan", a: "Sachet-Parampara • Do Patti", id: "lBvbNxiVmZA" },
+  { t: "Qayde Se", a: "Arijit Singh • Metro In Dino", id: "GTD3gAWezz8" },
+  { t: "Zamaana Lage", a: "Arijit Singh • Metro In Dino", id: "m8kaNWu-BC4" },
+  { t: "Aavan Jaavan", a: "Arijit Singh • War 2", id: "enjkcCdAlXc" },
+  { t: "Pardesiya", a: "Sonu Nigam • Param Sundari", id: "N4wK3NtVRT0" },
+  { t: "Ishq Jalakar (Karvaan)", a: "Shashwat Sachdev • Dhurandhar", id: "8qCVXCFREkQ" },
+  { t: "Shararat", a: "Jasmine Sandlas • Dhurandhar", id: "YyepU5ztLf4" },
+  { t: "Barbaad", a: "Jubin Nautiyal • Saiyaara", id: "0v5eHPfy5Lk" },
+  { t: "Khayaal", a: "Talwiinder", id: "GCvt9C4FLgA" },
+  { t: "Haseen", a: "Talwiinder", id: "IltsOcCj1Ak" },
+  { t: "Andaaz-e-Karam", a: "Madhur Sharma", id: "__bHEfJ29j0" },
+  { t: "Deewaniyat", a: "Vishal Mishra • Ek Deewane Ki Deewaniyat", id: "Qo4IOTAbGAM" },
+  { t: "Kasturi", a: "Arijit Singh", id: "gPfIxI0b5Xs" },
+  { t: "Sitaare", a: "Arijit Singh • Ikkis", id: "nDjloeIB3Pc" },
+  { t: "Dooron Dooron", a: "Paresh Pahuja", id: "LV_wiOhO40Q" },
+  { t: "Majboor", a: "Sheheryar Rehan", id: "zaFGQEIcetM" },
+  { t: "Tu Hain Toh", a: "Mr. & Mrs. Mahi", id: "TVbI55pDdaI" },
+  { t: "Heeriye", a: "Jasleen Royal & Arijit Singh", id: "RLzC55ai0eo" },
+  { t: "Aasa Kooda", a: "Sai Abhyankkar", id: "a3Ue-LN5B9U" },
+  { t: "Pehle Bhi Main", a: "Vishal Mishra • Animal", id: "iAIBF2ngbWY" },
+  { t: "Arjan Vailly", a: "Animal", id: "zqGW6x_5N0k" },
+  { t: "Husn", a: "Anuv Jain", id: "gJLVTKhTnog" },
+  { t: "Gulabi Sadi", a: "Sanju Rathod", id: "B_6d3RBiEN0" },
+  { t: "O Maahi", a: "Arijit Singh • Dunki", id: "Etkd-07gnxM" },
+  { t: "Chaleya", a: "Arijit Singh • Jawan", id: "VAdGW7QDJiU" },
+  { t: "Besharam Rang", a: "Pathaan", id: "huxhqphtDrM" },
+  { t: "Jhoom", a: "Ali Zafar", id: "B4-HoKdW6j0" },
+  { t: "Apna Bana Le", a: "Arijit Singh • Bhediya", id: "ElZfdU54Cp8" },
+  { t: "Kesariya", a: "Arijit Singh • Brahmastra", id: "BddP6PYo2gs" },
+  { t: "Raataan Lambiyan", a: "Jubin Nautiyal • Shershaah", id: "GLGuLXKT9Ng" },
+  { t: "Dil Jhoom", a: "Ek Villain Returns", id: "jfosQWnUOK8" },
+  { t: "Baarish Ki Jaaye", a: "B Praak", id: "TYaNfLLOLNY" },
+  { t: "Filhaal", a: "B Praak", id: "hMy5za-m5Ew" },
+  { t: "Mann Bharryaa", a: "B Praak • Shershaah", id: "1poXN3jF3Bw" },
+  { t: "Pachtaoge", a: "Arijit Singh", id: "PVxc5mIHVuQ" },
+  { t: "Tum Hi Ho", a: "Arijit Singh • Aashiqui 2", id: "Umqb9KENgmk" },
+  { t: "Dhurandhar (Title Track)", a: "Shashwat Sachdev • Dhurandhar", id: "1a5nyrMtRsk" },
+  { t: "FA9LA", a: "Dhurandhar", id: "Q_mWs5nnqb0" },
+  { t: "Preet Re", a: "Darshan Raval • Dhadak 2", id: "k6q4lENp434" },
+  { t: "Rehna Kol", a: "Jubin Nautiyal • Loveyapa", id: "OTUpZk4Uiik" },
+  { t: "Bijuria", a: "Sonu Nigam • Sunny Sanskari Ki Tulsi Kumari", id: "nYLkyW2dDXU" },
+  { t: "Tumse Behtar", a: "Arijit Singh • Sunny Sanskari Ki Tulsi Kumari", id: "MivKhlsMKL0" },
+  { t: "Panwadi", a: "Khesari Lal • Sunny Sanskari Ki Tulsi Kumari", id: "usVq_4K_m_w" },
+  { t: "Tere Ishq Mein", a: "Arijit Singh • Tere Ishq Mein", id: "2gWbNcgZFM0" },
+  { t: "Gafoor", a: "The Bads of Bollywood", id: "z4VoiPst0os" },
+  { t: "Raat Bhar", a: "De De Pyaar De 2", id: "pDpZjSX_Tdo" },
+  { t: "Dilbar Ki Aankhon Ka", a: "Thamma", id: "pkLGczIXR1A" },
+  { t: "Ishq Mein", a: "Nadaaniyan", id: "hrr41U4fj54" },
+  { t: "Tu Meri Main Tera", a: "Title Track", id: "K6nBBkWXT-8" },
+  { t: "Jaane Tu", a: "Arijit Singh • Chhaava", id: "d6KJkavA8zk" },
+  { t: "Bhasad Macha", a: "Vishal Mishra • Deva", id: "-pvt6tQsOqQ" },
+  { t: "Tu Hai Toh Main Hoon", a: "Arijit Singh • Sky Force", id: "CKJA9blyMUg" },
+  { t: "Uyi Amma", a: "Amit Trivedi • Azaad", id: "FZLadzn5i6Q" },
+  { t: "Madman On The Run", a: "Dhoom Dhaam", id: "v3XJVqD0AKM" },
+  { t: "Sitare Zameen Par", a: "Title Track", id: "q7MpzJQiJr8" },
+  { t: "Naina", a: "Diljit Dosanjh • Crew", id: "3u6lLWGjFLY" },
+  { t: "Aari Aari", a: "Dhurandhar 2", id: "dESIGVxSSCE" },
+  { t: "Didi", a: "Dhurandhar 2", id: "hnEGQH4LP2c" },
+  { t: "Jaan Se Guzarte Hain", a: "Dhurandhar 2", id: "uFGreSkTMck" },
+  { t: "Phir Se", a: "Dhurandhar 2", id: "Ans8Y59cvds" },
+  { t: "Main Aur Tu", a: "Dhurandhar 2", id: "JSTIDkxtO5c" },
+  { t: "Sajni", a: "Dhurandhar 2", id: "F2m4HPLvj-4" },
+  { t: "Aakhri Ishq", a: "Dhurandhar 2", id: "Kr1ncWYhof8" },
+  { t: "Wild Ride", a: "Dhurandhar 2", id: "47ooG3yi6dQ" },
+  { t: "Destiny (Mann Atkeya)", a: "Dhurandhar 2", id: "sqSSKHKzvYY" },
+  { t: "O Mere Balam", a: "Welcome To The Jungle", id: "CsrugGNmBfg" },
+  { t: "Tera Paisa Mera Paisa", a: "Welcome To The Jungle", id: "mEO6Epcs_sI" },
+  { t: "Deewane Hain", a: "Welcome To The Jungle", id: "14IA7mkz5Aw" },
+  { t: "Saree", a: "Dhamaal 4", id: "zAEA3h529ZU" },
+  { t: "Qeher", a: "Guru Randhawa • Dhamaal 4", id: "cyUnbQ2IK_w" },
+  { t: "Chatni", a: "Dhamaal 4", id: "gZWLEm4JLQk" },
+  { t: "Tere Paas Main", a: "Diljit Dosanjh • Main Vaapas Aaunga", id: "rNXmANj72ps" },
+  { t: "Kya Kamaal Hai", a: "Diljit Dosanjh • Main Vaapas Aaunga", id: "DELSFv0g7q0" },
+  { t: "Leher", a: "Arijit Singh • Cocktail 2", id: "eh_5uIWqh2M" },
+  { t: "Tera Yaar Hoon Main", a: "Title Track", id: "TsUS5ddz6cE" },
+  { t: "Jai Hind", a: "Maatrubhumi", id: "Flfe0H8dy-Q" },
+  { t: "Jai Ambe Bol", a: "Yeh Prem Mol Liya", id: "aocAbUbZkG0" },
+  { t: "Jhumka Patola", a: "Yeh Prem Mol Liya", id: "wODprPLcgvo" },
+  { t: "Dard-E-Dil Dard-E-Jigar", a: "Gunmaaster G9", id: "4rPcOxl-cyM" },
+  { t: "Afsaana Banaaya Aapne", a: "Gunmaaster G9", id: "u9MpnqWC6Xg" },
+  { t: "Do Din Ki Zindagi", a: "Gunmaaster G9", id: "Sgb1nNxS9_Q" },
+  { t: "Ishq Ki Vibe", a: "Nakhrewaalii", id: "PArAafe6Mw4" },
+  { t: "Senti", a: "Daadi Ki Shaadi", id: "BvI1UUkmfsI" },
+  { t: "Fanaa Karr De", a: "Ravie Dubey & Sargun Mehta", id: "WvRYeSOBL4Y" },
+  { t: "Samjho Na", a: "Aditya Rikhari", id: "MhXCj8E9CZU" },
+  { t: "Afsos", a: "Anuv Jain ft. AP Dhillon", id: "2FhgKp_lfJQ" }
+];
+let radioPlayer = null, radioPlaying = false, radioStarted = false, radioIx = -1, radioPendingIx = 0, radioShuffle = false;
+function setRadioState(t){ const el = $('#radioState'); if (el) el.textContent = t; const nt = $('.js-now-title'); if (nt) nt.textContent = t; }
 function setRadioIcon(){
   const p = $('.rb-play'), q = $('.rb-pause'), pill = $('#radioPill');
   if (p) p.classList.toggle('hidden', radioPlaying);
   if (q) q.classList.toggle('hidden', !radioPlaying);
   if (pill) pill.classList.toggle('playing', radioPlaying);
   const nx = $('#radioNext'); if (nx) nx.classList.toggle('hidden', !radioStarted);
+  const pv = $('#radioPrev'); if (pv) pv.classList.toggle('hidden', !radioStarted);
+  const mb = $('.js-mplay'); if (mb) mb.innerHTML = radioPlaying ? '<svg viewBox="0 0 24 24"><path d="M7.5 5h3.4v14H7.5zM13.1 5h3.4v14h-3.4z" fill="#fff"/></svg> Roko' : '<svg viewBox="0 0 24 24"><path d="M8.5 5.8v12.4c0 .9 1 1.5 1.8 1L19 13a1.2 1.2 0 0 0 0-2L10.3 4.9c-.8-.5-1.8 0-1.8.9z" fill="#fff"/></svg> Chalao';
+}
+function radioMarkRow(){
+  document.querySelectorAll('.song-row').forEach(r => r.classList.toggle('playing', +r.dataset.ix === radioIx));
+  const row = document.querySelector('.song-row.playing');
+  if (row) row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+function radioLoadList(ix){
+  if (!radioPlayer || !SONGS.length) return;
+  radioIx = ix;
+  radioPlayer.loadPlaylist({ playlist: SONGS.map(s => s.id), index: ix });
+  try{ radioPlayer.setShuffle(radioShuffle); }catch(err){}
 }
 function radioCreate(){
   radioPlayer = new YT.Player('radioPlayer', {
     width: '2', height: '2',
-    playerVars: { listType: 'playlist', list: 'PLhcVVbS7iNzD7D6GTIHmtswD9T0cYuSut', autoplay: 1, controls: 0, rel: 0, playsinline: 1, loop: 1 },
+    playerVars: { autoplay: 1, controls: 0, rel: 0, playsinline: 1, loop: 1 },
     events: {
-      onReady: e => { try{ e.target.setShuffle(true); }catch(err){} e.target.playVideo(); },
+      onReady: () => { radioLoadList(radioPendingIx); },
       onStateChange: e => {
         if (e.data === YT.PlayerState.PLAYING){
           radioPlaying = true; radioStarted = true; setRadioIcon();
+          try{ radioIx = radioPlayer.getPlaylistIndex(); }catch(err){}
+          radioMarkRow();
           setTimeout(() => { try{ const d = radioPlayer.getVideoData(); if (d && d.title) setRadioState(d.title); }catch(err){} }, 700);
         } else if (e.data === YT.PlayerState.PAUSED){
           radioPlaying = false; setRadioIcon(); setRadioState('Ruka hai \u2014 Play dabao, gaana chalega');
@@ -1133,22 +1268,30 @@ function radioCreate(){
           try{ radioPlayer.nextVideo(); }catch(err){}
         }
       },
-      onError: () => setRadioState('Gaana load nahi hua \u2014 dobara Play dabao')
+      onError: () => { setRadioState('Ye gaana nahi chala \u2014 agla try karo'); try{ radioPlayer.nextVideo(); }catch(err){} }
     }
   });
 }
+function radioBoot(){
+  if (window.YT && YT.Player){ radioCreate(); return; }
+  const tag = document.createElement('script'); tag.src = 'https://www.youtube.com/iframe_api';
+  document.head.appendChild(tag);
+  window.onYouTubeIframeAPIReady = radioCreate;
+}
+function radioPlaySong(ix){
+  radioPendingIx = ix; setRadioState('Load ho raha hai\u2026');
+  if (!radioPlayer){ radioBoot(); return; }
+  if (radioIx === -1){ radioLoadList(ix); return; }
+  try{ radioPlayer.playVideoAt(ix); }catch(err){ radioLoadList(ix); }
+}
 function radioToggle(){
-  if (!radioPlayer){
-    setRadioState('Load ho raha hai\u2026');
-    if (window.YT && YT.Player){ radioCreate(); return; }
-    const tag = document.createElement('script'); tag.src = 'https://www.youtube.com/iframe_api';
-    document.head.appendChild(tag);
-    window.onYouTubeIframeAPIReady = radioCreate;
-    return;
-  }
+  if (!radioPlayer){ setRadioState('Load ho raha hai\u2026'); radioBoot(); return; }
+  if (radioIx === -1){ radioLoadList(radioPendingIx); return; }
   if (radioPlaying) radioPlayer.pauseVideo(); else radioPlayer.playVideo();
 }
 function radioInit(){
   const b = $('#radioBtn'); if (b) b.addEventListener('click', radioToggle);
   const n = $('#radioNext'); if (n) n.addEventListener('click', () => { if (radioPlayer) radioPlayer.nextVideo(); });
+  const pv = $('#radioPrev'); if (pv) pv.addEventListener('click', () => { if (radioPlayer) radioPlayer.previousVideo(); });
+  const li = $('#radioList'); if (li) li.addEventListener('click', () => openApp('music'));
 }

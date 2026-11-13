@@ -437,8 +437,28 @@ input[type=range]{accent-color:var(--accent)}
 .radio-meta{display:flex;flex-direction:column;line-height:1.15;min-width:0}
 .radio-meta strong{font-size:.82rem;white-space:nowrap}
 .radio-meta small{color:var(--muted);font-size:.68rem;white-space:nowrap;max-width:190px;overflow:hidden;text-overflow:ellipsis}
-#radioNext{width:34px;height:34px;flex:none;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center}
-#radioNext svg{width:17px;height:17px}
+#radioNext,#radioPrev,#radioList{width:34px;height:34px;flex:none;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center}
+#radioNext svg,#radioPrev svg,#radioList svg{width:17px;height:17px}
+.song-list{display:flex;flex-direction:column;gap:6px}
+.song-row{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);border-radius:12px;padding:8px 10px;color:#eef4ff;cursor:pointer}
+.song-row:active{transform:scale(.99)}
+.song-rank{width:26px;height:26px;flex:0 0 26px;border-radius:9px;background:linear-gradient(135deg,#ff9d5c,#ff5f8f);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:#fff}
+.song-meta{flex:1;min-width:0;display:flex;flex-direction:column}
+.song-meta strong{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.song-meta small{opacity:.65;font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.song-go{opacity:.7;display:flex}
+.song-go svg{width:15px;height:15px}
+.song-row.playing{border-color:rgba(255,157,92,.85);background:rgba(255,120,80,.15)}
+.song-row.playing .song-go{color:#ffb37a;opacity:1}
+.radio-head{display:flex;flex-direction:column;gap:8px}
+.radio-now{display:flex;flex-direction:column}
+.radio-now small{opacity:.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.radio-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.rctl{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:#fff;border-radius:11px;padding:8px 12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-size:13px}
+.rctl svg{width:16px;height:16px}
+.rctl.main{background:linear-gradient(135deg,#ff9d5c,#ff5f8f);border:none;font-weight:700}
+.rctl.on{background:rgba(120,200,255,.25);border-color:rgba(120,200,255,.65)}
+.radio-tip{margin:0;font-size:12px}
 .eq{display:none;align-items:flex-end;gap:2px;height:14px;flex:none}
 #radioPill.playing .eq{display:flex}
 .eq span{width:3px;background:var(--accent);border-radius:2px;animation:eqB .9s ease-in-out infinite}
