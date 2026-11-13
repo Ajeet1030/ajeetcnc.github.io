@@ -218,7 +218,7 @@ body.light .sb-chip{background:rgba(255,255,255,.35)}
 
 /* ---------- Windows ---------- */
 #windows{position:absolute;inset:0;z-index:55;pointer-events:none}
-.win{position:absolute;width:min(560px,94vw);max-height:calc(100% - 150px);display:flex;flex-direction:column;pointer-events:auto;overflow:hidden;animation:pop .2s ease}
+.win{position:absolute;width:min(560px,94vw);max-height:calc(100dvh - 150px);display:flex;flex-direction:column;pointer-events:auto;overflow:hidden;animation:pop .2s ease}
 /* Windows par backdrop-filter NAHI (har window ka blur = drag/open me lag ki sabse badi wajah).
    Uski jagah zyada opaque glass gradient — look waisa hi, paint sasta. */
 .win{background:linear-gradient(165deg,rgba(22,42,84,.95),rgba(11,24,52,.93));backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:0 10px 26px rgba(2,8,24,.5),inset 0 1px 0 rgba(255,255,255,.12)}
@@ -386,6 +386,28 @@ input[type=range]{accent-color:var(--accent)}
   #startPanel{left:8px;bottom:calc(var(--tb-h) + 14px)}
   .win{max-height:calc(100% - 140px)}
   .tb-brand-text small{display:none}
+}
+/* chhote phones — sab kuch screen ke hisaab se chhota aur fit */
+@media (max-width:480px){
+  #topbar{gap:8px;padding:0 10px}
+  .tb-avatar{width:32px;height:32px}
+  .tb-crown{font-size:1.25rem}
+  #iconPanel{width:140px;padding:9px 7px}
+  .dicon{font-size:.6rem;padding:7px 1px}
+  .dicon span{font-size:1.25rem}
+  .wp-title{top:9%}
+  #wpPhoto{height:56%}
+  .task-search{display:none}
+  .win{max-height:calc(100dvh - 132px)}
+}
+/* phone ghumane par (landscape, kam height) — widgets chhupao, windows fit rakho */
+@media (max-height:520px){
+  #widgets{display:none}
+  #iconPanel{top:70px;max-height:calc(100dvh - 128px)}
+  #wpPhoto{height:80%}
+  .wp-title{top:7%}
+  .win{max-height:calc(100dvh - 118px)}
+  #startPanel{max-height:calc(100dvh - 130px)}
 }
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.01ms!important;transition-duration:.01ms!important}

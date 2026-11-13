@@ -118,6 +118,22 @@ function closeWin(id){
   const w = openWins.get(id); if (!w) return;
   w.remove(); openWins.delete(id); renderChips();
 }
+/* screen ghumne ya size badalne par saari khuli windows ko screen ke andar wapas fit karo */
+function clampWindows(){
+  const vw = window.innerWidth, vh = window.innerHeight;
+  openWins.forEach(w => {
+    const r = w.getBoundingClientRect();
+    let x = parseFloat(w.style.left), y = parseFloat(w.style.top);
+    if (isNaN(x)) x = r.left; if (isNaN(y)) y = r.top;
+    x = Math.max(-r.width + 90, Math.min(x, vw - 70));
+    y = Math.max(70, Math.min(y, vh - 90));
+    w.style.left = x + 'px'; w.style.top = y + 'px';
+  });
+}
+let rszTimer = null;
+window.addEventListener('resize', () => { clearTimeout(rszTimer); rszTimer = setTimeout(clampWindows, 120); });
+window.addEventListener('orientationchange', () => setTimeout(clampWindows, 250));
+
 function renderChips(){
   const box = $('#openChips'); box.innerHTML = '';
   openWins.forEach((w, id) => {
