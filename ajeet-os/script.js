@@ -661,6 +661,9 @@ const APP_INIT = {
 
   images(win){
     const view = $('.js-img-view', win);
+    view.title = 'Photo par tap = bada / chhota';
+    view.addEventListener('click', () => view.classList.toggle('zoomed'));
+    toast('Photo par tap karne se bada hoga — phir scroll karke pura dekho.');
     $('.js-img-file', win).addEventListener('change', e => { const f = e.target.files[0]; if (f) view.src = URL.createObjectURL(f); });
   },
   music(win){
