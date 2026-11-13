@@ -1119,7 +1119,7 @@ function setRadioIcon(){
 function radioCreate(){
   radioPlayer = new YT.Player('radioPlayer', {
     width: '2', height: '2',
-    playerVars: { listType: 'playlist', list: 'PLVFLMYM1tErk', autoplay: 1, controls: 0, rel: 0, playsinline: 1, loop: 1 },
+    playerVars: { listType: 'playlist', list: 'PLhcVVbS7iNzD7D6GTIHmtswD9T0cYuSut', autoplay: 1, controls: 0, rel: 0, playsinline: 1, loop: 1 },
     events: {
       onReady: e => { try{ e.target.setShuffle(true); }catch(err){} e.target.playVideo(); },
       onStateChange: e => {
