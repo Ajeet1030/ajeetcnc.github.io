@@ -323,20 +323,36 @@ async function tryLogin(){
   const pass = $('#loginPass').value;
   const err = $('#loginError');
   const has = store.get('passhash', null);
+  const lockUntil = +(store.get('lockUntil', 0) || 0);
+  if (has && Date.now() < lockUntil){
+    const mins = Math.max(1, Math.ceil((lockUntil - Date.now()) / 60000));
+    err.textContent = 'Bahut zyada galat koshish — security ke liye login ' + mins + ' minute band hai.';
+    err.classList.remove('hidden'); return;
+  }
   if (!has){
     const conf = $('#loginConfirm').value;
-    if (pass.length < 4){ err.textContent = 'Password kam se kam 4 characters ka rakho.'; err.classList.remove('hidden'); return; }
+    if (pass.length < 6){ err.textContent = 'Password kam se kam 6 characters ka rakho.'; err.classList.remove('hidden'); return; }
     if (pass !== conf){ err.textContent = 'Dono password match nahi ho rahe.'; err.classList.remove('hidden'); return; }
     store.set('passhash', await sha256(pass));
     toast('Owner password set ho gaya 👑');
     notify('Welcome to AJEET OS 👑', 'Tumhara personal desktop taiyaar hai. Dream • Learn • Create • Grow.');
     finishOwnerLogin(); return;
   }
-  if (await sha256(pass) === has){ finishOwnerLogin(); }
-  else { err.textContent = 'Galat password — dobara try karo.'; err.classList.remove('hidden'); }
+  if (await sha256(pass) === has){ store.set('loginFails', 0); store.set('lockUntil', 0); finishOwnerLogin(); }
+  else {
+    const fails = (+(store.get('loginFails', 0) || 0)) + 1;
+    if (fails >= 5){
+      store.set('loginFails', 0); store.set('lockUntil', Date.now() + 5 * 60000);
+      err.textContent = '5 baar galat password — security ke liye login 5 minute band kar diya hai.';
+    } else {
+      store.set('loginFails', fails);
+      err.textContent = 'Galat password — dobara try karo. (' + (5 - fails) + ' koshish bachi)';
+    }
+    err.classList.remove('hidden');
+  }
 }
 function finishOwnerLogin(){
-  if ($('#rememberMe').checked){ localStorage.setItem('ajeetos.session', '1'); sessionStorage.removeItem('ajeetos.session'); }
+  if ($('#rememberMe').checked){ localStorage.setItem('ajeetos.session', String(Date.now() + 7 * 24 * 3600 * 1000)); sessionStorage.removeItem('ajeetos.session'); }
   else { sessionStorage.setItem('ajeetos.session', '1'); localStorage.removeItem('ajeetos.session'); }
   $('#loginPass').value = ''; $('#loginConfirm').value = '';
   ownerLoggedIn = true;
@@ -596,6 +612,13 @@ const APP_INIT = {
   calculator(win){
     let expr = '';
     const disp = $('.js-calc-display', win);
+    /* Safety: agar keypad me "=" button kisi wajah se na aaya ho to yahin bana do — hisaab kabhi atke nahi. */
+    const grid = $('.calc-grid', win);
+    if (grid && !grid.querySelector('[data-k="="]')){
+      const eq = document.createElement('button');
+      eq.dataset.k = '='; eq.className = 'eqbtn'; eq.textContent = '=';
+      grid.appendChild(eq);
+    }
     function show(){ disp.textContent = expr || '0'; }
     $$('.calc-grid button', win).forEach(b => b.addEventListener('click', () => {
       const k = b.dataset.k;
@@ -649,7 +672,7 @@ const APP_INIT = {
     $('.js-set-pass', win).addEventListener('click', () => ownerGate(async () => {
       const cur = prompt('Current password:'); if (cur === null) return;
       if (await sha256(cur) !== store.get('passhash', '')){ toast('Current password galat hai.'); return; }
-      const nw = prompt('New password (min 4 characters):'); if (!nw || nw.length < 4){ toast('Password bahut chhota hai.'); return; }
+      const nw = prompt('New password (min 6 characters):'); if (!nw || nw.length < 6){ toast('Password bahut chhota hai — kam se kam 6 characters.'); return; }
       store.set('passhash', await sha256(nw)); toast('Password badal gaya 🔒');
     }));
     $('.js-set-wipe', win).addEventListener('click', () => ownerGate(() => {
@@ -693,8 +716,58 @@ const APP_INIT = {
     $('.js-vid-file', win).addEventListener('change', e => { const f = e.target.files[0]; if (f) p.src = URL.createObjectURL(f); });
   },
   pdf(win){
-    const fr = $('.js-pdf-frame', win);
-    $('.js-pdf-file', win).addEventListener('change', e => { const f = e.target.files[0]; if (f) fr.src = URL.createObjectURL(f); });
+    const view = $('.js-pdf-pages-view', win), frame = $('.js-pdf-frame', win),
+          nameEl = $('.js-pdf-name', win), status = $('.js-pdf-status', win),
+          openBtn = $('.js-pdf-open', win), pagesEl = $('.js-pdf-pages', win);
+    let pdfDoc = null, zoom = 1, blobUrl = '';
+    function loadPdfJs(){
+      return new Promise((res, rej) => {
+        if (window.pdfjsLib) return res();
+        const s = document.createElement('script');
+        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+        s.onload = () => { try{ window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; }catch(e){} res(); };
+        s.onerror = rej;
+        document.head.appendChild(s);
+      });
+    }
+    async function render(){
+      if (!pdfDoc) return;
+      view.innerHTML = '';
+      const total = pdfDoc.numPages, cap = Math.min(total, 50);
+      const w = view.clientWidth || 320;
+      for (let n = 1; n <= cap; n++){
+        const page = await pdfDoc.getPage(n);
+        const base = page.getViewport({ scale: 1 });
+        const vp = page.getViewport({ scale: (w / base.width) * zoom });
+        const cv = document.createElement('canvas'); cv.className = 'pdf-page';
+        cv.width = Math.floor(vp.width); cv.height = Math.floor(vp.height);
+        view.appendChild(cv);
+        await page.render({ canvasContext: cv.getContext('2d'), viewport: vp }).promise;
+      }
+      pagesEl.textContent = total + ' pages' + (total > cap ? ' (pehle ' + cap + ' yahan)' : '');
+      status.textContent = 'PDF khul gaya ✓ — scroll karke padho, A+ se bada karo.' + (total > cap ? ' Poora document padhne ke liye "Full Screen me Kholo" dabao.' : '');
+    }
+    $('.js-pdf-file', win).addEventListener('change', async e => {
+      const f = e.target.files[0]; if (!f) return;
+      nameEl.textContent = f.name;
+      if (blobUrl) URL.revokeObjectURL(blobUrl);
+      blobUrl = URL.createObjectURL(f);
+      openBtn.href = blobUrl; openBtn.classList.remove('hidden');
+      status.textContent = 'PDF khul raha hai…';
+      try{
+        await loadPdfJs();
+        const buf = await f.arrayBuffer();
+        pdfDoc = await window.pdfjsLib.getDocument({ data: buf }).promise;
+        frame.classList.add('hidden'); view.classList.remove('hidden');
+        render();
+      }catch(err){
+        view.classList.add('hidden'); frame.classList.remove('hidden');
+        frame.src = blobUrl;
+        status.textContent = 'Agar neeche PDF na dikhe, to upar "Full Screen me Kholo" dabao — wahan pakka khulega.';
+      }
+    });
+    $('.js-pdf-zin', win).addEventListener('click', () => { if (pdfDoc){ zoom = Math.min(2.5, zoom + 0.25); render(); } });
+    $('.js-pdf-zout', win).addEventListener('click', () => { if (pdfDoc){ zoom = Math.max(0.5, zoom - 0.25); render(); } });
   },
 
   appstore(win){
@@ -838,14 +911,14 @@ const APP_INIT = {
 
   backup(win){
     const msg = $('.js-bk-msg', win);
-    $('.js-bk-download', win).addEventListener('click', () => {
+    $('.js-bk-download', win).addEventListener('click', () => ownerGate(() => {
       const data = {};
       Object.keys(localStorage).filter(k => k.startsWith('ajeetos.')).forEach(k => { data[k] = localStorage.getItem(k); });
       const a = document.createElement('a');
       a.download = 'ajeet-os-backup.json';
       a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type:'application/json' }));
       a.click(); msg.textContent = 'Backup download ho gaya. Is file ko sambhal ke rakho.';
-    });
+    }));
     $('.js-bk-file', win).addEventListener('change', e => {
       const f = e.target.files[0]; if (!f) return;
       e.target.value = '';
@@ -994,9 +1067,7 @@ function wireUI(){
   $('#forgotLink').addEventListener('click', e => {
     e.preventDefault();
     if (!store.get('passhash', null)){ toast('Pehle password set karo.'); return; }
-    if (confirm('Password reset karein? Naya password set karna hoga. Notes/files/tasks safe rahenge.')){
-      store.del('passhash'); setLoginMode(); toast('Purana password hata diya — naya set karo.');
-    }
+    toast('Security: Login screen se password reset band hai — bina owner permission koi access nahi le sakta. Password badalna ho to pehle Owner Login karke Settings se badlo.');
   });
   $('#loginCloseBtn').addEventListener('click', () => hideLock());
   $$('#lockScreen [data-open-social]').forEach(b => b.addEventListener('click', () => {
@@ -1114,7 +1185,10 @@ document.addEventListener('DOMContentLoaded', () => {
     notify('Welcome to AJEET OS 👑', 'Tumhara personal desktop taiyaar hai.');
   }
   riyaSay('Hello Ajeet ❤️ How can I help you today?');
-  const hasSession = localStorage.getItem('ajeetos.session') === '1' || sessionStorage.getItem('ajeetos.session') === '1';
+  const sessExp = +(localStorage.getItem('ajeetos.session') || 0);
+  const remembered = sessExp > Date.now();
+  if (localStorage.getItem('ajeetos.session') && !remembered) localStorage.removeItem('ajeetos.session');
+  const hasSession = remembered || sessionStorage.getItem('ajeetos.session') === '1';
   ownerLoggedIn = !!(hasSession && store.get('passhash', null));
   enterDesktop();
   applyRemovedApps();

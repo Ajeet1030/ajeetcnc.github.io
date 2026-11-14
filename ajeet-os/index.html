@@ -336,7 +336,7 @@
       <button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button><button data-k="×" class="op">×</button>
       <button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button><button data-k="−" class="op">−</button>
       <button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button><button data-k="+" class="op">+</button>
-      <button data-k="±">±</button><button data-k="0">0</button><button data-k=".">.</button><button data-k="=" class="eq">=</button>
+      <button data-k="±">±</button><button data-k="0">0</button><button data-k=".">.</button><button data-k="=" class="eqbtn">=</button>
     </div>
   </div>
 </template>
@@ -404,9 +404,17 @@
 
 <template id="tpl-pdf">
   <div class="app-body media">
-    <div class="fm-bar"><label class="btn file-btn">Open PDF<input type="file" accept="application/pdf" class="js-pdf-file" hidden></label></div>
-    <iframe class="pdf-frame js-pdf-frame" title="PDF viewer"></iframe>
-    <p class="muted">Pick a PDF from your device to read it here.</p>
+    <div class="fm-bar">
+      <label class="btn file-btn">Open PDF<input type="file" accept="application/pdf" class="js-pdf-file" hidden></label>
+      <a class="btn js-pdf-open hidden" target="_blank" rel="noopener">Full Screen me Kholo</a>
+      <button class="btn js-pdf-zout" type="button">A−</button>
+      <button class="btn js-pdf-zin" type="button">A+</button>
+      <span class="js-pdf-pages muted"></span>
+    </div>
+    <p class="muted js-pdf-status">Apne phone/computer se koi PDF chuno — uske pages yahin khul jayenge, scroll karke padho.</p>
+    <div class="pdf-pages js-pdf-pages-view"></div>
+    <iframe class="pdf-frame js-pdf-frame hidden" title="PDF viewer"></iframe>
+    <p class="muted js-pdf-name"></p>
   </div>
 </template>
 
