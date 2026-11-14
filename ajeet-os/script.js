@@ -397,6 +397,7 @@ function defaultSocials(){
   return [
     { id: uid(), platform:'Instagram', icon:'📸', name:'@theajeetbhai',     url:'https://www.instagram.com/theajeetbhai' },
     { id: uid(), platform:'Instagram', icon:'📸', name:'@insta_wallpaper4k', url:'https://www.instagram.com/insta_wallpaper4k' },
+    { id: uid(), platform:'Instagram', icon:'📸', name:'@theajeetbhai_x', url:'https://www.instagram.com/theajeetbhai_x' },
     { id: uid(), platform:'WhatsApp', icon:'💬', name:'WhatsApp par chat karo', url:'https://wa.me/919990953738?text=Hello%20Ajeet%20bhai' }
   ];
 }
@@ -410,6 +411,16 @@ function getSocials(){
       store.set('socials', s);
     }
     store.set('socialsSeedV2', 1);
+  }
+  /* One-time: purane save me @theajeetbhai_x seed jodo (owner delete kare to wapas nahi aayega) */
+  if (!store.get('socialsSeedV3', null)){
+    if (!s.some(x => x.url === 'https://www.instagram.com/theajeetbhai_x')){
+      const waIdx = s.findIndex(x => x.url && x.url.includes('wa.me'));
+      const xEntry = { id: uid(), platform:'Instagram', icon:'📸', name:'@theajeetbhai_x', url:'https://www.instagram.com/theajeetbhai_x' };
+      if (waIdx >= 0) s.splice(waIdx, 0, xEntry); else s.push(xEntry);
+      store.set('socials', s);
+    }
+    store.set('socialsSeedV3', 1);
   }
   return s;
 }
@@ -1020,7 +1031,7 @@ function riyaReply(raw){
   if (t.includes('love')) return 'Love you too, Ajeet ❤️ Ab batao, kaam ki baat karein?';
   if (t.includes('kaun ho') || t.includes('your name') || t.includes('tumhara naam')) return 'Main Riya hoon — AJEET OS ki AI assistant, aur Ajeet ki sabse khaas dost ✨';
   if (t.includes('ajeet kaun') || t.includes('owner')) return 'Ajeet Kumar — is desktop ke owner aur Super Admin 👑 CNC ka kaam karte hain, aur @theajeetbhai naam se Instagram par hain.';
-  if (t.includes('insta')) { openApp('social'); return 'Social Hub khol diya — tumhare dono Instagram accounts wahi hain: @theajeetbhai aur @insta_wallpaper4k 📸'; }
+  if (t.includes('insta')) { openApp('social'); return 'Social Hub khol diya — tumhare teeno Instagram accounts wahi hain: @theajeetbhai, @insta_wallpaper4k aur @theajeetbhai_x 📸'; }
   if (t.includes('task') || t.includes('todo')) { openApp('tasks'); return 'Task Manager khol diya ✅ Apne tasks wahi add kar sakte ho.'; }
   if (t.includes('note')) { openApp('notepad'); return 'Notepad khol diya 📝 Jo likhna hai likho, save apne aap ho jayega button dabane par.'; }
   if (t.includes('joke') || t.includes('hassao')) return 'Ek joke sunau? Computer ko thand lagi to usne bola — "Mujhe Windows band kar do!" 😄';
