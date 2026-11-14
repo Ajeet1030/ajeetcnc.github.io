@@ -452,6 +452,9 @@ input[type=range]{accent-color:var(--accent)}
 .song-go svg{width:15px;height:15px}
 .song-row.playing{border-color:rgba(255,157,92,.85);background:rgba(255,120,80,.15)}
 .song-row.playing .song-go{color:#ffb37a;opacity:1}
+.song-row.loading{border-color:rgba(120,200,255,.7);background:rgba(90,160,255,.13)}
+.song-row.loading .song-go{color:#9fd0ff;opacity:1;animation:songPulse 1s ease-in-out infinite}
+@keyframes songPulse{0%,100%{opacity:.35}50%{opacity:1}}
 .radio-head{display:flex;flex-direction:column;gap:8px}
 .radio-now{display:flex;flex-direction:column}
 .radio-now small{opacity:.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}

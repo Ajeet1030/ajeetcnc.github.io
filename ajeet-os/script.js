@@ -705,7 +705,7 @@ const APP_INIT = {
     const list = $('.js-song-list', win);
     list.innerHTML = '';
     SONGS.forEach((s, i) => {
-      const row = document.createElement('button'); row.className = 'song-row' + (i === radioIx ? ' playing' : ''); row.dataset.ix = i;
+      const row = document.createElement('button'); row.className = 'song-row' + (i === radioIx ? ' playing' : '') + (radioLoading && i === radioLoadingIx ? ' loading' : ''); row.dataset.ix = i;
       row.innerHTML = '<span class="song-rank">' + (i + 1) + '</span><span class="song-meta"><strong></strong><small></small></span><span class="song-go"><svg viewBox="0 0 24 24"><path d="M8.5 5.8v12.4c0 .9 1 1.5 1.8 1L19 13a1.2 1.2 0 0 0 0-2L10.3 4.9c-.8-.5-1.8 0-1.8.9z" fill="currentColor"/></svg></span>';
       row.querySelector('strong').textContent = s.t;
       row.querySelector('small').textContent = s.a;
@@ -713,9 +713,9 @@ const APP_INIT = {
       list.appendChild(row);
     });
     const pl = $('.js-mplay', win); if (pl) pl.addEventListener('click', radioToggle);
-    const nx = $('.js-mnext', win); if (nx) nx.addEventListener('click', () => { if (radioPlayer) radioPlayer.nextVideo(); });
-    const pv = $('.js-mprev', win); if (pv) pv.addEventListener('click', () => { if (radioPlayer) radioPlayer.previousVideo(); });
-    const sh = $('.js-mshuffle', win); if (sh) sh.addEventListener('click', () => { radioShuffle = !radioShuffle; sh.classList.toggle('on', radioShuffle); if (radioPlayer){ try{ radioPlayer.setShuffle(radioShuffle); }catch(err){} } toast(radioShuffle ? 'Mix ON \u2014 gaane ulte-seedhe chalenge' : 'Mix OFF \u2014 gaane list ke order me chalenge'); });
+    const nx = $('.js-mnext', win); if (nx) nx.addEventListener('click', radioNext);
+    const pv = $('.js-mprev', win); if (pv) pv.addEventListener('click', radioPrev);
+    const sh = $('.js-mshuffle', win); if (sh) sh.addEventListener('click', () => { radioShuffle = !radioShuffle; sh.classList.toggle('on', radioShuffle); radioSetShuffle(); toast(radioShuffle ? 'Mix ON \u2014 gaane ulte-seedhe chalenge' : 'Mix OFF \u2014 gaane list ke order me chalenge'); });
     const p = $('.js-aud-player', win), nm = $('.js-aud-name', win);
     const fi = $('.js-aud-file', win); if (fi) fi.addEventListener('change', e => { const f = e.target.files[0]; if (f){ p.src = URL.createObjectURL(f); nm.textContent = f.name; } });
     setRadioIcon();
@@ -1211,7 +1211,9 @@ document.addEventListener('DOMContentLoaded', () => {
 /* ---------------- Highway Radio — Insta Trending gaano ki list ----------------
    Player bilkul hide rehta hai. Gaane SONGS list se chalte hain — sabse popular pehle.
    Koi bhi Music app ki list se apni pasand ka koi bhi gaana tap karke baja sakta hai.
-   YouTube API sirf pehle Play par load hota hai — site halki aur smooth rehti hai. */
+   Dono hidden players DOMContentLoaded par hi background me taiyaar ho jate hain:
+   pehla gaana cue rehta hai aur chalte gaane ke saath AGla gaana standby player me
+   pre-buffer hota rehta hai — isliye tap karte hi gaana lagbhag turant bajta hai. */
 const SONGS = [
   { t: "Sahiba", a: "Aditya Rikhari", id: "n2dVFdqMYGA" },
   { t: "Gehra Hua", a: "Arijit Singh • Dhurandhar", id: "GX9x62kFsVU" },
@@ -1314,7 +1316,17 @@ const SONGS = [
   { t: "Samjho Na", a: "Aditya Rikhari", id: "MhXCj8E9CZU" },
   { t: "Afsos", a: "Anuv Jain ft. AP Dhillon", id: "2FhgKp_lfJQ" }
 ];
-let radioPlayer = null, radioPlaying = false, radioStarted = false, radioIx = -1, radioPendingIx = 0, radioShuffle = false, radioWantPlay = false, radioLoading = false;
+let radioPlayer = null, radioPlaying = false, radioStarted = false, radioIx = -1, radioPendingIx = 0, radioShuffle = false, radioWantPlay = false, radioLoading = false, radioLoadingIx = -1;
+/* Dual-player engine (speed fix): ek ACTIVE player gaana chalata hai, dusra STANDBY
+   player AGla gaana pehle se cue (pre-buffer) karke rakhta hai. Isliye Next dabane
+   par ya gaana khatam hone par agla gaana lagbhag turant shuru hota hai — har baar
+   cold buffering nahi lagti. radioPlayer hamesha ACTIVE player ko point karta hai. */
+const radioSlots = {
+  A: { key: 'A', el: 'radioPlayer',  player: null, ready: false, cuedIx: -1, cuedReady: false },
+  B: { key: 'B', el: 'radioPlayerB', player: null, ready: false, cuedIx: -1, cuedReady: false }
+};
+let radioActive = radioSlots.A, radioStandby = radioSlots.B;
+let radioOrder = SONGS.map((s, i) => i), radioPos = -1, radioBooted = false;
 function setRadioState(t){ const el = $('#radioState'); if (el) el.textContent = t; const nt = $('.js-now-title'); if (nt) nt.textContent = t; }
 function setRadioIcon(){
   const p = $('.rb-play'), q = $('.rb-pause'), pill = $('#radioPill');
@@ -1326,65 +1338,187 @@ function setRadioIcon(){
   const mb = $('.js-mplay'); if (mb) mb.innerHTML = radioPlaying ? '<svg viewBox="0 0 24 24"><path d="M7.5 5h3.4v14H7.5zM13.1 5h3.4v14h-3.4z" fill="#fff"/></svg> Roko' : '<svg viewBox="0 0 24 24"><path d="M8.5 5.8v12.4c0 .9 1 1.5 1.8 1L19 13a1.2 1.2 0 0 0 0-2L10.3 4.9c-.8-.5-1.8 0-1.8.9z" fill="#fff"/></svg> Chalao';
 }
 function radioMarkRow(){
-  document.querySelectorAll('.song-row').forEach(r => r.classList.toggle('playing', +r.dataset.ix === radioIx));
-  const row = document.querySelector('.song-row.playing');
+  document.querySelectorAll('.song-row').forEach(r => {
+    const ix = +r.dataset.ix;
+    r.classList.toggle('playing', ix === radioIx);
+    r.classList.toggle('loading', radioLoading && ix === radioLoadingIx);
+  });
+  const row = document.querySelector('.song-row.playing') || document.querySelector('.song-row.loading');
   if (row) row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
 }
-function radioLoadList(ix){
-  if (!radioPlayer || !SONGS.length) return;
-  radioIx = ix; radioLoading = true; setRadioState('Load ho raha hai\u2026');
-  radioPlayer.loadPlaylist({ playlist: SONGS.map(s => s.id), index: ix });
-  try{ radioPlayer.setShuffle(radioShuffle); }catch(err){}
+function radioSetLoading(ix){
+  radioLoading = ix >= 0; radioLoadingIx = ix;
+  if (ix >= 0) setRadioState('Load ho raha hai\u2026');
+  radioMarkRow();
+}
+function radioBuildOrder(fromIx){
+  const rest = SONGS.map((s, i) => i).filter(i => i !== fromIx);
+  if (radioShuffle){ for (let i = rest.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); const t = rest[i]; rest[i] = rest[j]; rest[j] = t; } }
+  radioOrder = [fromIx].concat(rest);
+  radioPos = 0;
+}
+function radioNextIx(){
+  if (radioPos + 1 < radioOrder.length) return radioOrder[radioPos + 1];
+  if (radioShuffle){
+    const pool = SONGS.map((s, i) => i).filter(i => i !== radioIx);
+    for (let i = pool.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); const t = pool[i]; pool[i] = pool[j]; pool[j] = t; }
+    radioOrder = [radioIx].concat(pool); radioPos = 0;
+    return radioOrder[1];
+  }
+  return radioOrder[0];
+}
+function radioSyncActive(){ radioPlayer = radioActive.player; }
+/* FAST MODE (owner ne chuna): player hidden hai, sirf audio sunna hai — isliye
+   sabse chhoti playback quality ('small', na mile to 'tiny') rakho taaki gaana
+   lagbhag turant shuru ho. YouTube har naye video par quality reset kar sakta
+   hai, isliye ready / cue / load / state-change — har jagah dobara set karte hain. */
+function radioSetQuality(slot){
+  if (!slot || !slot.player) return;
+  try{ slot.player.setPlaybackQuality('small'); }
+  catch(err){ try{ slot.player.setPlaybackQuality('tiny'); }catch(e2){} }
+}
+function radioCueStandby(){
+  if (!radioStandby.ready || radioIx < 0 || !SONGS.length) return;
+  const nx = radioNextIx();
+  if (radioStandby.cuedIx === nx) return;
+  radioStandby.cuedIx = nx; radioStandby.cuedReady = false;
+  try{ radioStandby.player.cueVideoById(SONGS[nx].id); }catch(err){}
+  radioSetQuality(radioStandby);
+}
+function radioStartOn(slot, ix){
+  radioIx = ix;
+  const p = radioOrder.indexOf(ix); if (p >= 0) radioPos = p;
+  slot.cuedIx = ix; slot.cuedReady = false;
+  radioSetLoading(ix);
+  try{ slot.player.loadVideoById(SONGS[ix].id); }catch(err){}
+  radioSetQuality(slot);
+}
+function radioSwapToStandby(){
+  const old = radioActive;
+  radioActive = radioStandby; radioStandby = old;
+  radioSyncActive();
+  radioIx = radioActive.cuedIx;
+  radioPos = radioOrder.indexOf(radioIx);
+  radioSetLoading(radioIx);
+  try{ radioActive.player.playVideo(); }catch(err){}
+  try{ old.player.pauseVideo(); }catch(err){}
+  radioCueStandby();
+}
+function radioAdvance(){
+  if (!radioActive.ready) return;
+  if (radioIx < 0){ radioPlaySong(radioPendingIx); return; }
+  const nx = radioNextIx();
+  if (radioStandby.ready && radioStandby.cuedIx === nx){ radioSwapToStandby(); return; }
+  radioStartOn(radioActive, nx);
+  radioCueStandby();
+}
+function radioNext(){ radioAdvance(); }
+function radioPrev(){
+  if (!radioActive.ready || radioIx < 0) return;
+  const pv = radioPos - 1 >= 0 ? radioOrder[radioPos - 1] : radioOrder[radioOrder.length - 1];
+  radioStartOn(radioActive, pv);
+  radioCueStandby();
+}
+function radioSetShuffle(){
+  radioBuildOrder(radioIx >= 0 ? radioIx : radioPendingIx);
+  if (radioIx >= 0) radioCueStandby();
+}
+function radioWireSlot(slot){
+  return {
+    onReady: () => {
+      slot.ready = true;
+      try{ slot.player.setVolume(100); }catch(err){}
+      radioSetQuality(slot);
+      if (slot === radioActive){
+        radioSyncActive();
+        if (radioWantPlay){ radioWantPlay = false; radioPlaySong(radioPendingIx); }
+        else if (radioIx < 0 && slot.cuedIx < 0 && SONGS.length){
+          /* Pehla gaana pehle se cue rakho — pehle tap par lagbhag turant chalega */
+          slot.cuedIx = 0;
+          try{ slot.player.cueVideoById(SONGS[0].id); }catch(err){}
+          radioSetQuality(slot);
+        }
+      }
+      radioCueStandby();
+    },
+    onStateChange: e => {
+      if (e.data === YT.PlayerState.CUED){ slot.cuedReady = true; radioSetQuality(slot); return; }
+      if (slot !== radioActive) return;
+      if (e.data === YT.PlayerState.PLAYING){
+        radioSetQuality(slot);
+        radioPlaying = true; radioStarted = true; radioSetLoading(-1); setRadioIcon();
+        radioMarkRow();
+        setTimeout(() => { try{ const d = radioActive.player.getVideoData(); if (d && d.title) setRadioState(d.title); }catch(err){} }, 700);
+        radioCueStandby();
+      } else if (e.data === YT.PlayerState.BUFFERING){
+        radioSetQuality(slot);
+        if (radioIx >= 0) radioSetLoading(radioIx);
+      } else if (e.data === YT.PlayerState.PAUSED){
+        if (radioLoading){ setRadioState('Load ho raha hai\u2026'); }
+        else { radioPlaying = false; setRadioIcon(); setRadioState('Ruka hai \u2014 Play dabao, gaana chalega'); }
+      } else if (e.data === YT.PlayerState.ENDED){
+        radioAdvance();
+      }
+    },
+    onError: () => {
+      if (slot !== radioActive) return;
+      setRadioState('Ye gaana nahi chala \u2014 agla try karo');
+      radioSetLoading(-1);
+      radioAdvance();
+    }
+  };
 }
 function radioCreate(){
-  radioPlayer = new YT.Player('radioPlayer', {
+  if (radioSlots.A.player || !window.YT || !YT.Player) return;
+  const mk = slot => new YT.Player(slot.el, {
     width: '2', height: '2',
-    playerVars: { autoplay: 1, controls: 0, rel: 0, playsinline: 1, loop: 1 },
-    events: {
-      onReady: () => { if (radioWantPlay) radioLoadList(radioPendingIx); },
-      onStateChange: e => {
-        if (e.data === YT.PlayerState.PLAYING){
-          radioPlaying = true; radioStarted = true; radioLoading = false; setRadioIcon();
-          try{ radioIx = radioPlayer.getPlaylistIndex(); }catch(err){}
-          radioMarkRow();
-          setTimeout(() => { try{ const d = radioPlayer.getVideoData(); if (d && d.title) setRadioState(d.title); }catch(err){} }, 700);
-        } else if (e.data === YT.PlayerState.BUFFERING){
-          radioLoading = true; setRadioState('Load ho raha hai\u2026');
-        } else if (e.data === YT.PlayerState.PAUSED){
-          if (radioLoading){ setRadioState('Load ho raha hai\u2026'); }
-          else { radioPlaying = false; setRadioIcon(); setRadioState('Ruka hai \u2014 Play dabao, gaana chalega'); }
-        } else if (e.data === YT.PlayerState.ENDED){
-          try{ radioPlayer.nextVideo(); }catch(err){}
-        }
-      },
-      onError: () => { setRadioState('Ye gaana nahi chala \u2014 agla try karo'); try{ radioPlayer.nextVideo(); }catch(err){} }
-    }
+    playerVars: { autoplay: 0, controls: 0, rel: 0, playsinline: 1 },
+    events: radioWireSlot(slot)
   });
+  radioSlots.A.player = mk(radioSlots.A);
+  radioSlots.B.player = mk(radioSlots.B);
+  radioSyncActive();
 }
 function radioBoot(){
+  if (radioBooted) return; radioBooted = true;
   if (window.YT && YT.Player){ radioCreate(); return; }
   const tag = document.createElement('script'); tag.src = 'https://www.youtube.com/iframe_api';
   document.head.appendChild(tag);
-  window.onYouTubeIframeAPIReady = radioCreate;
+  const prevReady = window.onYouTubeIframeAPIReady;
+  window.onYouTubeIframeAPIReady = () => { if (prevReady){ try{ prevReady(); }catch(err){} } radioCreate(); };
 }
 function radioPlaySong(ix){
-  radioPendingIx = ix; radioWantPlay = true; setRadioState('Load ho raha hai\u2026');
-  if (!radioPlayer){ radioBoot(); return; }
-  if (radioIx === -1){ radioLoadList(ix); return; }
-  radioLoading = true;
-  try{ radioPlayer.playVideoAt(ix); }catch(err){ radioLoadList(ix); }
+  radioPendingIx = ix; radioWantPlay = true;
+  radioSetLoading(ix);
+  if (!radioActive.ready){ radioBoot(); return; }
+  radioWantPlay = false;
+  if (ix === radioIx && radioStarted){
+    try{ radioActive.player.playVideo(); }catch(err){}
+    radioSetLoading(-1);
+    return;
+  }
+  if (radioStandby.ready && radioStandby.cuedIx === ix){ radioSwapToStandby(); return; }
+  if (radioIx < 0 && radioActive.cuedIx === ix){
+    radioIx = ix; radioPos = radioOrder.indexOf(ix);
+    try{ radioActive.player.playVideo(); }catch(err){}
+    radioCueStandby();
+    return;
+  }
+  radioStartOn(radioActive, ix);
+  radioCueStandby();
 }
 function radioToggle(){
-  if (!radioPlayer){ radioWantPlay = true; setRadioState('Load ho raha hai\u2026'); radioBoot(); return; }
-  if (radioIx === -1){ radioLoadList(radioPendingIx); return; }
-  if (radioPlaying) radioPlayer.pauseVideo(); else radioPlayer.playVideo();
+  if (!radioActive.ready){ radioWantPlay = true; setRadioState('Load ho raha hai\u2026'); radioBoot(); return; }
+  if (radioIx === -1){ radioPlaySong(radioPendingIx); return; }
+  if (radioPlaying){ try{ radioActive.player.pauseVideo(); }catch(err){} }
+  else { try{ radioActive.player.playVideo(); }catch(err){} }
 }
 function radioInit(){
   const b = $('#radioBtn'); if (b) b.addEventListener('click', radioToggle);
-  /* Player ko pehle se taiyaar rakho — page khulne ke thodi der baad background me load,
-     taaki pehle tap par gaana turant baje (bina khud chale, sirf ready rahe). */
-  window.addEventListener('load', () => setTimeout(() => { if (!radioPlayer) radioBoot(); }, 1000));
-  const n = $('#radioNext'); if (n) n.addEventListener('click', () => { if (radioPlayer) radioPlayer.nextVideo(); });
-  const pv = $('#radioPrev'); if (pv) pv.addEventListener('click', () => { if (radioPlayer) radioPlayer.previousVideo(); });
+  /* Dono players ko DOMContentLoaded par hi background me taiyaar kar do (bina khud chale) —
+     pehla gaana bhi cue rahega, isliye pehla tap aur har Next lagbhag turant chalega. */
+  radioBoot();
+  const n = $('#radioNext'); if (n) n.addEventListener('click', radioNext);
+  const pv = $('#radioPrev'); if (pv) pv.addEventListener('click', radioPrev);
   const li = $('#radioList'); if (li) li.addEventListener('click', () => openApp('music'));
 }
