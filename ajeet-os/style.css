@@ -131,7 +131,7 @@ body.light .login-error{color:#9f1239}
 .tb-avatar{width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);cursor:pointer}
 
 /* icon panel */
-#iconPanel{position:absolute;left:12px;top:78px;width:196px;max-height:calc(100% - 160px);overflow-y:auto;padding:12px 10px;display:grid;grid-template-columns:1fr 1fr;gap:6px;z-index:40}
+#iconPanel{position:absolute;left:12px;top:78px;width:196px;max-height:calc(100dvh - 160px);overflow-y:auto;padding:12px 10px;display:grid;grid-template-columns:1fr 1fr;gap:6px;z-index:40}
 .dicon{display:flex;flex-direction:column;align-items:center;gap:4px;padding:9px 2px;border-radius:13px;font-size:.68rem;text-align:center;transition:background .15s ease,transform .15s ease}
 .dicon span{font-size:1.45rem;filter:drop-shadow(0 3px 6px rgba(0,0,0,.45))}
 .dicon:hover{background:rgba(255,255,255,.12);transform:translateY(-1px)}
@@ -160,7 +160,7 @@ body.light .gauge-ring span{background:rgba(255,255,255,.9)}
 #perfChart{width:100%;height:36px;margin-top:8px}
 
 /* ---------- Start panel ---------- */
-#startPanel{position:absolute;left:12px;bottom:calc(var(--tb-h) + 18px);width:min(520px,94vw);max-height:calc(100% - 170px);overflow-y:auto;padding:14px;z-index:70;animation:rise .22s ease}
+#startPanel{position:absolute;left:12px;bottom:calc(var(--tb-h) + 18px);width:min(520px,94vw);max-height:calc(100dvh - 170px);overflow-y:auto;padding:14px;z-index:70;animation:rise .22s ease}
 @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .sp-profile{display:flex;align-items:center;gap:11px;padding-bottom:11px;border-bottom:1px solid var(--glass-brd)}
 .sp-profile img{width:46px;height:46px;border-radius:50%;object-fit:cover;border:2px solid var(--accent)}
@@ -232,8 +232,8 @@ body.light .win{background:linear-gradient(165deg,rgba(240,247,255,.97),rgba(224
 .win-btns{display:flex;gap:5px}
 .win-btns button{width:27px;height:27px;border-radius:8px;background:rgba(255,255,255,.09);font-size:.75rem;line-height:1}
 .win-btns .wb-close:hover{background:var(--danger);color:#fff}
-.win-body{flex:1;min-height:0;overflow-y:auto;padding:13px;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
-#iconPanel,#startPanel,#riyaPanel,.riya-msgs,#searchResults,#notifPanel{-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.win-body{flex:1;min-height:0;overflow-y:auto;padding:13px;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y}
+#iconPanel,#startPanel,#riyaPanel,.riya-msgs,#searchResults,#notifPanel{-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y}
 .app-body{display:flex;flex-direction:column;gap:11px}
 .btn{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#04121f;font-weight:700;padding:7px 13px;border-radius:10px;font-size:.82rem;transition:transform .12s ease}
 .btn:active{transform:scale(.96)}
@@ -378,8 +378,8 @@ input[type=range]{accent-color:var(--accent)}
 @media (max-width:640px){
   #wpPhoto{max-width:88vw;height:62%;opacity:.9;bottom:12px;border-radius:24px}
   .wp-title{top:11%;transform:translateX(-50%);left:50%;width:94%}
-  #iconPanel{width:158px;top:74px;max-height:calc(100% - 210px)}
-  #riyaPanel{left:12px;right:12px;width:auto;max-height:calc(100% - 158px);overflow-y:auto}
+  #iconPanel{width:158px;top:74px;max-height:calc(100dvh - 210px)}
+  #riyaPanel{left:12px;right:12px;width:auto;max-height:calc(100dvh - 158px);overflow-y:auto}
   #notifPanel{max-height:62vh;overflow-y:auto}
   #socialBar{bottom:calc(var(--tb-h) + 14px);max-width:94vw;padding:5px 6px}
   .sb-chip{font-size:.68rem;padding:5px 9px}
@@ -388,7 +388,7 @@ input[type=range]{accent-color:var(--accent)}
   #topbar{left:8px;right:8px;top:8px}
   #taskbar{left:8px;right:8px;bottom:8px}
   #startPanel{left:8px;bottom:calc(var(--tb-h) + 14px)}
-  .win{max-height:calc(100% - 140px)}
+  .win{max-height:calc(100dvh - 140px)}
   .tb-brand-text small{display:none}
 }
 /* chhote phones — sab kuch screen ke hisaab se chhota aur fit */

@@ -1202,6 +1202,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const hasSession = remembered || sessionStorage.getItem('ajeetos.session') === '1';
   ownerLoggedIn = !!(hasSession && store.get('passhash', null));
   enterDesktop();
+  if (window.innerWidth <= 640) $('#riyaPanel').classList.add('hidden');
   applyRemovedApps();
   updateOwnerUI();
   tickClock();
