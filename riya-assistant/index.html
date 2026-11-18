@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="color-scheme" content="light dark" />
-    <link rel="icon" href="data:," />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3CradialGradient id='g' cx='35%25' cy='30%25' r='80%25'%3E%3Cstop offset='0%25' stop-color='%23b9f1ff'/%3E%3Cstop offset='55%25' stop-color='%234fc9f5'/%3E%3Cstop offset='100%25' stop-color='%230a84ff'/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle cx='50' cy='50' r='46' fill='url(%23g)'/%3E%3Crect x='43' y='27' width='14' height='27' rx='7' fill='white'/%3E%3Cpath d='M35 47a15 15 0 0 0 30 0M50 62v11M41 73h18' stroke='white' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E" />
     <title>Riya — AI Voice Assistant</title>
     <style>
       /* ============ iOS Liquid Glass theme ============
@@ -294,10 +294,11 @@
       .msg.ai { align-self: flex-start; background: var(--bubble-ai); border-bottom-left-radius: var(--r); }
       .msg.me { align-self: flex-end; background: var(--bubble-me); color: var(--bubble-me-ink); border-color: transparent; }
       .msg .who { display: block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; opacity: 0.65; margin-bottom: 3px; }
+      .msg a { color: var(--blue); font-weight: 700; word-break: break-all; }
       .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; position: relative; }
       .chip {
         border: 1px solid var(--glass-edge); background: var(--chip);
-        border-radius: var(--r); padding: 8px 13px; font-size: 0.85rem; font-weight: 600; min-height: 40px;
+        border-radius: var(--r); padding: 8px 13px; font-size: 0.85rem; font-weight: 600; min-height: 44px;
       }
       .input-row { display: flex; gap: 9px; margin-top: 12px; position: relative; }
       .input-row input {
@@ -552,6 +553,7 @@
         var handsFree = false, voiceOn = true, listening = false, speaking = false;
         var voicePreset = "riya", cachedVoices = [], voiceListBuilt = -1;
         var notes = [], greeted = false, poseTimer = null, recog = null;
+        var speakToken = 0, pendingListen = false, recogBlocked = false;
 
         var URLS = {
           whatsapp: "https://www.whatsapp.com/",
@@ -685,11 +687,20 @@
               : "Ho gaya! Ab main " + names[key] + " awaaz me, Hindi me baat karungi.");
           }
         }
+        function finishSpeak() {
+          speaking = false; setState("idle", "Ready — orb tap karo aur bolo");
+          if (pendingListen) { pendingListen = false; startListening(); return; }
+          maybeListenAgain();
+        }
         function speak(text) {
           liveText.textContent = text;
           var m = moodFor(text); react(m[0], m[1], m[2], m[3], Math.max(2400, text.length * 62));
-          if (!voiceOn || !("speechSynthesis" in window)) { setState("idle", "Ready — orb tap karo aur bolo"); maybeListenAgain(); return; }
+          var my = ++speakToken;
+          if (!voiceOn || !("speechSynthesis" in window)) { finishSpeak(); return; }
           try {
+            /* Android Chrome par cancel() ke turant baad speak() karne se nayi
+               awaaz bhi kat jati hai — pehle kuch bol raha ho to 60ms ruk kar bolte hain. */
+            var wasActive = !!(speechSynthesis.speaking || speechSynthesis.pending);
             speechSynthesis.cancel();
             var u = new SpeechSynthesisUtterance(text);
             var v = pickVoice(); if (v) u.voice = v;
@@ -698,9 +709,12 @@
             u.rate = parseFloat($("voiceSpeed").value) || 1.02;
             u.pitch = pr.pitch;
             speaking = true; setState("speaking", "Riya bol rahi hai…");
-            u.onend = u.onerror = function () { speaking = false; setState("idle", "Ready — orb tap karo aur bolo"); maybeListenAgain(); };
-            speechSynthesis.speak(u);
-          } catch (e) { speaking = false; setState("idle", "Ready"); maybeListenAgain(); }
+            /* Token guard: purani (cancel ki hui) awaaz ka onend nayi awaaz ki
+               state ko kharab na kare — tez-tez replies par yahi race hota tha. */
+            u.onend = u.onerror = function () { if (my === speakToken) finishSpeak(); };
+            if (wasActive) setTimeout(function () { if (my === speakToken) { try { speechSynthesis.speak(u); } catch (e) {} } }, 60);
+            else speechSynthesis.speak(u);
+          } catch (e) { if (my === speakToken) finishSpeak(); }
         }
         function reply(text) { addMsg("ai", text); speak(text); }
 
@@ -716,7 +730,25 @@
         }
 
         /* ---------- Open helpers ---------- */
-        function openUrl(url) { window.open(url, "_blank", "noopener"); }
+        function openUrl(url) {
+          var w = null;
+          try { w = window.open(url, "_blank"); } catch (e) { w = null; }
+          if (w) { try { w.opener = null; } catch (e) {} return; }
+          /* Voice se khulne wale pages ko browser aksar popup samajh kar rok deta
+             hai — pehle "khol diya" bolkar chup-chaap fail hota tha. Ab chat me
+             tappable link aa jayega, ek tap me wahi page khulega. */
+          var d = document.createElement("div");
+          d.className = "msg ai";
+          var who = document.createElement("span"); who.className = "who"; who.textContent = "Riya";
+          d.appendChild(who);
+          d.appendChild(document.createTextNode("Browser ne auto-open rok diya — yahan tap karke kholo: "));
+          var a = document.createElement("a");
+          a.href = url; a.target = "_blank"; a.rel = "noopener";
+          a.textContent = url.replace(/^https?:\/\//, "").slice(0, 60);
+          d.appendChild(a);
+          msgs.appendChild(d);
+          msgs.scrollTop = msgs.scrollHeight;
+        }
         function playSong(query) {
           openUrl("https://www.youtube.com/results?search_query=" + encodeURIComponent(query));
         }
@@ -768,10 +800,13 @@
         function tryCalc(raw) {
           var s = " " + raw.toLowerCase().replace(/,/g, "") + " ";
           s = s.replace(/(plus|jod|jodo|aur|\+)/g, " + ").replace(/(minus|ghata|ghatao|-)/g, " - ")
-               .replace(/(guna|gunna|multiply|into|x|\*|×)/g, " * ").replace(/(bhaag|bhag|divide|divided by|\/|÷)/g, " / ");
+               .replace(/\s+x\s+/g, " * ")
+               .replace(/(guna|gunna|multiply|into|\*|×)/g, " * ").replace(/(divided by|bhaag|bhag|divide|\/|÷)/g, " / "); /* "divided by" pehle — warna "divide" match karke "d by" bacha deta tha; akela x hi guna hai, warna "six" jaise shabd toot jate the */
           Object.keys(numWords).forEach(function (w) { s = s.replace(new RegExp("\\b" + w + "\\b", "g"), String(numWords[w])); });
           var m = s.match(/(-?\d+(?:\.\d+)?)\s*([+\-*\/])\s*(-?\d+(?:\.\d+)?)/);
           var pm = s.match(/(\d+(?:\.\d+)?)\s*(?:%|percent|pratishat|feesadi)(?:\s*(?:of|ka|ki))?\s*(\d+(?:\.\d+)?)/);
+          var pm2 = s.match(/(\d+(?:\.\d+)?)\s*(?:ka|of)\s*(\d+(?:\.\d+)?)\s*(?:%|percent|pratishat|feesadi)/); /* Hindi order: "500 ka 10%" — pehle ye hisaab fail hota tha */
+          if (pm2) { var pv3 = parseFloat(pm2[1]) * parseFloat(pm2[2]) / 100; return pm2[1] + " ka " + pm2[2] + "% hota hai " + (Math.round(pv3 * 100) / 100) + "."; }
           if (pm && !m) { var pv = parseFloat(pm[2]) * parseFloat(pm[1]) / 100; return pm[2] + " ka " + pm[1] + "% hota hai " + (Math.round(pv * 100) / 100) + "."; }
           if (pm && m && /%|percent|pratishat/.test(raw.toLowerCase())) { var pv2 = parseFloat(pm[2]) * parseFloat(pm[1]) / 100; return pm[2] + " ka " + pm[1] + "% hota hai " + (Math.round(pv2 * 100) / 100) + "."; }
           if (!m) return null;
@@ -839,10 +874,20 @@
           for (var i = 0; i < KNOWLEDGE.length; i++) if (KNOWLEDGE[i][0].test(t)) return KNOWLEDGE[i][1];
           return null;
         }
+        /* ---- Devanagari → Roman: Chrome ka Hindi recognizer aksar jawab
+           Devanagari me deta hai ("यूट्यूब खोलो") — pehle saare command patterns
+           sirf Roman the, isliye bole hue Hindi commands match hi nahi hote the.
+           Ab pehle in shabdon ko Roman me badal kar match karte hain. ---- */
+        var DEV_MAP = { "यूट्यूब":"youtube", "यूटूब":"youtube", "व्हाट्सएप":"whatsapp", "व्हाट्सऐप":"whatsapp", "इंस्टाग्राम":"instagram", "गूगल":"google", "फेसबुक":"facebook", "टेलीग्राम":"telegram", "स्पॉटिफाई":"spotify", "स्पॉटिफ़ाई":"spotify", "जीमेल":"gmail", "ईमेल":"gmail", "गाना":"gaana", "गाने":"gaana", "गीत":"gaana", "संगीत":"music", "वीडियो":"video", "चलाओ":"chalao", "बजाओ":"bajao", "खोलो":"kholo", "खोल":"khol", "करो":"karo", "नोट":"note", "लिखो":"likho", "समय":"samay", "वक्त":"samay", "बताओ":"batao", "क्या":"kya", "कौन":"kaun", "कहाँ":"kahan", "कहां":"kahan", "कैसे":"kaise", "कितना":"kitna", "कितने":"kitne", "कितनी":"kitni", "मौसम":"mausam", "खबर":"khabar", "ख़बर":"khabar", "समाचार":"khabar", "सर्च":"search", "खोजो":"khojo", "ढूंढो":"dhundo", "कॉल":"call", "फोन":"phone", "फ़ोन":"phone", "वेबसाइट":"website", "साइट":"site", "जोक":"joke", "चुटकुला":"joke", "शायरी":"shayari", "कहानी":"kahani", "आज":"aaj", "तारीख":"tarikh", "तारीख़":"tarikh", "दिन":"din", "हिंदी":"hindi", "अंग्रेजी":"english", "अंग्रेज़ी":"english", "आवाज":"awaaz", "आवाज़":"awaaz", "बदल":"badal", "बदलो":"badal", "नमस्ते":"namaste", "हैलो":"hello", "धन्यवाद":"dhanyavad", "शुक्रिया":"shukriya", "मैप":"map", "मैप्स":"maps", "नक्शा":"naksha", "रास्ता":"rasta", "मदद":"madad", "सवाल":"sawal", "जवाब":"jawab", "हिसाब":"hisaab", "जोड़":"jod", "घटा":"ghata", "गुणा":"guna", "भाग":"bhaag", "ठीक":"theek", "अलविदा":"alvida", "प्यार":"pyaar", "नाम":"naam", "राजधानी":"rajdhani", "भारत":"bharat", "दिल्ली":"delhi", "और":"aur", "की":"ki", "का":"ka", "के":"ke", "है":"hai", "हैं":"hai", "में":"me", "मुझे":"mujhe", "मेरा":"mera", "मेरी":"meri", "तुम":"tum", "मैं":"main", "हो":"ho", "से":"se", "पर":"par", "भी":"bhi", "एक":"ek", "कोई":"koi" };
+        function normalizeText(s) {
+          var out = " " + s + " ";
+          Object.keys(DEV_MAP).forEach(function (k) { out = out.split(k).join(" " + DEV_MAP[k] + " "); });
+          return out;
+        }
 
         /* ---------- Brain: commands ---------- */
         function processCommand(raw) {
-          var t = " " + raw.toLowerCase().replace(/\s+/g, " ").trim() + " ";
+          var t = " " + normalizeText(raw.toLowerCase()).replace(/\s+/g, " ").trim() + " ";
           var m;
 
           if (/(voice change|awaaz badal|awaaz change|voice badal)/.test(t)) {
@@ -857,6 +902,7 @@
           if (/(hindi me bolo|hindi mein bolo|speak in hindi|hindi me baat)/.test(t)) { setVoicePreset("riya"); return; }
           if (/(note karo|note kar lo|note bana|note karlo)/.test(t)) {
             var note = raw.replace(/.*?(note karo|note kar lo|note bana|note karlo)\s*[:\-]?\s*/i, "").trim();
+            if (note === raw.trim()) note = raw.replace(/.*?नोट\s*(करो|कर|लिखो)?\s*[:\-]?\s*/, "").trim(); /* Devanagari me bola gaya note */
             if (note) { addNote(note); reply("Ho gaya! Note save kar liya: " + note); }
             else reply("Note me kya likhun? Aise bolo — note karo, kal market jana hai.");
             return;
@@ -867,12 +913,20 @@
             else reply("Kis number par call karun? Aise bolo — call karo, uske baad number.");
             return;
           }
-          if (/(gaana|gana|song|music|chalao|bajao|play)/.test(t) && /(chalao|bajao|play|suno|sunao|lagao)/.test(t)) {
-            var q = raw.replace(/(riya|zoya|please|koi|ek|ka|ki|gaana|gana|song|music|chalao|bajao|play|lagao|suna[oo]?)/gi, " ").replace(/\s+/g, " ").trim();
+          if (/play store/.test(t)) { react("happy", "point", "happy", "nod"); reply("Play Store khol diya!"); openUrl("https://play.google.com/store"); return; }
+          /* Video/reel ki baat ko gaana wala branch na kha jaye — aur Spotify bola
+             ho to gaana Spotify par hi search hoga, YouTube par nahi. */
+          if (!/(video|reel)/.test(t) && /(gaana|gana|song|music|chalao|bajao|play)/.test(t) && /(chalao|bajao|play|suno|sunao|lagao)/.test(t)) {
+            var q = raw.replace(/(riya|zoya|please|koi|ek|ka|ki|gaana|gana|song|music|chalao|bajao|play|lagao|spotify|suna[oo]?)/gi, " ").replace(/\s+/g, " ").trim();
             if (!q) q = "trending hindi songs";
             react("laugh", "cheer", "laugh", "cheer");
-            reply("Abhi chalaya! YouTube par '" + q + "' khul raha hai — suno aur enjoy karo.");
-            playSong(q);
+            if (/spotify/.test(t)) {
+              reply("Abhi chalaya! Spotify par '" + q + "' search karke khol diya hai.");
+              openUrl("https://open.spotify.com/search/" + encodeURIComponent(q));
+            } else {
+              reply("Abhi chalaya! YouTube par '" + q + "' khul raha hai — suno aur enjoy karo.");
+              playSong(q);
+            }
             return;
           }
           /* Hisaab — pehle check, taaki har sawal ka jawab mile */
@@ -923,7 +977,7 @@
           if (/(joke|hasao|mazak)/.test(t)) { reply(jokes[jokeIdx++ % jokes.length]); return; }
           if (/(tum kya.*kar sakti|kya kya kar sakti|kya kar sakti ho|tumhari.*madad|help.*kya|features)/.test(t)) { reply("Main sab kuch kar sakti hoon Ajeet — har sawal ka jawab: rajdhani, hisaab, samanya gyaan, shabd ka matlab. Aur har bola hua kaam: apps kholna, gaana-video chalana, Google search, Maps, call, note banana, time-date, joke-shayari-motivation. Bas bolo!"); return; }
           if (/(time bata|samay bata|time kya|kitne baj|time|samay)/.test(t) && /(bata|kya|hai|baj)/.test(t)) { reply("Abhi time hai " + timeStr() + "."); return; }
-          if (/(date|tarikh|aaj.*din|aaj kya|din kya)/.test(t)) { reply("Aaj hai " + dateStr() + "."); return; }
+          if (/(\bdate\b|tarikh|aaj.*din|aaj kya|din kya)/.test(t)) { reply("Aaj hai " + dateStr() + "."); return; } /* \bdate\b — warna "update karo" me bhi date bol deti thi */
           if (/(kaun ho|tum kaun|your name|naam kya hai tumhara)/.test(t)) { reply("Main Riya hoon, tumhari apni voice assistant — aur ye saath me Zoya hai. Hum dono tumhare har sawal ka jawab bhi dete hain aur har bola hua kaam bhi karte hain!"); return; }
           /* Shabd ka matlab — dictionary */
           var dictMatch = t.match(/(?:matlab|meaning|arth).*?(hello|thank|love|friend|water|food|home|time|money|happy|morning|night|book|school|work)/) || t.match(/(hello|thank|love|friend|water|food|home|money|happy|morning|night|book|school|work)\s*(?:ka matlab|meaning|ka arth)/);
@@ -934,11 +988,11 @@
             if (/matlab kya|meaning of/.test(t)) { reply(know + " Pura jawab khol bhi rahi hoon."); googleSearch(raw); return; }
             reply(know); return;
           }
-          if (/(hello|hi|hey|namaste|kaise ho|kaisi ho)/.test(t)) { reply("Hello Ajeet! Main bilkul badhiya hoon — tum sunao, aaj kya karna hai? Sawal pucho, gaana chalwao, ya koi app khulwao!"); return; }
+          if (/(\bhello\b|\bhi\b|\bhey\b|namaste|kaise ho|kaisi ho)/.test(t)) { reply("Hello Ajeet! Main bilkul badhiya hoon — tum sunao, aaj kya karna hai? Sawal pucho, gaana chalwao, ya koi app khulwao!"); return; } /* \bhi\b — warna "bhi/nahi/kabhi" wale har sawal par greeting aa jati thi */
           if (/(thank|shukriya|dhanyavad)/.test(t)) { react("love", "care", "love", "care"); reply("Anytime Ajeet! Tum bas bolte raho, main aur Zoya yahin hain tumhare liye."); return; }
-          if (/(bye|alvida|good night|so jao)/.test(t)) { react("care", "wave", "care", "wave"); reply("Bye Ajeet! Dhyaan rakhna apna — jab zaroorat ho, bas orb tap karke bula lena."); return; }
+          if (/(\bbye\b|alvida|good night|so jao)/.test(t)) { react("care", "wave", "care", "wave"); reply("Bye Ajeet! Dhyaan rakhna apna — jab zaroorat ho, bas orb tap karke bula lena."); return; }
           if (/(khush|bahut badhiya|maza aa|maja aa|love you|pyaar)/.test(t)) { react("love", "cheer", "love", "cheer"); reply("Ye sunkar dil khush ho gaya! Main aur Zoya hamesha tumhare saath hain Ajeet."); return; }
-          if (/(ok|okay|theek hai|thik hai|samajh gaya|acha|achha)/.test(t)) { reply("Perfect! Kuch aur bolo — sawal ho ya kaam, main turant jawab dungi aur kar bhi dungi."); return; }
+          if (/(\bok\b|okay|theek hai|thik hai|samajh gaya|\bacha\b|\bachha\b)/.test(t)) { reply("Perfect! Kuch aur bolo — sawal ho ya kaam, main turant jawab dungi aur kar bhi dungi."); return; } /* \bok\b — warna "book/look" par bhi Perfect bol deti thi */
           /* Har sawal ka jawab — jo na mile, wo Google par kholkar dungi, koi sawal khali nahi jayega */
           var isQuestion = /(\?|kya|kaun|kahan|kaha |kab |kyun|kyu |kaise|kitna|kitne|kitni|batao|bata |samjhao|samjha|bolo|what|who|where|when|why|how|which|tell me|explain)/.test(t);
           if (isQuestion) {
@@ -960,10 +1014,18 @@
 
         /* ---------- Speech recognition ---------- */
         var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-        function maybeListenAgain() { if (handsFree && !speaking) setTimeout(startListening, 350); }
+        function maybeListenAgain() {
+          /* Guards zaroori hain: pehle ye bina check startListening bula leta tha,
+             aur startListening pehle se sun rahe mic ko BAND kar deta tha —
+             Hands-Free isiliye chalu hote hi ruk jata tha. */
+          if (!handsFree || speaking || listening || recogBlocked || document.hidden) return;
+          setTimeout(function () {
+            if (handsFree && !speaking && !listening && !recogBlocked && !document.hidden) startListening();
+          }, 350);
+        }
         function startListening() {
           if (!SR) { reply("Is browser me voice sunne ki suvidha nahi hai — Chrome me kholo, ya neeche likh kar bhejo, main waisa hi jawab dungi."); return; }
-          if (listening) { stopListening(); return; }
+          if (listening) return; /* pehle se sun raha hai to waisa hi rehne do — band mat karo */
           try {
             recog = new SR();
             /* Auto mode: hi-IN recognizer Hindi, Hinglish aur Indian-English mix
@@ -983,19 +1045,26 @@
             };
             recog.onerror = function (ev) {
               listening = false; micBtn.classList.remove("rec");
-              if (ev.error === "not-allowed") { setState("idle", "Mic permission nahi mili"); liveText.textContent = "Mic ki permission nahi mili — browser ke lock icon se mic Allow karke phir try karo."; }
-              else setState("idle", "Ready — orb tap karo aur bolo");
+              if (ev.error === "not-allowed" || ev.error === "service-not-allowed") {
+                /* Permission hi nahi hai to Hands-Free ka restart-loop band karo,
+                   warna mic error baar-baar flicker karta rahega. */
+                recogBlocked = true; pendingListen = false;
+                if (handsFree) { handsFree = false; hfToggle.setAttribute("aria-pressed", "false"); }
+                setState("idle", "Mic permission nahi mili");
+                liveText.textContent = "Mic ki permission nahi mili — browser ke lock icon se mic Allow karke phir try karo.";
+              }
+              else if (ev.error !== "aborted") setState("idle", "Ready — orb tap karo aur bolo");
             };
             recog.onend = function () {
               listening = false; micBtn.classList.remove("rec");
               if (!speaking) setState("idle", "Ready — orb tap karo aur bolo");
               maybeListenAgain();
             };
-            if (speaking && "speechSynthesis" in window) speechSynthesis.cancel();
+            if (speaking && "speechSynthesis" in window) { speakToken++; speaking = false; speechSynthesis.cancel(); }
             recog.start();
           } catch (e) { setState("idle", "Ready"); }
         }
-        function stopListening() { try { if (recog) recog.stop(); } catch (e) {} }
+        function stopListening() { pendingListen = false; try { if (recog) recog.stop(); } catch (e) {} }
 
         /* ---------- Wiring ---------- */
         $("orbBtn").addEventListener("click", function () {
@@ -1003,8 +1072,10 @@
             greeted = true;
             addMsg("ai", "Hello Ajeet! Main Riya — aur saath me Zoya bhi hai. Kuch bhi bolo, hum sun rahe hain.");
             react("happy", "wave", "happy", "wave", 3000);
+            /* Fixed 2600ms timer greeting ko beech me kaat deta tha (Hindi awaaz
+               usse zyada lambi hoti hai) — ab mic greeting PURA hone par khulega. */
+            pendingListen = true;
             speak("Hello Ajeet! Main Riya, aur saath me Zoya bhi hai. Kuch bhi bolo, hum sun rahe hain.");
-            setTimeout(startListening, 2600);
             return;
           }
           if (listening) stopListening(); else startListening();
@@ -1025,13 +1096,13 @@
         hfToggle.addEventListener("click", function () {
           handsFree = !handsFree;
           hfToggle.setAttribute("aria-pressed", handsFree ? "true" : "false");
-          if (handsFree) { reply("Hands-Free mode ON! Ab mic baar-baar dabana nahi padega — bas bolte raho, baat-cheet chalti rahegi."); setTimeout(startListening, 1800); }
+          if (handsFree) { recogBlocked = false; reply("Hands-Free mode ON! Ab mic baar-baar dabana nahi padega — bas bolte raho, baat-cheet chalti rahegi."); /* mic reply ki awaaz khatm hote hi khud khulega (finishSpeak → maybeListenAgain) — alag timer se double-start hota tha */ }
           else { stopListening(); reply("Hands-Free mode OFF kar diya."); }
         });
         voiceToggle.addEventListener("click", function () {
           voiceOn = !voiceOn;
           voiceToggle.setAttribute("aria-pressed", voiceOn ? "true" : "false");
-          if (!voiceOn && "speechSynthesis" in window) { speechSynthesis.cancel(); speaking = false; setState("idle", "Ready"); }
+          if (!voiceOn && "speechSynthesis" in window) { speakToken++; pendingListen = false; speechSynthesis.cancel(); speaking = false; setState("idle", "Ready"); }
         });
 
         /* ---------- Voice panel wiring ---------- */
@@ -1063,6 +1134,8 @@
             if (listening) stopListening();
           } else {
             document.body.classList.remove("paused");
+            /* Background me band hua mic wapas aane par Hands-Free me khud chalu ho */
+            if (handsFree && !listening && !speaking && !recogBlocked) startListening();
           }
         });
 
