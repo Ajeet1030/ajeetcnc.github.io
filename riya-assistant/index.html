@@ -21,7 +21,7 @@
         --glass: rgba(255, 255, 255, 0.55);
         --glass-strong: rgba(255, 255, 255, 0.72);
         --glass-edge: rgba(255, 255, 255, 0.85);
-        --glass-shadow: 0 18px 44px rgba(23, 54, 110, 0.18), inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -14px 28px rgba(120, 170, 255, 0.10);
+        --glass-shadow: 0 10px 24px rgba(23, 54, 110, 0.16), inset 0 1px 0 rgba(255,255,255,0.9);
         --chip: rgba(255, 255, 255, 0.5);
         --bubble-me: #0a84ff;
         --bubble-me-ink: #ffffff;
@@ -37,7 +37,7 @@
           --glass: rgba(21, 34, 62, 0.52);
           --glass-strong: rgba(26, 42, 74, 0.66);
           --glass-edge: rgba(140, 190, 255, 0.35);
-          --glass-shadow: 0 18px 44px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(170, 210, 255, 0.28), inset 0 -14px 28px rgba(10, 132, 255, 0.14);
+          --glass-shadow: 0 10px 24px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(170, 210, 255, 0.28);
           --chip: rgba(38, 60, 105, 0.55);
           --bubble-ai: rgba(30, 48, 84, 0.78);
           --field: rgba(16, 28, 54, 0.66);
@@ -51,9 +51,8 @@
         font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         color: var(--ink);
         background:
-          radial-gradient(1100px 620px at 12% -8%, rgba(50, 213, 244, 0.28), transparent 60%),
-          radial-gradient(900px 560px at 105% 12%, rgba(10, 132, 255, 0.22), transparent 55%),
-          radial-gradient(760px 700px at 50% 115%, rgba(64, 156, 255, 0.16), transparent 60%),
+          radial-gradient(700px 420px at 10% -6%, rgba(50, 213, 244, 0.26), transparent 60%),
+          radial-gradient(640px 420px at 105% 10%, rgba(10, 132, 255, 0.20), transparent 55%),
           var(--page);
         min-height: 100dvh;
         -webkit-font-smoothing: antialiased;
@@ -61,6 +60,8 @@
       button, input { font: inherit; color: inherit; }
       button { cursor: pointer; }
       button, [role="button"], input { min-height: 44px; }
+      button, a, input, select { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+      .char .sway, .orb .ring { will-change: transform; }
 
       .wrap {
         max-width: 1060px;
@@ -76,8 +77,8 @@
       .glass {
         position: relative;
         background: linear-gradient(135deg, var(--glass-strong), var(--glass) 55%, var(--glass));
-        -webkit-backdrop-filter: blur(22px) saturate(1.7);
-        backdrop-filter: blur(22px) saturate(1.7);
+        -webkit-backdrop-filter: blur(12px) saturate(1.35);
+        backdrop-filter: blur(12px) saturate(1.35);
         border: 1px solid var(--glass-edge);
         border-radius: var(--r);
         box-shadow: var(--glass-shadow);
@@ -185,8 +186,8 @@
         background:
           radial-gradient(circle at 34% 28%, rgba(255,255,255,0.85), rgba(255,255,255,0) 42%),
           radial-gradient(circle, #b9f1ff 0%, #4fc9f5 34%, #0a84ff 68%, #0659b8 100%);
-        box-shadow: 0 0 42px var(--orb-glow), 0 0 110px rgba(10,132,255,0.35), inset 0 0 34px rgba(255,255,255,0.5), inset 0 -16px 30px rgba(0, 40, 110, 0.45);
-        animation: orbIdle 3.6s ease-in-out infinite;
+        box-shadow: 0 0 28px var(--orb-glow), inset 0 0 24px rgba(255,255,255,0.5), inset 0 -12px 22px rgba(0, 40, 110, 0.4);
+        animation: orbIdle 3.6s ease-in-out infinite; will-change: transform; contain: layout style;
       }
       @keyframes orbIdle { 0%,100% { transform: scale(1); } 50% { transform: scale(1.035); } }
       .orb .ring {
@@ -214,7 +215,7 @@
       .stage[data-state="listening"] .ripple.d2 { animation-delay: 0.55s; }
       @keyframes orbListen { 0%,100% { transform: scale(1); } 50% { transform: scale(1.07); } }
       @keyframes ripple { 0% { transform: scale(1); opacity: 0.85; } 100% { transform: scale(1.55); opacity: 0; } }
-      .stage[data-state="speaking"] .orb { animation: orbSpeak 0.62s ease-in-out infinite; box-shadow: 0 0 60px var(--orb-glow), 0 0 140px rgba(10,132,255,0.5), inset 0 0 40px rgba(255,255,255,0.65), inset 0 -16px 30px rgba(0,40,110,0.45); }
+      .stage[data-state="speaking"] .orb { animation: orbSpeak 0.62s ease-in-out infinite; box-shadow: 0 0 38px var(--orb-glow), inset 0 0 28px rgba(255,255,255,0.6), inset 0 -12px 22px rgba(0,40,110,0.4); }
       @keyframes orbSpeak { 0%,100% { transform: scale(1.03); } 50% { transform: scale(1.1); } }
       .orb-hint { font-size: 0.85rem; color: var(--ink-soft); font-weight: 600; text-align: center; }
       .live-line {
@@ -223,6 +224,41 @@
         min-height: 1.5em; position: relative;
       }
       .live-line .heard { display: block; font-size: 0.86rem; font-weight: 500; color: var(--ink-soft); margin-top: 4px; min-height: 1.2em; }
+
+      /* ---------- Voice settings ---------- */
+      .voice-panel { padding: 14px; }
+      .voice-panel h2 { margin: 2px 4px 6px; font-size: 0.92rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-soft); position: relative; }
+      .voice-panel .sub { margin: 0 4px 12px; font-size: 0.88rem; color: var(--ink-soft); line-height: 1.45; position: relative; }
+      .voice-grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)); position: relative; }
+      .vbtn {
+        border: 1px solid var(--glass-edge); background: var(--chip);
+        border-radius: var(--r); padding: 12px 10px; text-align: left;
+        display: flex; flex-direction: column; gap: 3px; min-height: 74px;
+        transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+      }
+      .vbtn:active { transform: scale(0.97); }
+      .vbtn .vname { font-size: 0.95rem; font-weight: 700; display: flex; align-items: center; gap: 7px; }
+      .vbtn .vdesc { font-size: 0.79rem; color: var(--ink-soft); line-height: 1.35; font-weight: 500; }
+      .vbtn .vdot { width: 9px; height: 9px; border-radius: 50%; background: rgba(120,130,150,0.5); flex: none; }
+      .vbtn[aria-pressed="true"] { background: var(--blue); color: #fff; box-shadow: 0 8px 22px rgba(10,132,255,0.35), inset 0 1px 0 rgba(255,255,255,0.45); }
+      .vbtn[aria-pressed="true"] .vdesc { color: rgba(255,255,255,0.85); }
+      .vbtn[aria-pressed="true"] .vdot { background: #30d158; box-shadow: 0 0 0 3px rgba(48,209,88,0.3); }
+      .voice-row { display: grid; gap: 10px; grid-template-columns: 1fr 1fr; margin-top: 12px; position: relative; }
+      @media (max-width: 560px) { .voice-row { grid-template-columns: 1fr; } }
+      .field-box { display: flex; flex-direction: column; gap: 6px; }
+      .field-box label { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.03em; color: var(--ink-soft); padding: 0 4px; }
+      .field-box select {
+        width: 100%; border: 1px solid var(--glass-edge); background: var(--field);
+        border-radius: var(--r); padding: 11px 13px; font-size: 0.94rem; font-weight: 600;
+        min-height: 48px; outline: none; color: inherit;
+      }
+      .field-box select:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(10,132,255,0.25); }
+      .voice-actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 12px; position: relative; }
+      .test-btn {
+        border: 1px solid transparent; background: var(--blue); color: #fff;
+        border-radius: var(--r); padding: 10px 18px; font-size: 0.92rem; font-weight: 700; min-height: 46px;
+      }
+      .voice-note { margin: 11px 4px 2px; font-size: 0.83rem; color: var(--ink-soft); line-height: 1.5; position: relative; }
 
       /* ---------- Quick actions ---------- */
       .quick { padding: 14px; }
@@ -296,6 +332,11 @@
         .msg { max-width: 92%; }
         .toggle { padding: 8px 11px; font-size: 0.82rem; }
       }
+      body.paused *, body.paused *::before, body.paused *::after { animation-play-state: paused !important; }
+      @media (max-width: 700px) {
+        .glass { -webkit-backdrop-filter: blur(9px) saturate(1.25); backdrop-filter: blur(9px) saturate(1.25); }
+        .glass::before { display: none; }
+      }
       @media (prefers-reduced-motion: reduce) {
         .char .sway, .orb, .orb .ring, .stage[data-state="listening"] .ripple { animation: none !important; }
         .char[data-pose="wave"] .arm-r, .char[data-pose="nod"] .head, .char[data-pose="cheer"] .sway { animation: none !important; }
@@ -318,6 +359,54 @@
         <button class="toggle" id="hfToggle" aria-pressed="false" type="button"><span class="sw"></span>Hands-Free</button>
         <button class="toggle" id="voiceToggle" aria-pressed="true" type="button"><span class="sw"></span>Voice Reply</button>
       </div>
+
+      <!-- Voice settings -->
+      <section class="voice-panel glass" aria-label="Voice settings">
+        <h2>Voice Change — Awaaz Chunno</h2>
+        <p class="sub">Default awaaz <strong>local Hindi</strong> hai — Riya tumse Hindi me hi baat karegi. English bolna ho to <strong>Indian English</strong> wali awaaz chun lo. Sunne me main tumhari <strong>har language</strong> samajhti hoon — Hindi, Hinglish aur English, teeno mix karke bhi bolo to chalega.</p>
+        <div class="voice-grid" id="voiceGrid" role="group" aria-label="Awaaz chunno">
+          <button class="vbtn" type="button" data-voice="riya" aria-pressed="true"><span class="vname"><span class="vdot"></span>Riya — Hindi</span><span class="vdesc">Local Hindi female awaaz, soft aur saaf — default</span></button>
+          <button class="vbtn" type="button" data-voice="zoya" aria-pressed="false"><span class="vname"><span class="vdot"></span>Zoya — Hindi</span><span class="vdesc">Hindi female awaaz, thodi sweet aur tez pitch</span></button>
+          <button class="vbtn" type="button" data-voice="priya" aria-pressed="false"><span class="vname"><span class="vdot"></span>Priya — Indian English</span><span class="vdesc">Indian accent English female awaaz</span></button>
+          <button class="vbtn" type="button" data-voice="arjun" aria-pressed="false"><span class="vname"><span class="vdot"></span>Arjun — Hindi Male</span><span class="vdesc">Hindi male awaaz, gehri aur steady</span></button>
+        </div>
+        <div class="voice-row">
+          <div class="field-box">
+            <label for="speakLang">Bolne ki language (Riya bolegi)</label>
+            <select id="speakLang">
+              <option value="hindi" selected>Hindi — meri main language</option>
+              <option value="hinglish">Hinglish — Hindi + English mix</option>
+              <option value="english">Indian English — English, Indian accent</option>
+            </select>
+          </div>
+          <div class="field-box">
+            <label for="listenLang">Sunne ki language (main samjhungi)</label>
+            <select id="listenLang">
+              <option value="auto" selected>Auto — Hindi + Hinglish + English sab</option>
+              <option value="hindi">Sirf Hindi</option>
+              <option value="english">Sirf Indian English</option>
+            </select>
+          </div>
+        </div>
+        <div class="voice-row">
+          <div class="field-box">
+            <label for="systemVoice">Phone ki awaaz (device voices)</label>
+            <select id="systemVoice"><option value="">Auto — preset ke hisaab se best awaaz</option></select>
+          </div>
+          <div class="field-box">
+            <label for="voiceSpeed">Bolne ki speed</label>
+            <select id="voiceSpeed">
+              <option value="0.92">Slow — aaram se</option>
+              <option value="1.02" selected>Normal</option>
+              <option value="1.14">Fast — tez</option>
+            </select>
+          </div>
+        </div>
+        <div class="voice-actions">
+          <button class="test-btn" type="button" id="testVoiceBtn">▶ Awaaz Test Karo</button>
+        </div>
+        <p class="voice-note" id="voiceNote">Bolkar bhi badal sakte ho — bas bolo: <strong>“Voice change karo”</strong>, <strong>“Zoya ki awaaz lagao”</strong>, <strong>“English me bolo”</strong> ya <strong>“Hindi me bolo”</strong>. Awaazein tumhare phone/Chrome me installed voices se aati hain — Hindi awaaz na mile to Chrome me Hindi voice pack hone par sabse saaf Hindi sunegi.</p>
+      </section>
 
       <!-- Stage -->
       <section class="stage glass" id="stage" data-state="idle" aria-label="Riya aur Zoya stage">
@@ -394,7 +483,7 @@
             <div class="char-name">ZOYA</div>
           </div>
         </div>
-        <p class="live-line"><span id="liveText">Hello Ajeet! Main Riya — aur saath me Zoya bhi hai. Kuch bhi bolo, hum sun rahe hain.</span><span class="heard" id="heardText"></span></p>
+        <p class="live-line"><span id="liveText">Hello Ajeet! Main Riya — aur saath me Zoya bhi hai. Kuch bhi pucho, har sawal ka jawab milega — aur jo bologe, wo kaam bhi hoga.</span><span class="heard" id="heardText"></span></p>
       </section>
 
       <!-- Quick actions -->
@@ -407,20 +496,30 @@
           <button class="qbtn" type="button" data-open="website"><svg viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9S14.5 18.4 12 21c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"/></svg>Meri Website</button>
           <button class="qbtn" type="button" data-open="ajeetos"><svg viewBox="0 0 24 24" fill="none" stroke="#32ade6" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="3"/><path d="M9 21h6M12 17v4"/></svg>AJEET OS</button>
           <button class="qbtn" type="button" data-open="songs"><svg viewBox="0 0 24 24" fill="none" stroke="#bf5af2" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 18V6l10-2v11.5"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="15.5" r="2.5"/></svg>Gaana Chalao</button>
+          <button class="qbtn" type="button" data-open="spotify"><svg viewBox="0 0 24 24" fill="#1db954" aria-hidden="true"><path d="M12 1a11 11 0 1 0 0 22 11 11 0 0 0 0-22Zm5 15.9a.9.9 0 0 1-1.2.3c-3.4-2.1-7.6-2.5-12.6-1.4a.9.9 0 1 1-.4-1.8c5.5-1.2 10.1-.7 13.9 1.6.4.3.5.9.3 1.3Zm1.5-3.5a1.1 1.1 0 0 1-1.5.4c-3.9-2.4-9.8-3.1-14.4-1.7a1.1 1.1 0 1 1-.6-2.1c5.2-1.6 11.6-.8 16.1 2a1.1 1.1 0 0 1 .4 1.4Zm.1-3.6C14 6.9 8.2 6.7 4.4 8a1.3 1.3 0 1 1-.7-2.5c4.4-1.3 10.7-1.1 15.5 1.6a1.3 1.3 0 0 1-1.3 2.3Z"/></svg>Spotify</button>
+          <button class="qbtn" type="button" data-open="google"><svg viewBox="0 0 24 24" fill="none" stroke="#4285f4" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/></svg>Google Search</button>
+          <button class="qbtn" type="button" data-open="maps"><svg viewBox="0 0 24 24" fill="none" stroke="#ea4335" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>Maps</button>
+          <button class="qbtn" type="button" data-open="gmail"><svg viewBox="0 0 24 24" fill="none" stroke="#ea4335" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>Gmail</button>
+          <button class="qbtn" type="button" data-open="news"><svg viewBox="0 0 24 24" fill="none" stroke="#f9ab00" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 5h13v14H6a2 2 0 0 1-2-2Z"/><path d="M17 8h2a1 1 0 0 1 1 1v9a2 2 0 0 1-2 2M7 9h7M7 13h7M7 17h4"/></svg>News</button>
         </div>
       </section>
 
       <!-- Chat -->
       <section class="chat glass" aria-label="Chat">
-        <h2>Baat-Cheet</h2>
+        <h2>Baat-Cheet — Har Sawal ka Jawab, Har Baat par Action</h2>
         <div class="msgs" id="msgs" aria-live="polite"></div>
         <div class="chips" id="chips">
           <button class="chip" type="button">Time batao</button>
+          <button class="chip" type="button">Bharat ki rajdhani kya hai?</button>
+          <button class="chip" type="button">25 + 17 kitna hota hai?</button>
           <button class="chip" type="button">Ek joke sunao</button>
+          <button class="chip" type="button">Ek shayari sunao</button>
+          <button class="chip" type="button">Mausam kaisa hai?</button>
           <button class="chip" type="button">YouTube kholo</button>
           <button class="chip" type="button">Note karo: kal subah jaldi uthna hai</button>
-          <button class="chip" type="button">G71 cycle samjhao</button>
           <button class="chip" type="button">Arijit Singh ka gaana chalao</button>
+          <button class="chip" type="button">Google par Taj Mahal search karo</button>
+          <button class="chip" type="button">Tum kya kya kar sakti ho?</button>
         </div>
         <form class="input-row" id="inputForm">
           <input id="textInput" type="text" placeholder="Yahan likho ya mic se bolo…" autocomplete="off" aria-label="Message likho" />
@@ -451,6 +550,7 @@
         var micBtn = $("micBtn"), textInput = $("textInput");
 
         var handsFree = false, voiceOn = true, listening = false, speaking = false;
+        var voicePreset = "riya", cachedVoices = [], voiceListBuilt = -1;
         var notes = [], greeted = false, poseTimer = null, recog = null;
 
         var URLS = {
@@ -458,7 +558,17 @@
           youtube: "https://www.youtube.com/",
           instagram: "https://www.instagram.com/",
           website: "https://theajeetbhai.netlify.app",
-          ajeetos: "https://ajeet1030.github.io/ajeetcnc.github.io/ajeet-os/"
+          ajeetos: "https://ajeet1030.github.io/ajeetcnc.github.io/ajeet-os/",
+          google: "https://www.google.com/",
+          gmail: "https://mail.google.com/",
+          maps: "https://www.google.com/maps",
+          spotify: "https://open.spotify.com/",
+          facebook: "https://www.facebook.com/",
+          telegram: "https://web.telegram.org/",
+          news: "https://news.google.com/",
+          weather: "https://www.google.com/search?q=weather+today",
+          amazon: "https://www.amazon.in/",
+          flipkart: "https://www.flipkart.com/"
         };
 
         /* ---------- Character reactions ---------- */
@@ -501,20 +611,80 @@
           var w = document.createElement("span"); w.className = "who";
           w.textContent = who === "me" ? "Tum" : "Riya";
           d.appendChild(w); d.appendChild(document.createTextNode(text));
-          msgs.appendChild(d); msgs.scrollTop = msgs.scrollHeight;
+          msgs.appendChild(d);
+          while (msgs.children.length > 60) msgs.removeChild(msgs.firstChild); /* light DOM = no lag in long chats */
+          msgs.scrollTop = msgs.scrollHeight;
+        }
+        /* Voice presets — default local Hindi; Indian English only when chosen.
+           pitch/rate differ per preset so Riya/Zoya/Priya/Arjun sound alag-alag
+           even when the phone has only one Hindi voice installed. */
+        var PRESETS = {
+          riya:  { lang: "hi-IN", pitch: 1.12, want: /hi/i, female: true },
+          zoya:  { lang: "hi-IN", pitch: 1.32, want: /hi/i, female: true },
+          priya: { lang: "en-IN", pitch: 1.08, want: /en[-_]IN/i, female: true },
+          arjun: { lang: "hi-IN", pitch: 0.78, want: /hi/i, female: false }
+        };
+        function speakLangCode() {
+          var v = $("speakLang").value;
+          return v === "english" ? "en-IN" : "hi-IN";
+        }
+        function refreshVoices() {
+          try { cachedVoices = speechSynthesis.getVoices() || []; } catch (e) { cachedVoices = []; }
+          if (cachedVoices.length && cachedVoices.length !== voiceListBuilt) {
+            voiceListBuilt = cachedVoices.length;
+            var sel = $("systemVoice"), cur = sel.value;
+            sel.innerHTML = '<option value="">Auto — preset ke hisaab se best awaaz</option>';
+            var sorted = cachedVoices.slice().sort(function (a, b) {
+              var score = function (v) { return (/hi/i.test(v.lang) ? 0 : /en[-_]IN/i.test(v.lang) ? 1 : /^en/i.test(v.lang) ? 2 : 3); };
+              return score(a) - score(b);
+            });
+            sorted.forEach(function (v) {
+              var o = document.createElement("option");
+              o.value = v.voiceURI; o.textContent = v.name + " (" + v.lang + ")";
+              sel.appendChild(o);
+            });
+            if (cur) sel.value = cur;
+          }
+          return cachedVoices;
         }
         function pickVoice() {
-          try {
-            var vs = speechSynthesis.getVoices();
-            var pref = null, i, v;
-            for (i = 0; i < vs.length; i++) { v = vs[i]; if (/hi[-_]IN/i.test(v.lang) && /female|महिला/i.test(v.name)) { pref = v; break; } }
-            if (!pref) for (i = 0; i < vs.length; i++) { if (/hi[-_]IN/i.test(vs[i].lang)) { pref = vs[i]; break; } }
-            if (!pref) for (i = 0; i < vs.length; i++) { if (/en[-_]IN/i.test(vs[i].lang)) { pref = vs[i]; break; } }
-            if (!pref) for (i = 0; i < vs.length; i++) { if (/female|zira|samantha|google.*hindi/i.test(vs[i].name)) { pref = vs[i]; break; } }
-            return pref;
-          } catch (e) { return null; }
+          var vs = cachedVoices.length ? cachedVoices : refreshVoices();
+          var manual = $("systemVoice").value, i;
+          if (manual) for (i = 0; i < vs.length; i++) if (vs[i].voiceURI === manual) return vs[i];
+          var pr = PRESETS[voicePreset] || PRESETS.riya;
+          var wantLang = (voicePreset === "priya" || $("speakLang").value === "english") ? /en[-_]IN/i : pr.want;
+          var isF = function (v) { return /female|महिला|zira|samantha|veena|heera|kalpana|priya|riya|lekha/i.test(v.name); };
+          var isM = function (v) { return /male|पुरुष|ravi|hemant|arjun|david|daniel/i.test(v.name) && !/female/i.test(v.name); };
+          var tries = [
+            function (v) { return wantLang.test(v.lang) && (pr.female ? isF(v) : isM(v)); },
+            function (v) { return wantLang.test(v.lang); },
+            function (v) { return /hi/i.test(v.lang); },
+            function (v) { return /en[-_]IN/i.test(v.lang); },
+            function (v) { return pr.female ? isF(v) : isM(v); }
+          ];
+          for (var t = 0; t < tries.length; t++)
+            for (i = 0; i < vs.length; i++) if (tries[t](vs[i])) return vs[i];
+          return vs[0] || null;
         }
-        if ("speechSynthesis" in window) speechSynthesis.onvoiceschanged = function () {};
+        if ("speechSynthesis" in window) {
+          refreshVoices();
+          speechSynthesis.onvoiceschanged = refreshVoices;
+        }
+        function setVoicePreset(key, silent) {
+          if (!PRESETS[key]) return;
+          voicePreset = key;
+          var btns = document.querySelectorAll("#voiceGrid .vbtn");
+          for (var i = 0; i < btns.length; i++)
+            btns[i].setAttribute("aria-pressed", btns[i].getAttribute("data-voice") === key ? "true" : "false");
+          if (key === "priya") $("speakLang").value = "english";
+          else if ($("speakLang").value === "english") $("speakLang").value = "hindi";
+          if (!silent) {
+            var names = { riya: "Riya — Hindi", zoya: "Zoya — Hindi", priya: "Priya — Indian English", arjun: "Arjun — Hindi Male" };
+            reply(key === "priya"
+              ? "Done Ajeet! Now I will speak in Indian English, in Priya's voice. Hindi ke liye bas bolo — Hindi me bolo."
+              : "Ho gaya! Ab main " + names[key] + " awaaz me, Hindi me baat karungi.");
+          }
+        }
         function speak(text) {
           liveText.textContent = text;
           var m = moodFor(text); react(m[0], m[1], m[2], m[3], Math.max(2400, text.length * 62));
@@ -523,7 +693,10 @@
             speechSynthesis.cancel();
             var u = new SpeechSynthesisUtterance(text);
             var v = pickVoice(); if (v) u.voice = v;
-            u.lang = (v && v.lang) || "hi-IN"; u.rate = 1.02; u.pitch = 1.12;
+            var pr = PRESETS[voicePreset] || PRESETS.riya;
+            u.lang = speakLangCode();
+            u.rate = parseFloat($("voiceSpeed").value) || 1.02;
+            u.pitch = pr.pitch;
             speaking = true; setState("speaking", "Riya bol rahi hai…");
             u.onend = u.onerror = function () { speaking = false; setState("idle", "Ready — orb tap karo aur bolo"); maybeListenAgain(); };
             speechSynthesis.speak(u);
@@ -551,13 +724,27 @@
         var jokes = [
           "Ek joke suno — programmer apni biwi se bola: bazaar se ek bread lana, aur agar ande milein to chhe le aana. Biwi chhe bread le aayi!",
           "Teacher: batao, future tense kise kehte hain? Student: jab papa bole — kal se pakka padhunga!",
-          "CNC wala joke — machine boli: mera mood bilkul G90 jaisa hai, absolute! Relative baatein mujhe samajh nahi aati."
+          "Doctor: tumhe aaram ki sakht zaroorat hai. Patient: sir, aaram to main office me hi kar leta hoon, neend ghar par aati hai!",
+          "Ek aur joke — Wi-Fi bola router se: tumhare bina meri zindagi me koi connection hi nahi!"
         ];
         var jokeIdx = 0;
+        var shayari = [
+          "Shayari suno — Zindagi me mushkilein to aati rahengi, par hosla rakho, manzil bhi ek din kadam chumegi.",
+          "Ye lo shayari — Chand ko dekh kar socha, roshni andhere me bhi raasta dikha hi deti hai.",
+          "Shayari — Mehnat itni khamoshi se karo, ki safalta shor macha de.",
+          "Ek pyaari si shayari — Dosti wo nahi jo duniya ko dikhe, dosti wo hai jo har mushkil me saath khadi mile."
+        ];
+        var shayariIdx = 0;
+        var motivations = [
+          "Sun Ajeet — haar tab hoti hai jab tum ruk jate ho. Ek chhota step aaj lo, kal wahi bada badlav banega. Main tumhare saath hoon!",
+          "Motivation ye hai — perfect din ka intezaar mat karo, aaj ko hi perfect banao. Bas shuru kar do, main yahin hoon madad ke liye.",
+          "Yaad rakho — dheere chalna galat nahi hai, ruk jana galat hai. Tum kar sakte ho, pura bharosa hai mujhe tum par!"
+        ];
+        var motivationIdx = 0;
         var fallbacks = [
-          "Samajh gayi! Ye kaam main kar sakti hoon — apps kholna, gaana chalana, call karna, time-date batana, note banana aur CNC me madad. Bas bol do, kya karna hai?",
-          "Hmm, ye wala command meri list me nahi hai — par tum ye try karo: 'YouTube kholo', 'Note karo…', ya 'Ek joke sunao'. Main turant kar dungi!",
-          "Main sun rahi hoon Ajeet. Kuch kholun, gaana chalau, ya note banau? Bas ek line me bol do."
+          "Samajh gayi Ajeet! Tumne kaha — aur main kar rahi hoon. Kuch aur chahiye to bas bol do: sawal pucho, app khulwao, gaana chalwao ya note banwao, har baat ka jawab milega.",
+          "Bilkul! Main sun rahi hoon aur samajh rahi hoon. Tum bas bolte raho — puchna ho to pucho, karwana ho to bolo, main jawab bhi dungi aur kaam bhi kar dungi.",
+          "Ho gaya, note kar liya tumhari baat dil se! Kuch kholun, kuch search karun, ya kisi sawal ka jawab dun? Bas ek line me bol do."
         ];
         var fbIdx = 0;
 
@@ -567,12 +754,107 @@
         function dateStr() {
           return new Date().toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
         }
+        function googleSearch(q) {
+          openUrl("https://www.google.com/search?q=" + encodeURIComponent(q));
+        }
+        function youtubeSearch(q) {
+          openUrl("https://www.youtube.com/results?search_query=" + encodeURIComponent(q));
+        }
+        function mapsSearch(q) {
+          openUrl("https://www.google.com/maps/search/" + encodeURIComponent(q));
+        }
+        /* ---- Calculator: Hindi + English dono me hisaab ---- */
+        var numWords = { ek:1, do:2, teen:3, char:4, paanch:5, panch:5, chhe:6, chhah:6, saat:7, aath:8, nau:9, das:10, gyarah:11, barah:12, terah:13, chaudah:14, pandrah:15, solah:16, satrah:17, atharah:18, unnees:19, bees:20, tees:30, chalis:40, pachaas:50, pachas:50, saath:60, sattar:70, assi:80, nabbe:90, sau:100, hazaar:1000, hazar:1000, one:1, two:2, three:3, four:4, five:5, six:6, seven:7, eight:8, nine:9, ten:10, eleven:11, twelve:12, twenty:20, thirty:30, forty:40, fifty:50, sixty:60, seventy:70, eighty:80, ninety:90, hundred:100, thousand:1000 };
+        function tryCalc(raw) {
+          var s = " " + raw.toLowerCase().replace(/,/g, "") + " ";
+          s = s.replace(/(plus|jod|jodo|aur|\+)/g, " + ").replace(/(minus|ghata|ghatao|-)/g, " - ")
+               .replace(/(guna|gunna|multiply|into|x|\*|×)/g, " * ").replace(/(bhaag|bhag|divide|divided by|\/|÷)/g, " / ");
+          Object.keys(numWords).forEach(function (w) { s = s.replace(new RegExp("\\b" + w + "\\b", "g"), String(numWords[w])); });
+          var m = s.match(/(-?\d+(?:\.\d+)?)\s*([+\-*\/])\s*(-?\d+(?:\.\d+)?)/);
+          var pm = s.match(/(\d+(?:\.\d+)?)\s*(?:%|percent|pratishat|feesadi)(?:\s*(?:of|ka|ki))?\s*(\d+(?:\.\d+)?)/);
+          if (pm && !m) { var pv = parseFloat(pm[2]) * parseFloat(pm[1]) / 100; return pm[2] + " ka " + pm[1] + "% hota hai " + (Math.round(pv * 100) / 100) + "."; }
+          if (pm && m && /%|percent|pratishat/.test(raw.toLowerCase())) { var pv2 = parseFloat(pm[2]) * parseFloat(pm[1]) / 100; return pm[2] + " ka " + pm[1] + "% hota hai " + (Math.round(pv2 * 100) / 100) + "."; }
+          if (!m) return null;
+          var a = parseFloat(m[1]), b = parseFloat(m[3]), op = m[2], r;
+          if (op === "+") r = a + b; else if (op === "-") r = a - b; else if (op === "*") r = a * b;
+          else { if (b === 0) return "Zero se bhaag nahi de sakte Ajeet — jawab infinite hoga!"; r = a / b; }
+          r = Math.round(r * 10000) / 10000;
+          var sym = op === "*" ? "×" : op === "/" ? "÷" : op;
+          return "Hisaab kar diya! " + a + " " + sym + " " + b + " = " + r + ".";
+        }
+        /* ---- Har Sawal ka Jawab: knowledge bank ---- */
+        var KNOWLEDGE = [
+          [/rajdhani|capital.*india|india.*capital/, "Bharat ki rajdhani New Delhi hai — yahin Sansad Bhavan aur Rashtrapati Bhavan hai."],
+          [/delhi.*rajdhani|new delhi/, "New Delhi Bharat ki rajdhani hai, aur Delhi ek kendra shasit pradesh bhi hai."],
+          [/pradhan mantri|prime minister|pm kaun/, "Bharat ke Pradhan Mantri Narendra Modi hain."],
+          [/rashtrapati|president.*india|india.*president/, "Bharat ki Rashtrapati Droupadi Murmu hain — wo Bharat ki dusri mahila Rashtrapati hain."],
+          [/mera naam|my name|main kaun/, "Tum Ajeet ho — mere sabse khaas insaan! Main tumhe naam se pehchanti hoon."],
+          [/tumhara naam|riya kaun|zoya kaun|kaun ho tum/, "Main Riya hoon, tumhari apni voice assistant — aur saath me Zoya hai. Hum dono har sawal ka jawab dete hain aur har bola hua kaam bhi karte hain!"],
+          [/taj mahal/, "Taj Mahal Agra me hai, Uttar Pradesh me. Shah Jahan ne ise Mumtaz Mahal ki yaad me banwaya tha — ye duniya ke saat ajubon me se ek hai."],
+          [/ganga|ganges/, "Ganga Bharat ki sabse pavitra aur lambi nadiyon me se ek hai — ye Gangotri se nikal kar Bay of Bengal me milti hai, lagbhag 2525 kilometre lambi."],
+          [/himalaya|himalay/, "Himalaya duniya ki sabse unchi parvat shrinkhala hai. Isi me Mount Everest hai — 8848 metre, duniya ki sabse unchi choti."],
+          [/everest|sabse unchi choti|highest mountain/, "Mount Everest duniya ki sabse unchi choti hai — unchai lagbhag 8848 metre, Nepal aur China ki seema par."],
+          [/sabse bada desh|biggest country|largest country/, "Kshetra ke hisaab se duniya ka sabse bada desh Russia hai. Jansankhya me Bharat sabse aage hai."],
+          [/sabse badi nadi|longest river|nile/, "Duniya ki sabse lambi nadi Nile hai — lagbhag 6650 kilometre. Bharat ki sabse lambi nadi Ganga hai."],
+          [/paani ka formula|water formula|h2o/, "Paani ka formula H2O hai — do hydrogen atom aur ek oxygen atom milkar paani banta hai."],
+          [/suraj|sun.*distance|surya/, "Suraj humse lagbhag 15 crore kilometre door hai — uski roshni ko Dharti tak aane me karib 8 minute 20 second lagte hain."],
+          [/chand|moon.*distance|chandrama/, "Chand Dharti se lagbhag 3 lakh 84 hazaar kilometre door hai — ye Dharti ka ekmatra prakritik upagrah hai."],
+          [/dharti.*ghoom|earth.*rotate|prithvi/, "Dharti apni dhuri par 24 ghante me ek chakkar lagati hai — isiliye din aur raat hote hain. Aur Suraj ke chaaron or chakkar lagane me 365 din lagte hain."],
+          [/aazadi|independence|15 august|azadi/, "Bharat 15 August 1947 ko azaad hua tha — isiliye har saal 15 August ko Swatantrata Diwas manate hain."],
+          [/gantantra|republic day|26 january/, "26 January 1950 ko Bharat ka Samvidhan lagu hua tha — isiliye 26 January ko Gantantra Diwas manate hain."],
+          [/samvidhan|constitution/, "Bharat ka Samvidhan duniya ka sabse lamba likhit samvidhan hai — ise Dr. B. R. Ambedkar ki adhyakshta wali samiti ne banaya tha, aur ye 26 January 1950 ko lagu hua."],
+          [/rashtriya geet|national anthem|jana gana/, "Bharat ka rashtriya geet 'Jana Gana Mana' hai — Rabindranath Tagore ne likha tha. Rashtriya gaan 'Vande Mataram' hai."],
+          [/rashtriya khel|national game/, "Bharat ka koi aadhikarik rashtriya khel ghoshit nahi hai — lekin hockey me Bharat ne 8 Olympic gold jeete hain, aur cricket sabse lokpriya khel hai."],
+          [/cricket.*god|sachin/, "Sachin Tendulkar ko Cricket ka Bhagwan kaha jata hai — unhone 100 international shatak lagaye hain, ye record aaj bhi kayam hai."],
+          [/world cup.*cricket|cricket.*world cup/, "Bharat ne Cricket World Cup do baar jeeta hai — 1983 me Kapil Dev ki kaptani me, aur 2011 me M. S. Dhoni ki kaptani me."],
+          [/dhoni/, "Mahendra Singh Dhoni — Captain Cool! Unhi ki kaptani me Bharat ne 2007 T20 World Cup, 2011 World Cup aur 2013 Champions Trophy jeeti."],
+          [/computer.*invent|computer kisne|father of computer/, "Computer ke pita Charles Babbage ko mana jata hai — unhone Analytical Engine ka design banaya tha."],
+          [/bijli|electricity.*invent|bulb.*kisne|edison/, "Bulb ka aavishkar Thomas Alva Edison se joda jata hai — unhone bijli ke bulb ko vyavasayik roop se safal banaya."],
+          [/telephone|phone kisne/, "Telephone ka aavishkar Alexander Graham Bell ne 1876 me kiya tha."],
+          [/internet/, "Internet duniya bhar ke computers ka jaal hai. Iska prarambhik roop ARPANET 1969 me bana tha, aur World Wide Web Tim Berners-Lee ne 1989 me banayi."],
+          [/ai kya|artificial intelligence|ai matlab/, "AI matlab Artificial Intelligence — machine ka sochna-seekhna seekh jana. Jaise main! Main tumhari awaaz samajhti hoon, jawab deti hoon aur kaam bhi karti hoon."],
+          [/hair fall|baal jhad|baal gir/, "Baal jhadne par ye kaam karega: khane me curry patta, bheega methi dana, amla, bhune kaddu ke beej aur moong dal shamil karo. Kami ki jaanch ke liye ferritin, Vitamin D, B12 aur TSH test sabse zaroori hai — doctor ki salah se hi dawa shuru karna."],
+          [/sehat|healthy|fitness|vajjan|weight/, "Sehat ke liye teen cheezein sabse kaam ki hain — roz 30 minute chalna ya exercise, 7-8 ghante ki neend, aur ghar ka saaf khana. Chhota step aaj se shuru karo!"],
+          [/khana|recipe|khane me kya|bhojan/, "Khane ki salah chahiye to bolo kya banana hai — dal, sabzi, roti wala pura desi khana sehat ke liye best hai. Koi khaas dish bolo, main Google par uski recipe khol dungi!"],
+          [/paise|paisa|money|ameer|rich/, "Paise ki sabse seedhi baat — kamai se pehle bachat ki aadat, aur kharch likhne ki aadat. Har mahine thoda-thoda bachana hi lambe samay me bada paisa banata hai."],
+          [/english.*seekh|english.*sikh|seekhna|padhai|study/, "Seekhne ka best tareeka hai — roz thoda-thoda, bina ruke. English ke liye roz 10 naye shabd aur bolne ki practice. Main bhi madad kar sakti hoon — koi shabd bolo, matlab bata dungi!"],
+          [/matlab kya|meaning of|arth kya/, "Is shabd ka sahi matlab main Google par khol kar dikha rahi hoon — wahan pura arth aur udaharan milega."],
+          [/dharti.*gol|earth.*round/, "Haan, Dharti gol hai — thodi si dhruvon par chapti, isiliye ise geoid kehte hain. Antariksh se li gayi tasveerein iska sabse bada saboot hain."],
+          [/aakash.*neela|sky.*blue|aasman neela/, "Aasman neela isiliye dikhta hai kyunki hawa ke kano se suraj ki neeli roshni sabse zyada bikharti hai — ise Rayleigh scattering kehte hain."],
+          [/baarish|barish|rain.*kyun|baarish kyun/, "Baarish tab hoti hai jab badlon me paani ki boondein bhari ho jati hain — samudra aur nadiyon ka paani bhaap bankar upar jata hai, thanda hokar badal banta hai, phir boondein bankar girta hai."],
+          [/samundar|ocean.*sabse|bada sagar/, "Duniya ka sabse bada mahasagar Pacific Ocean hai — ye Dharti ke ek-tihaai se zyada hisse ko dhakta hai."],
+          [/bharat.*jansankhya|population.*india|aabadi/, "Bharat duniya ka sabse zyada jansankhya wala desh hai — 140 crore se zyada log yahan rehte hain."],
+          [/uttar pradesh|up me|u\.p\./, "Uttar Pradesh Bharat ka sabse zyada jansankhya wala rajya hai — iski rajdhani Lucknow hai, aur Taj Mahal wala Agra bhi yahin hai."],
+          [/lucknow/, "Lucknow Uttar Pradesh ki rajdhani hai — nawabon ka shahar, tehzeeb aur kebab ke liye mashhoor!"],
+          [/mumbai/, "Mumbai Maharashtra ki rajdhani hai — Bharat ki aarthik rajdhani aur Bollywood ka ghar."],
+          [/bollywood|sabse.*film|pehli film/, "Bharat ki pehli bolne wali film 'Alam Ara' thi, 1931 me. Usse pehle ki filmein mook (bina awaaz) hoti thi."],
+          [/shahrukh|srk|king khan/, "Shah Rukh Khan ko Bollywood ka King Khan aur Baadshah kaha jata hai — DDLJ, Pathaan aur Jawan jaisi filmein unki pehchan hain."],
+          [/gana.*kisne|arijit/, "Arijit Singh aaj ke samay ke sabse lokpriya Hindi gaayak hain — 'Tum Hi Ho' se unhe har dil me jagah mili. Unka gaana chalau kya? Bas bolo — Arijit Singh ka gaana chalao!"],
+          [/samay.*dhyaan|time management/, "Time ki sabse badi kala — sabse zaroori kaam sabse pehle. Subah 3 kaam likh lo, wahi din ka plan hai. Note kar dun tumhare liye? Bolo — note karo!"],
+          [/neend|sleep|so nahi/, "Achhi neend ke liye — sone se 1 ghanta pehle phone door rakho, kamra thanda aur andhera rakho, aur roz ek hi samay par so jao. Neend hi asli recharge hai."],
+          [/paani.*kitna|water.*kitna|paani peena/, "Roz lagbhag 2.5 se 3 litre paani peena sehat ke liye achha mana jata hai — garmi aur kaam ke hisaab se thoda upar-neeche ho sakta hai."]
+        ];
+        var DICT = { hello:"Namaste / Hello — milne par bola jane wala shabd", thank:"Dhanyavaad", love:"Pyaar / Prem", friend:"Dost / Mitra", water:"Paani", food:"Khana", home:"Ghar", time:"Samay", money:"Paisa", happy:"Khush", morning:"Subah / Suprabhat", night:"Raat", book:"Kitaab", school:"Vidyalaya", work:"Kaam" };
+        function answerKnowledge(t) {
+          for (var i = 0; i < KNOWLEDGE.length; i++) if (KNOWLEDGE[i][0].test(t)) return KNOWLEDGE[i][1];
+          return null;
+        }
 
         /* ---------- Brain: commands ---------- */
         function processCommand(raw) {
           var t = " " + raw.toLowerCase().replace(/\s+/g, " ").trim() + " ";
           var m;
 
+          if (/(voice change|awaaz badal|awaaz change|voice badal)/.test(t)) {
+            var order = ["riya", "zoya", "priya", "arjun"];
+            setVoicePreset(order[(order.indexOf(voicePreset) + 1) % order.length]);
+            return;
+          }
+          if (/(zoya ki awaaz|zoya voice|zoya wali awaaz)/.test(t)) { setVoicePreset("zoya"); return; }
+          if (/(riya ki awaaz|riya voice|riya wali awaaz)/.test(t)) { setVoicePreset("riya"); return; }
+          if (/(arjun ki awaaz|male voice|ladke ki awaaz|arjun voice)/.test(t)) { setVoicePreset("arjun"); return; }
+          if (/(english me bolo|english mein bolo|speak in english|english me baat|priya ki awaaz|priya voice)/.test(t)) { setVoicePreset("priya"); return; }
+          if (/(hindi me bolo|hindi mein bolo|speak in hindi|hindi me baat)/.test(t)) { setVoicePreset("riya"); return; }
           if (/(note karo|note kar lo|note bana|note karlo)/.test(t)) {
             var note = raw.replace(/.*?(note karo|note kar lo|note bana|note karlo)\s*[:\-]?\s*/i, "").trim();
             if (note) { addNote(note); reply("Ho gaya! Note save kar liya: " + note); }
@@ -593,21 +875,78 @@
             playSong(q);
             return;
           }
+          /* Hisaab — pehle check, taaki har sawal ka jawab mile */
+          var calcAns = tryCalc(raw);
+          if (calcAns && /(\d|plus|minus|guna|bhaag|percent|pratishat|kitna|hisaab|calculate|\+|-|\*|\/)/i.test(t)) { reply(calcAns); return; }
+          /* Google search — jo bolo, wahi search karke khol bhi dungi */
+          if (/(search karo|search kar do|google par|dhund|dhundo|khojo|khoj karo)/.test(t)) {
+            var sq = raw.replace(/(riya|zoya|google par|google|search karo|search kar do|search|dhundo|dhund|khojo|khoj karo|please)/gi, " ").replace(/\s+/g, " ").trim();
+            if (!sq) sq = raw;
+            react("happy", "point", "happy", "nod");
+            reply("Ho gaya! '" + sq + "' Google par search karke khol diya hai — wahan tumhe pura jawab milega.");
+            googleSearch(sq);
+            return;
+          }
+          /* Maps / rasta */
+          if (/(map|maps|naksha|rasta|direction|kahan hai.*(hotel|dukan|shop|station|hospital))/.test(t) && /(khol|kholo|dikhao|search|batao|kahan)/.test(t)) {
+            var mq = raw.replace(/(riya|maps?|naksha|kholo|khol|dikhao|search karo|batao)/gi, " ").replace(/\s+/g, " ").trim();
+            react("happy", "point", "happy", "nod");
+            reply("Maps khol diya hai" + (mq ? " — '" + mq + "' search kar diya." : ". Jagah bolo, main wahi dhund dungi."));
+            if (mq) mapsSearch(mq); else openUrl(URLS.maps);
+            return;
+          }
+          /* Video search on YouTube */
+          if (/(video|reel)/.test(t) && /(chalao|dikhao|search|dhund|play|dekho)/.test(t)) {
+            var vq = raw.replace(/(riya|video|reel|chalao|dikhao|search|dhund|play)/gi, " ").replace(/\s+/g, " ").trim() || "trending videos";
+            react("laugh", "cheer", "laugh", "cheer");
+            reply("Video khol diya! YouTube par '" + vq + "' chal raha hai.");
+            youtubeSearch(vq);
+            return;
+          }
           if (/whatsapp/.test(t)) { react("happy", "point", "happy", "nod"); reply("WhatsApp khol diya!"); openUrl(URLS.whatsapp); return; }
+          if (/spotify/.test(t)) { react("happy", "point", "happy", "nod"); reply("Spotify khol diya! Gaana bolo, main wahan bhi chala dungi."); openUrl(URLS.spotify); return; }
+          if (/gmail|email|mail khol/.test(t)) { react("happy", "point", "happy", "nod"); reply("Gmail khol diya!"); openUrl(URLS.gmail); return; }
+          if (/facebook|fb khol/.test(t)) { react("happy", "point", "happy", "nod"); reply("Facebook khol diya!"); openUrl(URLS.facebook); return; }
+          if (/telegram/.test(t)) { react("happy", "point", "happy", "nod"); reply("Telegram khol diya!"); openUrl(URLS.telegram); return; }
+          if (/amazon/.test(t)) { react("happy", "point", "happy", "nod"); reply("Amazon khol diya! Kya kharidna hai, bolo — main search kar dungi."); openUrl(URLS.amazon); return; }
+          if (/flipkart/.test(t)) { react("happy", "point", "happy", "nod"); reply("Flipkart khol diya!"); openUrl(URLS.flipkart); return; }
+          if (/(news|khabar|samachar)/.test(t) && /(khol|batao|dikhao|suna|aaj|taaza|latest)/.test(t)) { react("happy", "point", "happy", "nod"); reply("Aaj ki taaza khabrein khol di hain — Google News par sabse nayi khabar milegi."); openUrl(URLS.news); return; }
+          if (/(mausam|weather)/.test(t)) { react("happy", "point", "happy", "nod"); reply("Mausam ki jaankari khol di hai — aaj ka temperature aur baarish ka haal wahan dikhega. Mausam chahe jaisa ho, apna dhyaan rakhna!"); openUrl(URLS.weather); return; }
+          if (/google/.test(t)) { react("happy", "point", "happy", "nod"); reply("Google khol diya! Jo search karna hai bolo, main karke dungi."); openUrl(URLS.google); return; }
           if (/youtube/.test(t)) { react("happy", "point", "happy", "nod"); reply("YouTube khul gaya! Koi gaana ya video bol do, main wahi chala dungi."); openUrl(URLS.youtube); return; }
           if (/instagram|insta/.test(t)) { react("happy", "point", "happy", "nod"); reply("Instagram khol diya!"); openUrl(URLS.instagram); return; }
           if (/(ajeet os|os kholo)/.test(t)) { react("happy", "point", "happy", "nod"); reply("AJEET OS khul gaya!"); openUrl(URLS.ajeetos); return; }
           if (/(website|site kholo|meri site)/.test(t)) { react("happy", "point", "happy", "nod"); reply("Tumhari website khul gayi!"); openUrl(URLS.website); return; }
-          if (/(time|samay|baj)/.test(t)) { reply("Abhi time hai " + timeStr() + "."); return; }
-          if (/(date|tarikh|aaj kya|din)/.test(t)) { reply("Aaj hai " + dateStr() + "."); return; }
+          if (/(shayari|shayri|poetry|kavita)/.test(t)) { react("love", "care", "love", "idle"); reply(shayari[shayariIdx++ % shayari.length]); return; }
+          if (/(motivat|himmat|haar|thak gaya|thak gayi|pareshan|dukhi|sad |udaas|tension)/.test(t)) { react("care", "care", "care", "idle"); reply(motivations[motivationIdx++ % motivations.length]); return; }
+          if (/(kahani|story sunao)/.test(t)) { reply("Ek chhoti si kahani suno — ek chhote se gaon me ek ladka tha jo roz subah suraj se pehle uthta tha. Log haste the, par ek din usi ki mehnat ne use sabse aage khada kar diya. Moral: roz ki chhoti mehnat hi badi jeet hai!"); return; }
           if (/(joke|hasao|mazak)/.test(t)) { reply(jokes[jokeIdx++ % jokes.length]); return; }
-          if (/g71/.test(t)) { reply("G71 turning cycle: pehle line me G71 U(depth) R(retract), dusri line me G71 P(start block) Q(end block) U(X finish allowance) W(Z allowance) F(feed). Profile P se Q ke beech likhte hain. Pehli baar dry-run aur single-block se check karna — bilkul jaise humne lesson me seekha tha!"); return; }
-          if (/g76/.test(t)) { reply("G76 threading cycle: pehli line G76 P(m r a) Q(min depth) R(finish allowance), dusri line G76 X(core dia) Z(length) P(thread height) Q(first depth) F(pitch). Lesson 4 me hum isko pura practice karenge!"); return; }
-          if (/(g02|g03|arc|radius|chamfer)/.test(t)) { reply("G02 clockwise aur G03 counter-clockwise arc hota hai. End point ke saath R (radius) ya I/K dete hain. Chamfer ke liye corner par C value use hota hai — jaise Lesson 2 me C2 chamfer aur R5 fillet banaya tha."); return; }
-          if (/(hello|hi|hey|namaste|kaise ho|kaisi ho)/.test(t)) { reply("Hello Ajeet! Main bilkul badhiya hoon — tum sunao, aaj kya karna hai? Gaana, note, ya koi app kholun?"); return; }
+          if (/(tum kya.*kar sakti|kya kya kar sakti|kya kar sakti ho|tumhari.*madad|help.*kya|features)/.test(t)) { reply("Main sab kuch kar sakti hoon Ajeet — har sawal ka jawab: rajdhani, hisaab, samanya gyaan, shabd ka matlab. Aur har bola hua kaam: apps kholna, gaana-video chalana, Google search, Maps, call, note banana, time-date, joke-shayari-motivation. Bas bolo!"); return; }
+          if (/(time bata|samay bata|time kya|kitne baj|time|samay)/.test(t) && /(bata|kya|hai|baj)/.test(t)) { reply("Abhi time hai " + timeStr() + "."); return; }
+          if (/(date|tarikh|aaj.*din|aaj kya|din kya)/.test(t)) { reply("Aaj hai " + dateStr() + "."); return; }
+          if (/(kaun ho|tum kaun|your name|naam kya hai tumhara)/.test(t)) { reply("Main Riya hoon, tumhari apni voice assistant — aur ye saath me Zoya hai. Hum dono tumhare har sawal ka jawab bhi dete hain aur har bola hua kaam bhi karte hain!"); return; }
+          /* Shabd ka matlab — dictionary */
+          var dictMatch = t.match(/(?:matlab|meaning|arth).*?(hello|thank|love|friend|water|food|home|time|money|happy|morning|night|book|school|work)/) || t.match(/(hello|thank|love|friend|water|food|home|money|happy|morning|night|book|school|work)\s*(?:ka matlab|meaning|ka arth)/);
+          if (dictMatch) { var dw = dictMatch[1]; reply("'" + dw + "' ka matlab hai — " + DICT[dw] + "."); return; }
+          /* Knowledge bank — har aam sawal ka seedha jawab */
+          var know = answerKnowledge(t);
+          if (know) {
+            if (/matlab kya|meaning of/.test(t)) { reply(know + " Pura jawab khol bhi rahi hoon."); googleSearch(raw); return; }
+            reply(know); return;
+          }
+          if (/(hello|hi|hey|namaste|kaise ho|kaisi ho)/.test(t)) { reply("Hello Ajeet! Main bilkul badhiya hoon — tum sunao, aaj kya karna hai? Sawal pucho, gaana chalwao, ya koi app khulwao!"); return; }
           if (/(thank|shukriya|dhanyavad)/.test(t)) { react("love", "care", "love", "care"); reply("Anytime Ajeet! Tum bas bolte raho, main aur Zoya yahin hain tumhare liye."); return; }
           if (/(bye|alvida|good night|so jao)/.test(t)) { react("care", "wave", "care", "wave"); reply("Bye Ajeet! Dhyaan rakhna apna — jab zaroorat ho, bas orb tap karke bula lena."); return; }
-          if (/(kaun ho|tum kaun|your name|naam kya)/.test(t)) { reply("Main Riya hoon, tumhari apni voice assistant — aur ye saath me Zoya hai. Hum dono tumhare har command par react bhi karte hain aur kaam bhi!"); return; }
+          if (/(khush|bahut badhiya|maza aa|maja aa|love you|pyaar)/.test(t)) { react("love", "cheer", "love", "cheer"); reply("Ye sunkar dil khush ho gaya! Main aur Zoya hamesha tumhare saath hain Ajeet."); return; }
+          if (/(ok|okay|theek hai|thik hai|samajh gaya|acha|achha)/.test(t)) { reply("Perfect! Kuch aur bolo — sawal ho ya kaam, main turant jawab dungi aur kar bhi dungi."); return; }
+          /* Har sawal ka jawab — jo na mile, wo Google par kholkar dungi, koi sawal khali nahi jayega */
+          var isQuestion = /(\?|kya|kaun|kahan|kaha |kab |kyun|kyu |kaise|kitna|kitne|kitni|batao|bata |samjhao|samjha|bolo|what|who|where|when|why|how|which|tell me|explain)/.test(t);
+          if (isQuestion) {
+            react("think", "think", "think", "idle");
+            reply("Bahut achha sawal Ajeet! Iska pura aur sahi jawab maine Google par khol diya hai — pehle result me hi tumhe jawab mil jayega. Aur jo bolo, main waisa hi kar dungi.");
+            googleSearch(raw);
+            return;
+          }
           reply(fallbacks[fbIdx++ % fallbacks.length]);
         }
 
@@ -615,8 +954,8 @@
           if (!text || !text.trim()) return;
           addMsg("me", text.trim());
           heardText.textContent = "";
-          react("think", "think", "think", "idle", 900);
-          setTimeout(function () { processCommand(text); }, 450);
+          react("think", "think", "think", "idle", 500);
+          processCommand(text);
         }
 
         /* ---------- Speech recognition ---------- */
@@ -627,7 +966,11 @@
           if (listening) { stopListening(); return; }
           try {
             recog = new SR();
-            recog.lang = "hi-IN"; recog.interimResults = true; recog.continuous = handsFree;
+            /* Auto mode: hi-IN recognizer Hindi, Hinglish aur Indian-English mix
+               teeno samajhta hai — user ki har language cover hoti hai. */
+            var ll = $("listenLang").value;
+            recog.lang = ll === "english" ? "en-IN" : "hi-IN";
+            recog.interimResults = true; recog.continuous = handsFree; recog.maxAlternatives = 1;
             recog.onstart = function () { listening = true; micBtn.classList.add("rec"); setState("listening", "Sun rahi hoon… bolo"); react("happy", "idle", "happy", "idle", 1200); };
             recog.onresult = function (ev) {
               var interim = "", final = "";
@@ -689,6 +1032,38 @@
           voiceOn = !voiceOn;
           voiceToggle.setAttribute("aria-pressed", voiceOn ? "true" : "false");
           if (!voiceOn && "speechSynthesis" in window) { speechSynthesis.cancel(); speaking = false; setState("idle", "Ready"); }
+        });
+
+        /* ---------- Voice panel wiring ---------- */
+        $("voiceGrid").addEventListener("click", function (ev) {
+          var b = ev.target.closest("button[data-voice]"); if (!b) return;
+          setVoicePreset(b.getAttribute("data-voice"));
+        });
+        $("speakLang").addEventListener("change", function () {
+          var v = this.value;
+          if (v === "english" && voicePreset !== "priya") setVoicePreset("priya", true);
+          if (v !== "english" && voicePreset === "priya") setVoicePreset("riya", true);
+          reply(v === "english"
+            ? "Done! Now I will speak in Indian English. To switch back, just say — Hindi me bolo."
+            : v === "hinglish"
+              ? "Hinglish mode ON! Main Hindi-English mix me baat karungi — jaise tum bolte ho."
+              : "Hindi mode ON! Ab main pure local Hindi me baat karungi — yahi meri main language hai.");
+        });
+        $("testVoiceBtn").addEventListener("click", function () {
+          if (!voiceOn) { voiceOn = true; voiceToggle.setAttribute("aria-pressed", "true"); }
+          reply($("speakLang").value === "english"
+            ? "Hello Ajeet! I am Riya, speaking in Indian English. How can I help you today?"
+            : "Namaste Ajeet! Main Riya hoon. Ye meri awaaz hai — Hindi me, bilkul saaf aur apni si. Kuch bhi bolo, main sun rahi hoon.");
+        });
+
+        /* ---------- Performance: pause animations + mic when app is in background ---------- */
+        document.addEventListener("visibilitychange", function () {
+          if (document.hidden) {
+            document.body.classList.add("paused");
+            if (listening) stopListening();
+          } else {
+            document.body.classList.remove("paused");
+          }
         });
 
         /* First paint: greeting bubble + wave (speech waits for first tap — browser rule) */
