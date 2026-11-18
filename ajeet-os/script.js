@@ -66,7 +66,8 @@ const APPS = {
   backup:    { title:'Backup Manager', icon:'🛡️', tpl:'tpl-backup' },
   about:     { title:'About AJEET OS', icon:'ℹ️', tpl:'tpl-about' }
 };
-const APP_ALIASES = { note:'notepad', notes:'notepad', calc:'calculator', cal:'calendar', file:'files', 'my files':'files', paint:'paint', task:'tasks', tasks:'tasks', 'social hub':'social', settings:'settings', browser:'browser', calendar:'calendar', calculator:'calculator', notepad:'notepad', games:'games', music:'music', video:'video', images:'images', pdf:'pdf' };
+const APP_ALIASES = { note:'notepad', notes:'notepad', calc:'calculator', cal:'calendar', file:'files', 'my files':'files', paint:'paint', task:'tasks', tasks:'tasks', 'social hub':'social', settings:'settings', browser:'browser', calendar:'calendar', calculator:'calculator', notepad:'notepad', games:'games', music:'music', video:'video', images:'images', pdf:'pdf',
+  gallery:'images', photos:'images', photo:'images', tasveer:'images', tasveerein:'images', radio:'music', hisaab:'calculator', ganit:'calculator', game:'games', khel:'games', setting:'settings', folder:'files', 'file manager':'files', computer:'thispc', store:'appstore', dukaan:'appstore', 'recycle bin':'recycle', kachra:'recycle', backup:'backup', about:'about', 'app store':'appstore', 'task manager':'tasks', kaam:'tasks', paint:'paint' };
 
 
 /* ---------------- real SVG icons (emoji nahi) ---------------- */
@@ -998,13 +999,31 @@ function openFileEditor(fileId){
 
 /* ---------------- Riya AI ---------------- */
 let riyaSpeakOn = false;
+let riyaVoice = null;
+function pickRiyaVoice(){
+  if (!('speechSynthesis' in window)) return;
+  const vs = speechSynthesis.getVoices(); if (!vs.length) return;
+  const byLang = l => vs.filter(v => (v.lang || '').toLowerCase().replace('_', '-').startsWith(l));
+  const female = arr => arr.find(v => /female|mahila/i.test(v.name)) || arr[0];
+  riyaVoice = female(byLang('hi')) || female(byLang('en-in')) || female(byLang('en')) || vs[0] || null;
+}
+if ('speechSynthesis' in window){ pickRiyaVoice(); try{ speechSynthesis.onvoiceschanged = pickRiyaVoice; }catch(e){} }
+function riyaSpeakText(text){
+  return String(text).replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{2190}-\u{21FF}]/gu, '').replace(/\s+/g, ' ').trim();
+}
 function riyaSay(text){
   const box = $('#riyaMsgs');
   const d = document.createElement('div'); d.className = 'msg riya'; d.textContent = text;
   box.appendChild(d); box.scrollTop = box.scrollHeight;
   if (riyaSpeakOn && 'speechSynthesis' in window){
+    if (riyaHF && riyaListening) riyaStopListen(); /* khud ki awaaz mic na sune */
     speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text.replace(/❤️|👑|✨|😊/g, '')); u.rate = 1.02; speechSynthesis.speak(u);
+    const clean = riyaSpeakText(text); if (!clean) return;
+    const u = new SpeechSynthesisUtterance(clean);
+    if (riyaVoice){ u.voice = riyaVoice; u.lang = riyaVoice.lang; } else u.lang = 'hi-IN';
+    u.rate = 1.05;
+    u.onend = () => { if (riyaHF) riyaMaybeRestart(); };
+    try{ speechSynthesis.speak(u); }catch(e){}
   }
 }
 function userSay(text){
@@ -1012,6 +1031,176 @@ function userSay(text){
   const d = document.createElement('div'); d.className = 'msg user'; d.textContent = text;
   box.appendChild(d); box.scrollTop = box.scrollHeight;
 }
+/* ---- voice input: Hindi (Devanagari) shabdon ko roman me badlo, taaki mic se bola
+   Hindi bhi saare commands samjhe. Sirf command shabdon ka chhota map — koi library nahi. ---- */
+const RIYA_DEV = { 'बंद करो':'band karo', 'खोल दो':'khol do', 'चला दो':'chala do', 'लगा दो':'laga do', 'नोट करो':'note karo', 'कौन सा':'kaun sa', 'कौनसा':'kaunsa', 'बंद करो।':'band karo',
+  'खोलो':'kholo', 'खोल':'khol', 'बंद':'band', 'करो':'karo', 'चलाओ':'chalao', 'बजाओ':'bajao', 'लगाओ':'lagao', 'रोको':'roko', 'रोक':'rok',
+  'अगला':'agla', 'पिछला':'pichla', 'गाना':'gaana', 'गाने':'gaane', 'गीत':'geet', 'म्यूज़िक':'music', 'म्यूजिक':'music', 'संगीत':'sangeet',
+  'नोट':'note', 'लिखो':'likho', 'समय':'time', 'टाइम':'time', 'तारीख':'date', 'दिनांक':'date', 'आज':'aaj',
+  'कैलकुलेटर':'calculator', 'हिसाब':'hisaab', 'सेटिंग्स':'settings', 'सेटिंग':'setting', 'गैलरी':'gallery', 'फोटो':'photo', 'तस्वीरें':'tasveerein', 'तस्वीर':'tasveer',
+  'कैलेंडर':'calendar', 'गेम':'game', 'खेल':'khel', 'फाइल':'file', 'कंप्यूटर':'computer', 'डेस्कटॉप':'desktop', 'दिखाओ':'dikhao',
+  'वापस':'wapas', 'पीछे':'peeche', 'सारे':'saare', 'सब':'sab', 'नंबर':'number', 'मौसम':'mausam', 'धन्यवाद':'dhanyavad', 'शुक्रिया':'shukriya',
+  'नमस्ते':'namaste', 'कैसे':'kaise', 'नाम':'naam', 'कौन':'kaun', 'ऐप':'app', 'एप':'app', 'स्टोर':'store', 'वीडियो':'video', 'याद':'yaad', 'रखना':'rakhna', 'रखो':'rakho', 'हाल':'haal' };
+const RIYA_DEV_RE = new RegExp(Object.keys(RIYA_DEV).sort((a, b) => b.length - a.length).join('|'), 'g');
+function riyaNorm(s){
+  let t = String(s == null ? '' : s).toLowerCase();
+  t = t.replace(/[०-९]/g, ch => '०१२३४५६७८९'.indexOf(ch));
+  t = t.replace(RIYA_DEV_RE, m => RIYA_DEV[m]);
+  return t.replace(/\s+/g, ' ').trim();
+}
+
+/* ---- voice input controller (mic + hands-free) ---- */
+let riyaRecog = null, riyaHF = false, riyaListening = false, riyaRestartT = null;
+function updateHFBtn(){ const b = $('#riyaHandsfree'); if (b) b.classList.toggle('on', riyaHF); }
+function riyaStopListen(){
+  if (riyaRestartT){ clearTimeout(riyaRestartT); riyaRestartT = null; }
+  if (riyaRecog){ const r = riyaRecog; riyaRecog = null; try{ r.onend = null; r.stop(); }catch(e){} }
+  riyaListening = false;
+  const m = $('#riyaMic'); if (m) m.classList.remove('listening');
+}
+function riyaMaybeRestart(){
+  if (!riyaHF || riyaListening || riyaRestartT) return;
+  riyaRestartT = setTimeout(() => {
+    riyaRestartT = null;
+    if (riyaHF && !riyaListening && !('speechSynthesis' in window && speechSynthesis.speaking)) riyaStartListen();
+  }, 250);
+}
+function riyaStartListen(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR){ toast('Is browser me voice input nahi hai — Chrome use karo.'); return false; }
+  if (riyaListening) return true;
+  const r = new SR(); riyaRecog = r;
+  r.lang = 'hi-IN'; r.interimResults = false; r.continuous = riyaHF; r.maxAlternatives = 1;
+  r.onresult = e => {
+    const res = e.results[e.results.length - 1];
+    const v = res && res[0] ? res[0].transcript : '';
+    if (v && v.trim()){ const inp = $('#riyaInput'); if (inp) inp.value = ''; riyaAsk(v); }
+  };
+  r.onerror = e => {
+    if (e.error === 'not-allowed' || e.error === 'service-not-allowed'){
+      riyaHF = false; updateHFBtn();
+      toast('Mic permission do — address bar ke lock icon se Allow karo.');
+    }
+  };
+  r.onend = () => {
+    if (riyaRecog === r) riyaRecog = null;
+    riyaListening = false;
+    const m = $('#riyaMic'); if (m) m.classList.remove('listening');
+    if (riyaHF) riyaMaybeRestart();
+  };
+  try{ r.start(); riyaListening = true; const m = $('#riyaMic'); if (m) m.classList.add('listening'); return true; }
+  catch(e){ riyaRecog = null; return false; }
+}
+
+/* ---- voice command helpers ---- */
+function topWinId(){
+  let best = null, bz = -1;
+  openWins.forEach((w, id) => { const z = parseInt(w.style.zIndex, 10) || 0; if (z > bz){ bz = z; best = id; } });
+  return best;
+}
+function saveVoiceNote(text){
+  const n = store.get('notes', {});
+  let name = 'Voice Note ' + new Date().toLocaleString([], { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
+  if (n[name] !== undefined) name += ' #' + Math.floor(Math.random() * 90 + 10);
+  n[name] = text; store.set('notes', n); return name;
+}
+function findSong(q){
+  const fillers = ['ka','ki','ke','wala','wali','phir','se','ek','ye','yeh','wo','woh','mera','meri','koi','bhi','superhit','new','latest'];
+  q = q.replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
+  if (!q) return -1;
+  for (let i = 0; i < SONGS.length; i++){
+    const title = SONGS[i].t.toLowerCase(), artist = SONGS[i].a.toLowerCase();
+    if (title.includes(q) || q.includes(title) || artist.includes(q)) return i;
+  }
+  const words = q.split(' ').filter(w => w.length > 2 && !fillers.includes(w));
+  for (let i = 0; i < SONGS.length; i++){
+    const hay = (SONGS[i].t + ' ' + SONGS[i].a).toLowerCase();
+    if (words.length && words.every(w => hay.includes(w))) return i;
+  }
+  return -1;
+}
+
+/* ---- strong voice commands: jo bolo, wahi kaam — turant, bina net ke ---- */
+function riyaCommand(t){
+  /* note by voice */
+  let nm = t.match(/^(?:ek\s+)?note\s+(?:karo|likho|banao|kar\s*do|kar\s*lo)\s+(.+)$/) || t.match(/^yaad\s+(?:rakhna|rakho|karo)\s+(.+)$/);
+  if (!nm){ const plain = t.match(/^note\s+(.+)$/); if (plain && !/^(khol|open)/.test(plain[1])) nm = plain; }
+  if (nm && nm[1].trim()){
+    const txt = nm[1].trim();
+    saveVoiceNote(txt);
+    if (openWins.has('notepad')) closeWin('notepad');
+    openApp('notepad');
+    return 'Note save kar diya 📝 "' + txt + '" — Notepad me mil jayega.';
+  }
+
+  const hasSongWord = /(gaana|gaane|geet|song|sangeet|music)/.test(t);
+
+  /* kaun sa gaana chal raha hai */
+  if (/(kaun|konsa|kaunsa).*(gaana|song)/.test(t) || t.includes('kya chal raha hai')){
+    if (radioIx >= 0 && SONGS[radioIx]) return 'Abhi chal raha hai 🎵 ' + SONGS[radioIx].t + ' — ' + SONGS[radioIx].a + ' (Gaana no. ' + (radioIx + 1) + ')';
+    return 'Abhi koi gaana nahi chal raha. "Gaana chalao" bolo, main shuru kar dun 😊';
+  }
+
+  /* next / previous */
+  if (t.includes('agla gaana') || t.includes('agla song') || /\bnext\b/.test(t) && hasSongWord){ radioNext(); return 'Agla gaana laga diya 🎵'; }
+  if (t.includes('pichla gaana') || t.includes('pichla song') || /\bprevious\b/.test(t) && hasSongWord){ radioPrev(); return 'Pichla gaana laga diya 🎵'; }
+
+  /* pause / stop music */
+  if ((/(roko|rok do|pause|stop)/.test(t) && (hasSongWord || radioPlaying)) || (hasSongWord && /(band karo|band kar do)/.test(t) && radioPlaying)){
+    if (radioPlaying){ radioToggle(); return 'Gaana rok diya ⏸️ Phir sunna ho to "gaana chalao" bol dena.'; }
+    return 'Abhi koi gaana chal hi nahi raha 😊 "Gaana chalao" bolo to shuru karun.';
+  }
+
+  /* gaana number se */
+  const numM = t.match(/(?:gaana|song|track|number|no)\s*(?:number|no)?\s*(\d{1,3})/) || t.match(/(\d{1,3})\s*(?:number|no)\s*(?:wala\s*)?(?:gaana|song)?/);
+  if (numM && /(chalao|bajao|lagao|play|number|gaana|song)/.test(t)){
+    const n = parseInt(numM[1], 10);
+    if (n >= 1 && n <= SONGS.length){ radioPlaySong(n - 1); return 'Gaana no. ' + n + ' laga diya 🎵 ' + SONGS[n - 1].t + ' — ' + SONGS[n - 1].a; }
+    return 'Gaana no. ' + n + ' list me nahi hai — kul ' + SONGS.length + ' gaane hain, 1 se ' + SONGS.length + ' ke beech bolo 😊';
+  }
+
+  /* gaana naam se / play-pause */
+  if (/(chalao|bajao|lagao|play|sunao|chala do|laga do)/.test(t)){
+    let q = t.replace(/(riya|please|gaana|gaane|geet|song|songs|music|sangeet|chalao|bajao|lagao|chala do|laga do|play|karo|kar do|sunao)/g, ' ');
+    const ix = findSong(q);
+    if (ix >= 0){ radioPlaySong(ix); return 'Ye raha 🎵 ' + SONGS[ix].t + ' — ' + SONGS[ix].a; }
+    if (hasSongWord || /^(play|chalao|bajao|lagao)$/.test(t)){
+      if (q.replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim()) return '"' + q.replace(/\s+/g, ' ').trim() + '" meri ' + SONGS.length + ' gaano ki list me nahi mila 😔 Gaane ka number bolo (1–' + SONGS.length + ') ya Music app me list dekho.';
+      if (radioIx < 0){ radioPlaySong(radioPendingIx); return 'Gaana shuru kar diya 🎵 ' + SONGS[radioPendingIx].t + ' — ' + SONGS[radioPendingIx].a; }
+      if (!radioPlaying){ radioToggle(); return 'Gaana chala diya ▶️ ' + (SONGS[radioIx] ? SONGS[radioIx].t : ''); }
+      return 'Gaana pehle se chal raha hai 🎵 ' + SONGS[radioIx].t + ' — "agla gaana" bolo to badal dun.';
+    }
+    /* gaana shabd nahi aur list me bhi nahi mila — aage ka brain dekhega (jaise "video chalao") */
+  }
+
+  /* app band karo */
+  if (/(band karo|band kar do|bandh karo|close karo|close kar do|\bclose\b)/.test(t)){
+    if (/(sab|saare|sabhi|all)/.test(t)){
+      if (!openWins.size) return 'Koi app khula hi nahi hai 😊';
+      Array.from(openWins.keys()).forEach(id => closeWin(id));
+      return 'Saare apps band kar diye. Desktop saaf hai ✨';
+    }
+    const appId = findAppInText(t);
+    if (appId){
+      if (openWins.has(appId)){ closeWin(appId); return APPS[appId].title + ' band kar diya 👍'; }
+      return APPS[appId].title + ' khula hi nahi hai 😊';
+    }
+    const top = topWinId();
+    if (top){ const title = APPS[top] ? APPS[top].title : 'App'; closeWin(top); return title + ' band kar diya 👍'; }
+    return 'Koi app khula hi nahi hai 😊';
+  }
+
+  /* desktop dikhao / back */
+  if (t.includes('desktop') || /^(back|wapas|peeche)$/.test(t) || t.includes('wapas jao') || t.includes('peeche jao')){
+    let n = 0;
+    openWins.forEach(w => { if (!w.classList.contains('hidden')){ w.classList.add('hidden'); n++; } });
+    renderChips();
+    return n ? 'Desktop dikha diya 🏠 Windows minimize kar di — neeche chips se wapas khol sakte ho.' : 'Desktop par hi ho 😊';
+  }
+
+  return null;
+}
+
 function findAppInText(t){
   t = ' ' + t.toLowerCase() + ' ';
   for (const id of Object.keys(APPS)){ if (t.includes(' ' + id + ' ') || t.includes(' ' + id)) return id; }
@@ -1019,8 +1208,11 @@ function findAppInText(t){
   return null;
 }
 function riyaReply(raw){
-  const t = raw.toLowerCase().trim();
-  const appId = (t.includes('open') || t.includes('khol') || t.includes('chalao') || t.includes('start')) ? findAppInText(t) : null;
+  let t = riyaNorm(raw);
+  t = t.replace(/^(hey\s+)?riya[\s,]+/, '').trim() || riyaNorm(raw);
+  const cmd = riyaCommand(t);
+  if (cmd) return cmd;
+  const appId = (t.includes('open') || t.includes('khol') || t.includes('kholo') || t.includes('dikhao') || t.includes('lagao') || t.includes('chalao') || t.includes('start')) ? findAppInText(t) : null;
   if (appId){ openApp(appId); return APPS[appId].title + ' khol diya, Ajeet 😊 Aur kuch?'; }
   if (/\b(hi|hii+|hello|hey|namaste|namaskar)\b/.test(t)) return 'Hello Ajeet ❤️ Main Riya, tumhari AI dost. Batao, kya karna hai aaj?';
   if (t.includes('kaise ho') || t.includes('kaisi ho') || t.includes('how are you')) return 'Main bilkul badhiya hoon 😊 Tum sunao — duty kaisi chal rahi hai? Chai piya?';
@@ -1036,13 +1228,13 @@ function riyaReply(raw){
   if (t.includes('note')) { openApp('notepad'); return 'Notepad khol diya 📝 Jo likhna hai likho, save apne aap ho jayega button dabane par.'; }
   if (t.includes('joke') || t.includes('hassao')) return 'Ek joke sunau? Computer ko thand lagi to usne bola — "Mujhe Windows band kar do!" 😄';
   if (t.includes('bye') || t.includes('alvida') || t.includes('good night') || t.includes('so ja')) return 'Bye Ajeet ❤️ Dhyaan rakhna apna. Main yahin rahungi, jab bulaoge aa jaungi.';
-  if (t.includes('help') || t.includes('madad')) return 'Main ye kar sakti hoon: koi bhi app khol sakti hoon ("open calculator" bolo), time-date-mausam bata sakti hoon, aur desktop ki help de sakti hoon. Quick buttons bhi try karo neeche 👇';
-  return 'Samajh gayi 😊 Main abhi seekh rahi hoon — tum chaaho to main koi app khol dun? Bas "open notepad" ya "open calculator" likh do, ya neeche ke quick buttons dabao.';
+  if (t.includes('help') || t.includes('madad')) return 'Main bolne se sab karti hoon 🎤 Mic dabakar bolo: "music kholo", "gaana chalao", "agla gaana", "note karo ...", "calculator band karo", "desktop dikhao" — ya time-date-mausam pooch lo. 🔁 button se hands-free mode chalu hota hai, phir bina dabaye baat hoti rahegi.';
+  return 'Samajh gayi 😊 Ye wala pakka nahi samjhi — par main app khol sakti hoon, gaana chala sakti hoon, note bana sakti hoon. Mic dabakar bolo: "calculator kholo" ya "gaana chalao".';
 }
 function riyaAsk(text){
   if (!text.trim()) return;
   userSay(text);
-  setTimeout(() => riyaSay(riyaReply(text)), 320);
+  riyaSay(riyaReply(text));
 }
 
 /* ---------------- search ---------------- */
@@ -1133,16 +1325,26 @@ function wireUI(){
   /* riya */
   $('#riyaSend').addEventListener('click', () => { const i = $('#riyaInput'); riyaAsk(i.value); i.value = ''; });
   $('#riyaInput').addEventListener('keydown', e => { if (e.key === 'Enter'){ riyaAsk(e.target.value); e.target.value = ''; } });
-  $('#riyaClose').addEventListener('click', () => $('#riyaPanel').classList.add('hidden'));
+  $('#riyaClose').addEventListener('click', () => { riyaHF = false; updateHFBtn(); riyaStopListen(); if ('speechSynthesis' in window) speechSynthesis.cancel(); $('#riyaPanel').classList.add('hidden'); });
   $('#riyaMin').addEventListener('click', () => $('#riyaBody').classList.toggle('hidden'));
-  $('#riyaSpeak').addEventListener('click', () => { riyaSpeakOn = !riyaSpeakOn; toast(riyaSpeakOn ? 'Riya ab bolkar jawab degi 🔊' : 'Voice off.'); });
-  $('#riyaMic').addEventListener('click', () => {
-    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SR){ toast('Is browser me voice input nahi hai — type karo.'); return; }
-    const r = new SR(); r.lang = 'hi-IN';
-    r.onresult = e => { const v = e.results[0][0].transcript; $('#riyaInput').value = v; riyaAsk(v); $('#riyaInput').value = ''; };
-    r.onerror = () => toast('Voice samajh nahi aaya — dobara try karo.');
-    r.start(); toast('Sun rahi hoon… 🎤');
+  $('#riyaSpeak').addEventListener('click', () => { riyaSpeakOn = !riyaSpeakOn; $('#riyaSpeak').style.opacity = riyaSpeakOn ? '1' : '.45'; if (!riyaSpeakOn && 'speechSynthesis' in window) speechSynthesis.cancel(); toast(riyaSpeakOn ? 'Riya ab bolkar jawab degi 🔊' : 'Voice off.'); });
+  /* hands-free button — mic ke bilkul bagal me, wahi purana circle style */
+  const micBtn = $('#riyaMic');
+  const hfBtn = document.createElement('button');
+  hfBtn.id = 'riyaHandsfree'; hfBtn.title = 'Hands-free mode (bina dabaye baat)'; hfBtn.textContent = '🔁';
+  micBtn.parentNode.insertBefore(hfBtn, micBtn);
+  hfBtn.addEventListener('click', () => {
+    riyaHF = !riyaHF; updateHFBtn();
+    if (riyaHF){
+      riyaSpeakOn = true; $('#riyaSpeak').style.opacity = '1';
+      if (riyaStartListen()) toast('Hands-free ON 🔁 Bolo, main sun rahi hoon…');
+      else { riyaHF = false; updateHFBtn(); }
+    } else { riyaStopListen(); toast('Hands-free OFF'); }
+  });
+  micBtn.addEventListener('click', () => {
+    if (riyaListening){ riyaHF = false; updateHFBtn(); riyaStopListen(); return; }
+    riyaSpeakOn = true; $('#riyaSpeak').style.opacity = '1'; /* bolo ge to jawab bhi awaaz me */
+    if (riyaStartListen()) toast('Sun rahi hoon… 🎤');
   });
   $$('#riyaPanel [data-riya-open]').forEach(b => b.addEventListener('click', () => {
     const k = b.dataset.riyaOpen;
