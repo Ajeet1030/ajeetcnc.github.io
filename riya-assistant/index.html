@@ -1,0 +1,700 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>Riya — AI Voice Assistant</title>
+    <style>
+      /* ============ iOS Liquid Glass theme ============
+         One single corner radius for EVERY element, on every screen size —
+         panels, buttons, chips, bubbles, inputs all share --r, exactly
+         like Apple's consistent corner treatment. */
+      :root {
+        --r: 20px;
+        --blue: #0a84ff;
+        --cyan: #32d5f4;
+        --ink: #0c1220;
+        --ink-soft: rgba(12, 18, 32, 0.66);
+        --page: #dfe9f5;
+        --glass: rgba(255, 255, 255, 0.55);
+        --glass-strong: rgba(255, 255, 255, 0.72);
+        --glass-edge: rgba(255, 255, 255, 0.85);
+        --glass-shadow: 0 18px 44px rgba(23, 54, 110, 0.18), inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -14px 28px rgba(120, 170, 255, 0.10);
+        --chip: rgba(255, 255, 255, 0.5);
+        --bubble-me: #0a84ff;
+        --bubble-me-ink: #ffffff;
+        --bubble-ai: rgba(255, 255, 255, 0.78);
+        --field: rgba(255, 255, 255, 0.65);
+        --orb-glow: rgba(50, 213, 244, 0.55);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --ink: #eef4ff;
+          --ink-soft: rgba(226, 238, 255, 0.68);
+          --page: #060b18;
+          --glass: rgba(21, 34, 62, 0.52);
+          --glass-strong: rgba(26, 42, 74, 0.66);
+          --glass-edge: rgba(140, 190, 255, 0.35);
+          --glass-shadow: 0 18px 44px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(170, 210, 255, 0.28), inset 0 -14px 28px rgba(10, 132, 255, 0.14);
+          --chip: rgba(38, 60, 105, 0.55);
+          --bubble-ai: rgba(30, 48, 84, 0.78);
+          --field: rgba(16, 28, 54, 0.66);
+          --orb-glow: rgba(50, 213, 244, 0.65);
+        }
+      }
+
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(1100px 620px at 12% -8%, rgba(50, 213, 244, 0.28), transparent 60%),
+          radial-gradient(900px 560px at 105% 12%, rgba(10, 132, 255, 0.22), transparent 55%),
+          radial-gradient(760px 700px at 50% 115%, rgba(64, 156, 255, 0.16), transparent 60%),
+          var(--page);
+        min-height: 100dvh;
+        -webkit-font-smoothing: antialiased;
+      }
+      button, input { font: inherit; color: inherit; }
+      button { cursor: pointer; }
+      button, [role="button"], input { min-height: 44px; }
+
+      .wrap {
+        max-width: 1060px;
+        margin: 0 auto;
+        padding: clamp(12px, 3vw, 28px);
+        display: flex;
+        flex-direction: column;
+        gap: clamp(12px, 2.4vw, 20px);
+      }
+
+      /* Frosted liquid-glass surface: layered depth, inner glow,
+         light refraction on the edge, soft upper-left specular shine. */
+      .glass {
+        position: relative;
+        background: linear-gradient(135deg, var(--glass-strong), var(--glass) 55%, var(--glass));
+        -webkit-backdrop-filter: blur(22px) saturate(1.7);
+        backdrop-filter: blur(22px) saturate(1.7);
+        border: 1px solid var(--glass-edge);
+        border-radius: var(--r);
+        box-shadow: var(--glass-shadow);
+        overflow: hidden;
+      }
+      .glass::before {
+        content: "";
+        position: absolute; inset: 0;
+        border-radius: var(--r);
+        background: radial-gradient(420px 190px at 14% -6%, rgba(255,255,255,0.5), transparent 62%);
+        pointer-events: none;
+      }
+
+      /* ---------- Top status bar ---------- */
+      .topbar {
+        display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+        padding: 10px 12px;
+      }
+      .status {
+        display: flex; align-items: center; gap: 9px;
+        font-weight: 600; font-size: 0.95rem; margin-right: auto;
+        padding: 4px 6px;
+      }
+      .dot {
+        width: 11px; height: 11px; border-radius: 50%;
+        background: #30d158; box-shadow: 0 0 0 4px rgba(48, 209, 88, 0.18);
+        flex: none;
+      }
+      .dot.listening { background: var(--cyan); box-shadow: 0 0 0 5px rgba(50,213,244,0.22); animation: pulseDot 1.1s ease-in-out infinite; }
+      .dot.speaking { background: var(--blue); box-shadow: 0 0 0 5px rgba(10,132,255,0.22); animation: pulseDot 0.7s ease-in-out infinite; }
+      @keyframes pulseDot { 50% { transform: scale(1.35); } }
+      .toggle {
+        display: inline-flex; align-items: center; gap: 8px;
+        border: 1px solid var(--glass-edge); background: var(--chip);
+        border-radius: var(--r); padding: 8px 14px; font-size: 0.88rem; font-weight: 600;
+        min-height: 44px;
+      }
+      .toggle .sw {
+        width: 40px; height: 24px; border-radius: var(--r); flex: none;
+        background: rgba(120, 130, 150, 0.4); position: relative; transition: background 0.25s;
+      }
+      .toggle .sw::after {
+        content: ""; position: absolute; top: 3px; left: 3px;
+        width: 18px; height: 18px; border-radius: 50%;
+        background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.3); transition: left 0.25s;
+      }
+      .toggle[aria-pressed="true"] .sw { background: #30d158; }
+      .toggle[aria-pressed="true"] .sw::after { left: 19px; }
+
+      /* ---------- Stage: Riya + orb + Zoya ---------- */
+      .stage { padding: clamp(14px, 3vw, 26px); }
+      .stage-grid {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: end;
+        gap: clamp(4px, 2vw, 18px);
+      }
+      .char-cell { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 0; }
+      .char-name { font-size: 0.82rem; font-weight: 700; letter-spacing: 0.04em; color: var(--ink-soft); }
+      .char { width: clamp(96px, 24vw, 178px); height: auto; display: block; }
+      .char .sway { animation: sway 4.2s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 100%; }
+      .zoya .sway { animation-delay: -2.1s; }
+      @keyframes sway { 0%,100% { transform: rotate(-1.1deg); } 50% { transform: rotate(1.1deg); } }
+      .char .head { transform-box: fill-box; transform-origin: 50% 88%; }
+      .char[data-pose="nod"] .head { animation: nod 0.55s ease-in-out 3; }
+      @keyframes nod { 0%,100% { transform: rotate(0deg) translateY(0); } 50% { transform: rotate(2.5deg) translateY(3px); } }
+      .char[data-pose="think"] .head { transform: rotate(5deg); }
+      .char .arm { transform-box: fill-box; }
+      .char .arm-r { transform-origin: 18% 8%; }
+      .char .arm-l { transform-origin: 82% 8%; }
+      .char[data-pose="wave"] .arm-r { animation: wave 0.55s ease-in-out 5; }
+      @keyframes wave { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(-38deg); } }
+      .char[data-pose="cheer"] .arm-r { transform: rotate(-152deg); }
+      .char[data-pose="cheer"] .arm-l { transform: rotate(152deg); }
+      .char[data-pose="cheer"] .sway { animation: cheerBounce 0.5s ease-in-out 4; }
+      @keyframes cheerBounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+      .char[data-pose="point"] .arm-r { transform: rotate(-84deg); }
+      .char[data-pose="think"] .arm-r { transform: rotate(-118deg); }
+      .char[data-pose="care"] .arm-r { transform: rotate(-24deg); }
+      .char[data-pose="care"] .arm-l { transform: rotate(24deg); }
+      /* Faces: only the variant matching data-mood is visible */
+      .char .face-var { display: none; }
+      .char[data-mood="happy"] .f-happy,
+      .char[data-mood="laugh"] .f-laugh,
+      .char[data-mood="think"] .f-think,
+      .char[data-mood="surprise"] .f-surprise,
+      .char[data-mood="care"] .f-care,
+      .char[data-mood="love"] .f-love,
+      .char[data-mood="idle"] .f-idle { display: block; }
+      .char .blush { opacity: 0.35; transition: opacity 0.3s; }
+      .char[data-mood="love"] .blush, .char[data-mood="laugh"] .blush { opacity: 0.85; }
+
+      /* Arc-reactor orb */
+      .orb-cell { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+      .orb-btn {
+        position: relative; border: none; background: none; padding: 6px;
+        border-radius: 50%; min-height: 44px; display: block;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .orb {
+        display: block;
+        position: relative;
+        width: clamp(118px, 32vw, 196px); height: clamp(118px, 32vw, 196px);
+        border-radius: 50%;
+        background:
+          radial-gradient(circle at 34% 28%, rgba(255,255,255,0.85), rgba(255,255,255,0) 42%),
+          radial-gradient(circle, #b9f1ff 0%, #4fc9f5 34%, #0a84ff 68%, #0659b8 100%);
+        box-shadow: 0 0 42px var(--orb-glow), 0 0 110px rgba(10,132,255,0.35), inset 0 0 34px rgba(255,255,255,0.5), inset 0 -16px 30px rgba(0, 40, 110, 0.45);
+        animation: orbIdle 3.6s ease-in-out infinite;
+      }
+      @keyframes orbIdle { 0%,100% { transform: scale(1); } 50% { transform: scale(1.035); } }
+      .orb .ring {
+        position: absolute; inset: 9%; border-radius: 50%;
+        border: 3px solid rgba(255,255,255,0.55);
+        border-top-color: transparent; border-bottom-color: transparent;
+        animation: spin 7s linear infinite;
+      }
+      .orb .ring.r2 { inset: 20%; border-width: 2px; animation-duration: 4.5s; animation-direction: reverse; opacity: 0.8; }
+      .orb .core {
+        position: absolute; inset: 36%; border-radius: 50%;
+        background: radial-gradient(circle at 40% 35%, #ffffff, #aee9ff 55%, #39b6f0);
+        box-shadow: 0 0 22px rgba(255,255,255,0.9), inset 0 0 10px rgba(10,132,255,0.5);
+        display: flex; align-items: center; justify-content: center;
+      }
+      .orb .core svg { width: 58%; height: 58%; }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      .orb .ripple {
+        position: absolute; inset: 0; border-radius: 50%;
+        border: 2px solid rgba(50, 213, 244, 0.65); opacity: 0; pointer-events: none;
+      }
+      .stage[data-state="listening"] .orb { animation: orbListen 1.15s ease-in-out infinite; }
+      .stage[data-state="listening"] .orb .ring { animation-duration: 1.6s; }
+      .stage[data-state="listening"] .ripple { animation: ripple 1.6s ease-out infinite; }
+      .stage[data-state="listening"] .ripple.d2 { animation-delay: 0.55s; }
+      @keyframes orbListen { 0%,100% { transform: scale(1); } 50% { transform: scale(1.07); } }
+      @keyframes ripple { 0% { transform: scale(1); opacity: 0.85; } 100% { transform: scale(1.55); opacity: 0; } }
+      .stage[data-state="speaking"] .orb { animation: orbSpeak 0.62s ease-in-out infinite; box-shadow: 0 0 60px var(--orb-glow), 0 0 140px rgba(10,132,255,0.5), inset 0 0 40px rgba(255,255,255,0.65), inset 0 -16px 30px rgba(0,40,110,0.45); }
+      @keyframes orbSpeak { 0%,100% { transform: scale(1.03); } 50% { transform: scale(1.1); } }
+      .orb-hint { font-size: 0.85rem; color: var(--ink-soft); font-weight: 600; text-align: center; }
+      .live-line {
+        margin-top: clamp(10px, 2.4vw, 18px);
+        text-align: center; font-size: clamp(1rem, 2.6vw, 1.18rem); font-weight: 600;
+        min-height: 1.5em; position: relative;
+      }
+      .live-line .heard { display: block; font-size: 0.86rem; font-weight: 500; color: var(--ink-soft); margin-top: 4px; min-height: 1.2em; }
+
+      /* ---------- Quick actions ---------- */
+      .quick { padding: 14px; }
+      .quick h2, .chat h2, .notes h2 {
+        margin: 2px 4px 12px; font-size: 0.92rem; font-weight: 700;
+        letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-soft); position: relative;
+      }
+      .quick-grid {
+        display: grid; gap: 10px;
+        grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+      }
+      .qbtn {
+        border: 1px solid var(--glass-edge); background: var(--chip);
+        border-radius: var(--r); padding: 12px 8px;
+        display: flex; flex-direction: column; align-items: center; gap: 7px;
+        font-size: 0.86rem; font-weight: 600; min-height: 76px;
+        transition: transform 0.15s ease, background 0.15s ease;
+      }
+      .qbtn:active { transform: scale(0.96); }
+      .qbtn svg { width: 26px; height: 26px; }
+
+      /* ---------- Chat ---------- */
+      .chat { padding: 14px; display: flex; flex-direction: column; }
+      .msgs {
+        display: flex; flex-direction: column; gap: 9px;
+        max-height: 380px; overflow-y: auto; padding: 2px; position: relative;
+      }
+      .msg {
+        max-width: 86%; padding: 10px 14px; border-radius: var(--r);
+        font-size: 0.97rem; line-height: 1.45; white-space: pre-wrap; word-wrap: break-word;
+        border: 1px solid var(--glass-edge);
+      }
+      .msg.ai { align-self: flex-start; background: var(--bubble-ai); border-bottom-left-radius: var(--r); }
+      .msg.me { align-self: flex-end; background: var(--bubble-me); color: var(--bubble-me-ink); border-color: transparent; }
+      .msg .who { display: block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; opacity: 0.65; margin-bottom: 3px; }
+      .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; position: relative; }
+      .chip {
+        border: 1px solid var(--glass-edge); background: var(--chip);
+        border-radius: var(--r); padding: 8px 13px; font-size: 0.85rem; font-weight: 600; min-height: 40px;
+      }
+      .input-row { display: flex; gap: 9px; margin-top: 12px; position: relative; }
+      .input-row input {
+        flex: 1; min-width: 0; border: 1px solid var(--glass-edge);
+        background: var(--field); border-radius: var(--r);
+        padding: 11px 15px; font-size: 1rem; outline: none;
+      }
+      .input-row input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(10,132,255,0.25); }
+      .icon-btn {
+        flex: none; width: 48px; border-radius: var(--r);
+        border: 1px solid var(--glass-edge); background: var(--chip);
+        display: flex; align-items: center; justify-content: center;
+      }
+      .icon-btn svg { width: 22px; height: 22px; }
+      .icon-btn.send { background: var(--blue); color: #fff; border-color: transparent; }
+      .icon-btn.rec { background: #ff3b30; color: #fff; border-color: transparent; animation: pulseDot 0.9s ease-in-out infinite; }
+
+      /* ---------- Notes ---------- */
+      .notes { padding: 14px; }
+      .notes ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; position: relative; }
+      .notes li {
+        background: var(--chip); border: 1px solid var(--glass-edge);
+        border-radius: var(--r); padding: 10px 14px; font-size: 0.95rem;
+        display: flex; gap: 10px; align-items: baseline;
+      }
+      .notes li time { font-size: 0.75rem; color: var(--ink-soft); flex: none; font-weight: 600; }
+      .notes .empty { color: var(--ink-soft); font-size: 0.92rem; padding: 2px 4px; position: relative; }
+      .foot { text-align: center; color: var(--ink-soft); font-size: 0.82rem; padding: 2px 10px 8px; line-height: 1.5; }
+
+      @media (max-width: 520px) {
+        .char { width: clamp(84px, 25vw, 120px); }
+        .msg { max-width: 92%; }
+        .toggle { padding: 8px 11px; font-size: 0.82rem; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .char .sway, .orb, .orb .ring, .stage[data-state="listening"] .ripple { animation: none !important; }
+        .char[data-pose="wave"] .arm-r, .char[data-pose="nod"] .head, .char[data-pose="cheer"] .sway { animation: none !important; }
+      }
+    </style>
+  <link rel="icon" type="image/jpeg" href="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCADAAMADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD5MJyaKKK6zIKKKKACiiigAooooAKKKKACiiigAooooAKKKKADJooooAKKKKACiiigAoHWiigAooPWigAooooAKKKBQAUUd+K3PDHhbWNfYvZQIlsrbXup28uFD6bu59lBPtQJuxhgE9qkggmuJlggieaVukcalmP4DmvffBnwUiaGKebSrzXJWwVkunNjZfgv+tk/DA9q9b0L4Z+KLOyMNjqekeGbfH3NN08IfxZvmP1Ip27kc76I+VtG+FnxD1ZVey8H6sUbo80QgX85CtbsXwG+I7Juk0/SrcDr52s2ykfhvNfQ8vw4tllMmt/EbXbwg/NHFhQfbJNOuPDfgCOLyZZ9XkUdT9qwT9TiqsieeR85zfAn4jou5NM0+cHp5OpwN/NhWDq3wy8faWrPeeEdWCL1eGHzlH4xlq+mZfD3w9UEQX3iC3bsU1A8fgRVCbQbVH8zRfiDqtsw5VLtN4/MEH9KrkTMlUqp62f9fM+SpoXhlMMyPHKvVHBVh+B5qMjFfUXiGy8XzWx/tXStH8ZWK9fkWWTHqAwDj8K88vfBvgrxE7RaPJdeGdXDYNjc7pIs+mG+dfwJ+lS4PobKp3PIKK6DxX4P13w0+dSs/wDRy21LqI74XPpu7H2bB9q5+oNE09gooooGFFFFABQOtFA60ABooNFABRRRQAU5FLFVVSzE4AAySfSiNC7AAEknAAGST6CvqL4A/BiXT5Itc13dBqSH5ioy1iSP9VH2+04PzPyIQcDLn5QmUknbqcd8LfgZqepzCbW7dPPTBltJWKw2YIyPtLLyZCORAnzf3yvSvqPwP8MdH0W3hnaJHkRQBd3MS7wPSGIfJEvpgfia6/R9GstE02BGtIreOIf6PaL92Pvlu7MTyScknk5NU9X1aSZiFJJPAA6mp5m9hKPVlme703TgfssAL9DK53OfxNc7q3iGQghXx6AHFMvzHCu/UZnVjyIIuX/E9F/U1izaheys0OkWvkt3MK7pPxc8j9KpRE5Io69a3+pwMVtJUlxlJXGwH2JOOK8/v9J1csyyXOmwN/dkvkyPyJrvrvRNVmBuNSuobVTyZLqbH8/8a47xBp3hSC633njrS4Gfqq/Pkj6E1tFGMmc1PourclbzS5T2CX6Z/XFZeoaf4htVMkun3JjXq8WJF/NCa3W0/wAI3D7bXx9pTuegf5B+ZIpH8Ha9GhutGvrTUEHIeyugx/Q/1rRRRDkcpa+ILuA/u5nQqex5Fac2tadrkItvEFhFecYWYjbKn0ccim6lc3qSC28Q6Wk7LxmaPy5fwcYP86ppoA1R2/4RySWeZUMjWUwAk2jqVf7r/Tg/WmotEuSZ0thavHaukdydb0uRNjxzKGuI19GzxKnsRn0xXmXjn4b29wG1PwgN6sCzWAYnPr5RPOf+mbc+hPStvTNVvdMu8EyQyxthlYFSpHYg11un3cWqzG4sxFDfHBkiPEc/+De9UoRnoyJTlT1R8wurIxVlKkHBBGCD6UlfQfxH+H0XjCzl1bQ7Yw+IoQTPbEY+2gdj2EoHQ/x9Dzg18/SI0bsjqVZSQQRggjqCPWsK1GVKVmdOGxMK8fd3W42iiisTpCgdaKB1oAKKKKACgcnFFbvgXQk8QeJbXT7if7Nacy3lx/zxgQbpG+uBge5FAm7I9f8A2Zfh017eW/izUQYWy7aWWQERKhxJeEHg7SdkYPWQ56JX2D4at7TTbCC4EHlQxJts4Cc7V/vsT1YnJJPUknvXGfDLSIodGtle0FoksMczQdra2A/cW/8AwFeT6szmug1nUjNN5cXPO1FX9BRLVWRlCOrk9y7qV9NfTFIzuZs9+B7n0FY9xeLA/kWWZLhjgzAHLeyDsPfqajvbgwL9ghO+ZyBKynO5uyD2H6n8Kq6zqdv4YiWGLyZ9amj3/Of3dtH/AH3Pp7dW+nVxiOUibUU0zS7FbrxBcv58hzb2UI3yyn6Dt+Q9+1crqXizVbqb+zdKiOmnotrYRie6P+833U/DmrfhTw7e+K7uTU7y8ubexkOJb1/+Pi7/ANmMfwJ2/wAeleqadoeiaBpptdPs0tUC5ZYxmV/d2PP5/lV6RdnqzK7avsjwqXwdrt9N9p1C1tLVzyZNSuGuZv8AvkcD8qT/AIQdpZ4Ek1iVsSDK2+moFIyOOe1emaz4g0W1mYNdwxYP3YU8xx9WPH5Vz8njrQYtSt0I1GbcR8zz7RnPYCvQpYeo1e39fM8uvjYRbUdTmNb8M6LboRM12j87jcaZEU6nvgVxV34a0hbn7RYpBBKpyLiwla3kU+vykr+eK9Y174g2UF7PYzTarFt5V47oYwT0w3Brmr7U9E1n7v2C+nY4WO6h+zXDf7ksfBP4n6V6McPePvRPCjmU73Tdjj21bXbaMwX0lv4lsjx5N+gS5A/2JRw/45rWGg2cdjN/wjztDfOFlurSZgJYlxkJ9ATzjIz1IxVS5tVt9Y3aPJJHe28gZ9L1JV8x2B6KeFl57Ha3pms06tFe3++TzdO1BGJRlJBRx1xnn6qefr1rmqYfkeh61HFuotSLVFstcDWmtK1vqEa7Ir3b86EdFkH8a/qOx7VyBj1DQ9UNvdDy5UwVZWyrjsynuD616fBHb+LIJLC6SK11+JC0Mq/LHdqPT0PqO3UcZA5yaxXUY20DVMW93ExFpPJx5Mn9xj/cPf04NYuldXRtHEpPlZ03gm/i1dopXJW6ixvK9ZEH9RXG/tWfC9LaJfiHoVv+4uCBq0cY4DnG2cezdG9+e5qh4cv7vRNaMUweC4t5SkiE4KMDgivpnwS2m+MPCd5oF+Int723YBGGQAR8y/QEgj2JHaprWnS16HGoVKGNjWpvR6NdH/wT85yMHFFdP8UfCdx4L8b6joEyvst5T5LOOWjycfUjBB+lcxXmNWdmfUwkpJNBQOtFFIoKKKKAAdRXt3wK8Lw3K6PHdJj+2rl7q5PcafanJX6SSKQfUKK8VtYZLi4jgiGZZXVEHqxOB+pr6s+BMdvd+KrqFExbabYQ6bCT/wA81bMh/Hyyf+BVSWhnUeqR7ncXf2PS8Mds1wfNkGehIyF/AYH51jQ3rQW8moc+azGO39jj5m/AHA9z7VneIdSa4mAX5jI3ygdyTwKZdZudYttGgfKQ4gBHqOXb89xppEOWhpDUF0bRm1uaETXUriCxgP8Ay0kbp+HXPsD6iub8KaXL4m1We41GaSezjm33k3e8m/uj/YXoP84pfEbU/t/iQ2Fi4jhsW/s60weBIRmeT/gK4XPtXcaA0Gj+HbeC0HlhE2w+u7GWc+6jH/AjWsImFSaW52cwOn6YbhCqSRgKqRgful/uqP738q808d+JNUMQjjuBFZycBojuaRv7vHJb27d6zPEPiyYQ+VG7rGn+pjUnc3OCfcseB+JrLVrmzmhd0e91W6byrW3gbnf0Kqf4VX+JxyTkA8E12RjTpRvuzyIyxFap723Yz5NM1V2kkvXGnov3/NwZF/3ixCofYnNM0+28NS6hAk+qyXkglUfI8kh+8Om1Qv61znjDxlpml3LJKYPEuqxEhtzkadat/dRVIMxHc5C57t1riNR+JvjKcFYtcmsYu0NgiWyKPQCMD+dZvEyvuejHCxtsegeIJPCk2pTR/a57GZZGQlZXQZBIzhlIz+NYdzp2pQsLnS7tL9AcjACufoRlX+mSfauIi8d+J0Qxy6tLdxHrHeItwp/Bwa1tG8R6bfXGFMXh6/cY8xCTYzn+7IjZMefXJX/d613U8anoebUy1wV4v+vzN6w12DUMWOrNgBmzLJxJG59c9Ofw+ldBbrB4igSyvriNtQJC2OpbtqzkfdhmPZuyueQcA8HI5XUoX1qaVZohY6zZkK6Nzk9ACf4kPABOcZAJIINN8HarHDLLpeor5VpOSkyuDmFxxn6j+WR2rqVTm0ZwSouC5o9On+R1OkJcv/oshktr+1kPlyY2yRSqccjsQeCP6Hjd8SrH4k8Pf29FAINVsW+z6pAo7j+Me3f6ZH8NHhy+gfXorjWohK8bLZ6kQSDKCpWKcEfxMuVJ7kKT1qsVfwb43Njcv51pM/8AZ9wzH5ZI3G63lP4HafbNRVpqGpkqznK3Vbefl8/8jlfFkR1HSoPEKDNzbFLW/IHLDGIpT78bCfZfWuh+HHiK+t7ae0s5Qlw8ZMBY8FwOB+PI/Gq9pZJZ+J73w/dZWzvla1JPZX5jb6qdp+orj9Aup9P1cwynZc2spSRT2ZWwf1Brz5S5J3PZp0o1qTg9V+jMf4t6vN430Y6zdRY1LSQombGC8LME591Oz9fWvI6971TQ5Lrx9d6TZW5kh1OCV2RSBiKWMuT77Tk/8BrweeKSGaSGUbZI2KOPQg4P6iuCs3KXMz1sHCNOCpx2QyiiisTrCiiigDpvhfbJcePNI3ruSGY3LDHURI0n81Fe9fs4zyQT64X5P9niUk9QzSYH/joNeK/BlQfGTMW27NPuiD6Ept/9mr27wlF/YWna/qEDRswe3i+Vsgqobj8ea1ivdOeo/eO40W7WTXLeSQ7ktg87D/cUsP1xU3hC++yTanrcxyLC0ebJ/vYJ/wDZf1rmvB92dRfVJrFXmzYNtVVywy6AjA74q5qFveWfwz8QyyW80TSmOLLxkcM6D+pp20Ib1Mrw9bs87zXLl3treMP6tNOTJIfrtBH416NrVx9lt0h89Y5U2WqHPRiN0jY9mb/x2ua8EaY8yTb4Zd11rqpyh5RFVfy+Y1c8eWWoPAt0kFy7AzsAsZ4Z2IB/I10wg3scVSrFaPqcfp04vNXmvml2QW2Nj44XIJDfVY1J+prA8e+Jp9M0FTCfI1LXYTt2n5rTTgSqxr6GQhsnrtU/3zW1Jp1/b+FLoQ2d0ZJ5nUkRN0LqgHT+6p/OvKvizeCbx9q0atmK0kWzhH91IVEYH/jpP41lUutDoopPU5yeYtxnArY8HeFNR8US3JtJLe3trVA9zdXLlIogThQSASWJzhQCTg9ga5lnLPjPWvZvh/ZzaT8LfEK38aRSXbWd1aZbJZXjlKMMdCRng0UKftJWJxlf2FO/U848ZeFr/wANywefNa3dtcKzQXVrIWjfH3hyAVYZGVIB5B6GuZ3kGvVvGED3/gDTIrZEkliuJ5pgDggLFlic/wCyO1eSycPitMRR9jLQWDxHt4NvdHovhHVpL/RwhG/UtHj8yJyebiz6SQt67c5H+ySP4RW14qs45riw1e3YkXo8qUnu6gMjn3ZGGfcNXA+ALjyPFem7jhJZxBIPVZPkYfk1exWmkXP/AAg0JeCYTWlwrfNEf4Jdo6+0n6V3YWXPHU83HL2M7r+v63Oi0jR2ksNInYowvI20u5ZG3AFlDwOT6htn02ms/wCIAbWfDdnNnF0bOS0c9xJEPNi/EfMv4V1Fvd6lf+EbuC20aOCaxuLe4hfBYyASMrE57/hXOzWd9IupQyQyskOuqI/kPCMJQce3NdVWSd0eJhVNtTe6M3X52v7HQ/EA+9eWqsxH94AH+ZP5VyPxEBs/iLc3S/cv44b0f9tYwW/8e3V3HhrSLzU/hPobW9vNMYbmaIbELcB5B2/CuT+Nun3Vjq2gNNbypK+kqrZQ5+WWQD9DXjVJ3R9ZQgouyOg0DTdT1LXvDWvacIyLSIx3ZdsHy1Y5x6na7V4J8VdP/sz4ia7aAAKLtnXHTDgMP/Qq+k/gL4sh0rwxrqXNutyRAiqrHG0s2z+TV4R+0LB5PxNuuVJeztXJU5BPlBTz/wABrKqrxTsaYaX72Ub3t+H+Z55RRRXOegFFBooA7j4KQNd+NHtE+/Npt2qj1IjLY/8AHa9c8KBj4C1dSpVvMVm9yGYf1FePfBC+TT/it4emkIEb3fkOT6Sq0f8ANhX0te6JFY2OqQwIyC7jaTyiPuONrED24JranZqxxVpNTfaxw3we1CWy8RauI5CrtpkjLyRyroc/lmu4m8Q3mqeBdYW8uZZWhuYHw7k4+YdPbrXmHgVzb/EC0hZtq3XmWhJ7eYhUf+Pba6nw4JLtNZ0guFkmtiVB7lTj9N2fwrqpR01OLFTSd/Q2NT8RXieIIbqC6dYftlrMAhwNrxRnt2yDXTeKNe1qTwfcQLcyKYxPEQhx8yMp4xz0zXkBmkuLKzcBkPk+S/8Avxk7f/HWX8q9l02x/wCEn8JXRgcLPd26X8fOPnUFJ149wTXfh4Ll1PCzKracZHky2PiO7t7vUBq7WVkszp58ly4IZcMRtXLdGHavN/iBYfYPFN+iOskMjieGRejpIocHn617z4CWLUNQutAvsBLtQR8vLTxqVI+rxsR9QK4f4oeGJbm3Zre3An06M+UEU/6TZ9VcdcsmTuHUA/7JorYNyg7dDrweZJ1VGWn9I8X37Gz71654C8YWN3osGkagYfPEMdm0Vw7RpOiM3kukgVtkqh2QhgVZSOQRXktzEUcitfwxr1vo0biTQtM1CXzFkjmuhLviI6BdjqMZ55BrzaE/ZVD18bh1iaVrXO08c63Z6fbXGnW0kf2hVlt1gikMiwbsLIzyFVDPhdoVRgAk5zXlrks5re8R67HrUrynSNPs55JWlkltxJucnJOdzEdTngVjxxFiMVeLrOrPR6BgaCoUrNWZv/DqzN54w0tCpKRzieU44CRgyMT+CmvZ9Aa4vvBm651G4iubyb907Iz/AHpCwAIORxGa5b4ZeGZ4NMbpDqetw+Tbb+PItOss7egYDA/2Qx7ivR9YsVtBBp9sgUW0IVV/uyyIFRfqsYLH0LmtKNJ6HPjMQknbcv8AgbU9Vn8OutvPOru0NurFycGSbPH4Cqj65e3fimZWuJDby+IG+8xwY0DsR9MLXYeGtIOh+HLWRwEEEb6nJnsEUpAD9WOfxrzbUFOn6NdXLKTLBZSFcHrcXB8tf0yaupscuHivaORDoOq6pp3wg0oQXUsaT6g7xAHGAQ7Nj67l/SrfiPXtVifQkS5YPJp4llyAdxaR8E/gBTfEVpJZ6Ronh8E7bOAts/2mAXP47KreI7dpfF7WgwRYww2gx0yiAN/48WrilsevT7knju6Mdlp74QXN9YxidlUKX/0htucdeFxXh/x2lWTx84Bzssrdf/HSf617R8RkZvGen6SuGNpaWsbD0IjMrfrIK8J+Mdwtx8S9bCEFIJxbLjp+6RYz+qmoqSvCKNaMEqkn/WyORooorA6wooNFAE1lcS2l5DdwEiWCRZUI/vKQw/UV+hOkJZ+L/hLZeIrYI8xgEu8DkheSp/4A38q/PFetfYf7EfjBbzwnqXg+7cM9o3mQqx6oe35ZH/Aa0p+RyYtqEeZ7bfeeY+L7OfSvEDS2+UkgmEkTejKcg/mBXW3N5BZ+JrLxDbJ/oN6q3QUf3JBiRPqDuH1FaXxj0AQXkskPzBGKH6dv0xXNeCZY9U0qfw1cf8fVsXurAn+IdZYvrxvA9mr04xtL1PDqz56Sk+mj9P6/A273RJP+EjvdDslMx1D/AE/S9mMPKAS6D/eXOP8AgHrW/wDBzXWtLw6cOJlkNxYBjw7EfvIT/vDHHqPeq/haKDXNOi0uWRotW02QT2EgcqWVTkru7Y9fTB/hqDxjb2x1KfW9Mglsj54a5tc4kt5uu4egzyPfI9K7KVk7PY8mupVVyNO/cteO7S2tfEB1fSNyWF0BIpi+/A4OeP8AaQ847jPrVHUZV8RpHILkWWuWx85djfLKT1lhH8St1ZByDkgHkVoaFe2niFpoLhiuo3XM0KnCXRHSaH0l/vL36juKy9Z0CO30e6ubtXaC3BMUgJU+afukY5Q55OOMA5Ga7dGtzy4RnTqK+6/H+uxwfjTw3p2tXkQgso9D1WQbW2KWsbpgOXUjmJjjkcr7LXkbjBr2vU/FN7Z+CtW+1FJ5brZaQyuq+aS+TISw4bCAjJGfnHSvJ5PsLt80ar/wAj/0E14OLpxUvdPt8uqVHT99GdGOMnPrXrXg7wRbW9ym2BfEGqKqv5QUrY2uQCGldseYRnpwv+90ri7M6BDtYW4lYf3oWbP4MwH6V7J4P8a38nhC1g0+FLYWzNbSSqimVMDKFeiplSRuAJ+SuenHU660rI7rw5pkWhtLJeypqHiC7HmymQcKBzvkz9yJcAhTguQOAoArZ8L6Fa3t8Lu6dms4CZXd+Hfcfmdv9pzwB6Vi+GbE3VlBNsaO1lG6UEl5ZZe5YnlyDyM8dMDNdxetNpWlRvb2ErSQsDDCRuEbnjzZf7znjAPTjOOh9KM1GNluz52tRnWqXbsl0/zMz4kXK+WLEN5ZlImu1X/lnGo/dxfgOSPUiuK0/R213xVY6Y4At7Rxqeot/CmBiGM/Qcn6+1bOoyyWsBu7hDe3EsuIYjljd3BPC+6AnJPfp6VcmtZPDXh5tHeUT63qjfaNTmHbdzs/Hp9M+ornrSsrI9HCUeVGRElpq3iu51e6jH2O1zcHI6RRj5F/HCj6mqXhDQ4L3X1ubqaQCWYzXDFQcAncx7e9autQrp2mw6On/H1dbbi7x1ROscf1P3j/AMBqf7M1n4UuXQbZ70fZYj3Ct98j328D3YVyN3PQV4o8sj1iHWPid4h1ycAWljFLqUxb+FM7lT8I1QV81311NfXs97cHM1xK00h/2mYsf1Ne3fEu0k8B+BdbsZryC51LxRfCJZYQVH2WMiSXg8gZMafia8LPJJrCV07PodOHcZwU4vcKB1ooHWpNwooPWigArr/hF4wn8EeOdP1yJm8lHCXKj+KM9fy6/nXIUqnBpxbi7oipTVSLjLZn3N8Qja39lFqkZV7K5RfMkByBGwysn/ASeT6E+leG61bXmiawtxbSPBc28oeJ16qwPBFan7OvjZNW0R/AerzBriCNn01pD/rYsZaHnqVGSB3XI7V2uo6bZ6MlrDqRzqj7n0+KePlIf4NxPV/Qddu0nmvYcoTpqaPkcIquHxE8LUV7bPo49Pn0/wCGJY1L6Jb+J7a1+yamcG5tx/y6yf31H91uoz93ODUtwf8AhJNmp2Dw2uuwJtnhkH7q7j7hh6fy/Iji/wC1NU0vU/tcMh38h1cZWRT1Vh3BrotNFrrTfbNFfyLtPnlst37xMfxIf4l/Ud/Wkqil11OtYZ001bT+tCrBp/2m+kXTYGS6jObjS5uJo2H8Uf8AfHcFfmHcEc1p6p4gt9RuYdLu3l1CO1Yo1zbTgT+d0bOfllx93B+bg+tX9dudPh8PJfeI4zbXW8wWF3GpEgfHL8DgICD0IyV4rxe78G+I9ML6hoF3/aVrniW3kG5h7rnDfTn6Vr9acLKxksvjVfM36Gv8T7jT73U10qzhNzBp64eRMRO0r8uSoyOAFX/gJrgzZ6WZArTX0Izg7rcNj8iM1ak1K4trlo9U0lI5jw/ytbsfqOn6U3zdJZtzJqkGTnCMjj+lc9Spz62PTo0PZpRTNXTtI8NqCXv9WmPYRWSpn8Wc4/Ku/wDhtJpEOtJpcNt9jS9ATz7qTzm3jJTCDC5zkfVuteew6l4bi5kttcucDoZYowfx+Y1bsvETyzCDQPDdusxPys4e7l/L7v8A47WPtbKyRf1Zt3lJv+vI+k9NmGgSvDNP9je5ZUS4vJkM6ydFwgysWckd25GOlXGuTaYS5luZLmYbFtVz504P8JH8CnuTyf0rxHQ/h94w8RSLqfii/XSLIDJnvpAGUf7MYIC/jtr2vw7qei2OmN/wjGb7UQRDdajcKWkY7eGUEd8dcYyDwaI1rKxFTDczTLYgGgv/AGzqqQ3GuyR7bO0AzHZoehx/nP5msuJDZRPr+sZuJ5nJt4pOtxJ6n/YHf8AK054bTSI/7Q113ubyX54rTdmSUn+Jz/CvueT2rHVb/X9T+1XQ3SNhURRhI17Ko7AVi53Z0QpqKsQ6NYXWq6k087GW4nffI7dyep9q17q0XVru5KTCDTNKi8sSHgPKwyBntxl2PZdtbsOmyWpi0bTkWXU7oENu+7En8TNj+EZ59chRyePD/wBrvx/Z+HdJj+GPhi73TtGTqk6n5lV+WDEf8tJO/onH8fEc9mmFSk6sXDvueB/GbxZF4t8aXF3Yu50m0X7JpwbgtCpJMhHq7Fn/AOBAdq4mlY5NJWTd3dndGKiklsFFFA60igPWiiigAooooAmsbq4sruG7tJ5ILiFxJFLG2GRgchgexBr2Ow8Yf8JraNPeu7anFGDeQIcN8g4uIPTH8S/w/wC7gjxapbS5ntLmK5tZpIJ4mDxyRsVZGHQgjpVwqOD0MatGNRan0VourWGqW0Vjq9zGtw/y2t+oxFcY/hb+6/qD/wDrS90q9026SWMyROjbo5FJBBHcEdK8z8P+JbfVJGhvGtLO9mwJBINlreHtuxxE/owwuf7vQ+jeGvEV/ZXEekXcLXkWNosLxttxEO3lP0kX0/TFdkGqnwnnzvR+PbubGva8uu6KJ/F4uJPsKiC2urfAkyxztKcK/QsTweOvSudsNOvBJ9p8L6zFeFuqW8pjmx/tRNgn8Miup1mw0rxTbwWmh3aRy2qsz2E52T+YTy209eAAMZ4FcHrPhe+spds9tLGynjKkYpSvEuDjJXR0tr4h1eA/ZdZ022uADyt1bbT/AEH6VcbUfCtyuLrwTp8h7lCF/ktcZaal4isv3cOqXnljokjeYo/B8ite18Ta0FCyw6dL7vYR5/QCmqllsP2ep0UV94OtWU2/gDTdw7ytu/mtaln4n1ucm28PaJZWW7gLZ2e9h9Oo/SsCz8T60CvlW2lRHsy6dFn9Qa2dO13xRPeQtPq955IcboomESEdD8qADpWD1NtjRl8OeIL2UXXinUhZL2N7MWkx/sxDLfoBW9od1ZaHuHhyOeS6kTY95cADAz/BGMgfU5P0qDTvDl7czkeVI7luSeSTXXwaHpOgWX2/xFf21hCgyfMcBj+FS30HZbmfoWjXmpXRlk8yeaRsu7ksxPqSa7O1VNMuI9I0i2W/1qZchFOEgXu7t/Co9e/RQT0yNN1+51yPyfDcQ0fRWHzalcJ+9nXv5KHlv944Ue9eV/Ff9oXQ/BOnXPhf4XeXfarLkXmtSsJVWToWDf8ALWQdv4F9+lRJ2HFc2x2fx6+KulfB/QJ9F0m5h1Px1qUQMrkZFsp+67j+FRk7I+/U9ST8K6jeXWoX099fXEtzdXEjSzzStueR2OSzHuSaXU7671K/nv7+6mu7u4kMk88zl3kc9WYnkmq1ZruzoSS2CiiimUFA60UDrQAUUUUAFFFFABRRRQAA4rpvCXjPVfD89sUEN7BbPvhgul3iI+sbdU/Dj2rmaSnGTi7oipTjUi4yV0z6v8N/Fv4Q+NNDtdG8aeH10m+hjEcd0QAQf7yzLgg+5/KtuXwzdrbCbwn8Q49RsCP3dtrMYmUD0WTr+VfG4JFX9H1nVtGm83SdTvLB/W3mZAfqAcH8aqNRozlRXQ+mry11u2J/tTwVYXqd59Nu8Z99pzUMT6ISBN4V16A9wNjf4V4vY/FrxvbACXUbW9Uf8/NnGxP4qFP61f8A+Fxa664uNH0Wb6CZP0ElaKqupm6Ulse32Mnh9RkeH9Z+srRoP510WiX2hPMscdhZRN/dmuvNb/vlB/Wvmz/hb+orynhTwsW/vTW0sxH/AH1JioLn4y+PGUpYajZ6Qh/h03T4YMfjtLfrVc9PrciVKs/hsvx/yPq/4l6l46srC2j8L/ZIreaEPNeHZAkI9GaQgL36k14RrHiTwxpV8NQ8UeNZ/FWqRNuWx0cCaNW9HuZR5Q/4Ar14vruva3r0/n63q1/qUnY3Vw0uPoCcD8KzixrFy100No0NPf1Z6D8Qviz4o8WQz2KyjStKm4eztpGZpgOgmlY75focJ6KK89ycYooqDdJIKKKKBhRRRQAUUUUAB60UHrRQAUUUUAFFFFABRRRQIKKKMH0oAKKKKBhRRRQAUUUUAFFFFABRRRQAUUUUAFFFAHNAH//Z">
+<link rel="apple-touch-icon" href="data:image/jpeg;base64,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">
+<meta name="theme-color" content="#050914">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Riya Assistant">
+</head>
+  <body>
+    <div class="wrap">
+
+      <!-- Status + toggles -->
+      <div class="topbar glass">
+        <div class="status"><span class="dot" id="statusDot"></span><span id="statusText">Ready — orb tap karo aur bolo</span></div>
+        <button class="toggle" id="hfToggle" aria-pressed="false" type="button"><span class="sw"></span>Hands-Free</button>
+        <button class="toggle" id="voiceToggle" aria-pressed="true" type="button"><span class="sw"></span>Voice Reply</button>
+      </div>
+
+      <!-- Stage -->
+      <section class="stage glass" id="stage" data-state="idle" aria-label="Riya aur Zoya stage">
+        <div class="stage-grid">
+          <div class="char-cell">
+            <!-- RIYA -->
+            <svg class="char riya" id="charRiya" data-mood="idle" data-pose="idle" viewBox="0 0 200 260" role="img" aria-label="Riya, animated assistant">
+              <g class="sway">
+                <g class="arm arm-l"><rect x="34" y="150" width="17" height="62" rx="8.5" fill="#f2c09a"/><rect x="32" y="146" width="21" height="30" rx="9" fill="#0a84ff"/></g>
+                <path d="M62 138 Q100 122 138 138 L148 236 Q100 250 52 236 Z" fill="#0a84ff"/>
+                <path d="M62 138 Q100 122 138 138 L141 168 Q100 178 59 168 Z" fill="#39a7ff"/>
+                <g class="arm arm-r"><rect x="149" y="150" width="17" height="62" rx="8.5" fill="#f2c09a"/><rect x="147" y="146" width="21" height="30" rx="9" fill="#0a84ff"/></g>
+                <g class="head">
+                  <path d="M100 8 C56 8 44 44 46 84 C47 112 40 138 34 152 C58 140 62 128 63 108 L137 108 C138 128 142 140 166 152 C160 138 153 112 154 84 C156 44 144 8 100 8Z" fill="#20242e"/>
+                  <path d="M100 8 C56 8 44 44 46 84 C46 92 47 100 48 106 C58 66 74 40 100 34 C126 40 142 66 152 106 C153 100 154 92 154 84 C156 44 144 8 100 8Z" fill="#2c3242"/>
+                  <ellipse cx="100" cy="86" rx="37" ry="40" fill="#f7cfae"/>
+                  <path d="M63 82 C62 50 78 32 100 30 C122 32 138 50 137 82 C130 56 118 46 100 46 C82 46 70 56 63 82Z" fill="#20242e"/>
+                  <rect x="66" y="52" width="6" height="34" rx="3" fill="#32d5f4" opacity="0.85"/>
+                  <circle class="blush" cx="76" cy="98" r="6.5" fill="#ff9db1"/>
+                  <circle class="blush" cx="124" cy="98" r="6.5" fill="#ff9db1"/>
+                  <!-- face variants -->
+                  <g class="face-var f-idle"><ellipse cx="86" cy="86" rx="4" ry="6" fill="#26303e"/><ellipse cx="114" cy="86" rx="4" ry="6" fill="#26303e"/><path d="M93 104 Q100 109 107 104" stroke="#26303e" stroke-width="2.6" fill="none" stroke-linecap="round"/></g>
+                  <g class="face-var f-happy"><path d="M79 87 Q86 79 93 87" stroke="#26303e" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M107 87 Q114 79 121 87" stroke="#26303e" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M91 102 Q100 112 109 102" stroke="#26303e" stroke-width="2.8" fill="none" stroke-linecap="round"/></g>
+                  <g class="face-var f-laugh"><path d="M79 87 Q86 79 93 87" stroke="#26303e" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M107 87 Q114 79 121 87" stroke="#26303e" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M90 101 Q100 118 110 101 Q100 106 90 101Z" fill="#8a3b2e"/></g>
+                  <g class="face-var f-think"><ellipse cx="86" cy="86" rx="4" ry="6" fill="#26303e"/><ellipse cx="114" cy="86" rx="4" ry="6" fill="#26303e"/><path d="M84 74 L92 72 M108 72 L116 74" stroke="#26303e" stroke-width="2.4" stroke-linecap="round"/><path d="M95 106 L106 106" stroke="#26303e" stroke-width="2.6" stroke-linecap="round"/></g>
+                  <g class="face-var f-surprise"><ellipse cx="86" cy="86" rx="4.6" ry="7" fill="#26303e"/><ellipse cx="114" cy="86" rx="4.6" ry="7" fill="#26303e"/><path d="M82 73 L91 71 M109 71 L118 73" stroke="#26303e" stroke-width="2.4" stroke-linecap="round"/><circle cx="100" cy="106" r="4.6" fill="#8a3b2e"/></g>
+                  <g class="face-var f-care"><path d="M80 84 Q86 89 92 84" stroke="#26303e" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M108 84 Q114 89 120 84" stroke="#26303e" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M94 105 Q100 102 106 105" stroke="#26303e" stroke-width="2.6" fill="none" stroke-linecap="round"/></g>
+                  <g class="face-var f-love"><path d="M86 92 C78 84 84 76 86 81 C88 76 94 84 86 92Z" fill="#ff4d6d" transform="translate(-3 -2) scale(1.05)"/><path d="M114 92 C106 84 112 76 114 81 C116 76 122 84 114 92Z" fill="#ff4d6d" transform="translate(3 -2) scale(1.05)"/><path d="M91 102 Q100 112 109 102" stroke="#26303e" stroke-width="2.8" fill="none" stroke-linecap="round"/></g>
+                </g>
+              </g>
+            </svg>
+            <div class="char-name">RIYA</div>
+          </div>
+
+          <div class="orb-cell">
+            <button class="orb-btn" id="orbBtn" type="button" aria-label="Bolna shuru karo ya roko">
+              <span class="orb" aria-hidden="true">
+                <span class="ripple"></span><span class="ripple d2"></span>
+                <span class="ring"></span><span class="ring r2"></span>
+                <span class="core">
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="9" y="2.5" width="6" height="11" rx="3" fill="#0a84ff"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3.2M8.8 21.2h6.4" stroke="#0a84ff" stroke-width="2" stroke-linecap="round"/></svg>
+                </span>
+              </span>
+            </button>
+            <div class="orb-hint" id="orbHint">Orb tap karo — main sunungi</div>
+          </div>
+
+          <div class="char-cell">
+            <!-- ZOYA -->
+            <svg class="char zoya" id="charZoya" data-mood="idle" data-pose="idle" viewBox="0 0 200 260" role="img" aria-label="Zoya, animated assistant">
+              <g class="sway">
+                <g class="arm arm-l"><rect x="34" y="150" width="17" height="62" rx="8.5" fill="#eebd93"/><rect x="32" y="146" width="21" height="30" rx="9" fill="#0aa77a"/></g>
+                <path d="M62 138 Q100 122 138 138 L148 236 Q100 250 52 236 Z" fill="#0aa77a"/>
+                <path d="M62 138 Q100 122 138 138 L141 168 Q100 178 59 168 Z" fill="#2ecc9b"/>
+                <g class="arm arm-r"><rect x="149" y="150" width="17" height="62" rx="8.5" fill="#eebd93"/><rect x="147" y="146" width="21" height="30" rx="9" fill="#0aa77a"/></g>
+                <g class="head">
+                  <path d="M100 10 C60 10 48 42 50 78 C51 104 42 128 36 146 C56 138 62 124 63 106 L137 106 C138 124 144 138 164 146 C158 128 149 104 150 78 C152 42 140 10 100 10Z" fill="#4a2e1c"/>
+                  <path d="M100 10 C60 10 48 42 50 78 C50 88 51 96 52 102 C60 62 76 38 100 32 C124 38 140 62 148 102 C149 96 150 88 150 78 C152 42 140 10 100 10Z" fill="#5d3a22"/>
+                  <ellipse cx="100" cy="86" rx="37" ry="40" fill="#f3c69b"/>
+                  <path d="M63 80 C64 50 79 33 100 31 C121 33 136 50 137 80 C131 56 119 45 100 45 C81 45 69 56 63 80Z" fill="#4a2e1c"/>
+                  <circle cx="140" cy="52" r="7" fill="#ffb340"/><circle cx="140" cy="52" r="3" fill="#ff8a00"/>
+                  <circle class="blush" cx="76" cy="98" r="6.5" fill="#ff9db1"/>
+                  <circle class="blush" cx="124" cy="98" r="6.5" fill="#ff9db1"/>
+                  <g class="face-var f-idle"><ellipse cx="86" cy="86" rx="4" ry="6" fill="#33231a"/><ellipse cx="114" cy="86" rx="4" ry="6" fill="#33231a"/><path d="M93 104 Q100 109 107 104" stroke="#33231a" stroke-width="2.6" fill="none" stroke-linecap="round"/></g>
+                  <g class="face-var f-happy"><path d="M79 87 Q86 79 93 87" stroke="#33231a" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M107 87 Q114 79 121 87" stroke="#33231a" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M91 102 Q100 112 109 102" stroke="#33231a" stroke-width="2.8" fill="none" stroke-linecap="round"/></g>
+                  <g class="face-var f-laugh"><path d="M79 87 Q86 79 93 87" stroke="#33231a" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M107 87 Q114 79 121 87" stroke="#33231a" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M90 101 Q100 118 110 101 Q100 106 90 101Z" fill="#8a3b2e"/></g>
+                  <g class="face-var f-think"><ellipse cx="86" cy="86" rx="4" ry="6" fill="#33231a"/><ellipse cx="114" cy="86" rx="4" ry="6" fill="#33231a"/><path d="M84 74 L92 72 M108 72 L116 74" stroke="#33231a" stroke-width="2.4" stroke-linecap="round"/><path d="M95 106 L106 106" stroke="#33231a" stroke-width="2.6" stroke-linecap="round"/></g>
+                  <g class="face-var f-surprise"><ellipse cx="86" cy="86" rx="4.6" ry="7" fill="#33231a"/><ellipse cx="114" cy="86" rx="4.6" ry="7" fill="#33231a"/><path d="M82 73 L91 71 M109 71 L118 73" stroke="#33231a" stroke-width="2.4" stroke-linecap="round"/><circle cx="100" cy="106" r="4.6" fill="#8a3b2e"/></g>
+                  <g class="face-var f-care"><path d="M80 84 Q86 89 92 84" stroke="#33231a" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M108 84 Q114 89 120 84" stroke="#33231a" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M94 105 Q100 102 106 105" stroke="#33231a" stroke-width="2.6" fill="none" stroke-linecap="round"/></g>
+                  <g class="face-var f-love"><path d="M86 92 C78 84 84 76 86 81 C88 76 94 84 86 92Z" fill="#ff4d6d" transform="translate(-3 -2) scale(1.05)"/><path d="M114 92 C106 84 112 76 114 81 C116 76 122 84 114 92Z" fill="#ff4d6d" transform="translate(3 -2) scale(1.05)"/><path d="M91 102 Q100 112 109 102" stroke="#33231a" stroke-width="2.8" fill="none" stroke-linecap="round"/></g>
+                </g>
+              </g>
+            </svg>
+            <div class="char-name">ZOYA</div>
+          </div>
+        </div>
+        <p class="live-line"><span id="liveText">Hello Ajeet! Main Riya — aur saath me Zoya bhi hai. Kuch bhi bolo, hum sun rahe hain.</span><span class="heard" id="heardText"></span></p>
+      </section>
+
+      <!-- Quick actions -->
+      <section class="quick glass" aria-label="Quick apps">
+        <h2>Quick Apps — tap karte hi khulega</h2>
+        <div class="quick-grid">
+          <button class="qbtn" type="button" data-open="whatsapp"><svg viewBox="0 0 24 24" fill="#25d366" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.2 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.4-.7-2.9-1.2-4.7-4.1-4.9-4.3-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.4.5c-.1.1-.3.3-.1.6.1.3.7 1.2 1.6 1.9 1.1.9 2 1.2 2.3 1.3.3.1.5.1.6-.1l1-1.2c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.6.4 0 .1 0 .7-.2 1.2Z"/></svg>WhatsApp</button>
+          <button class="qbtn" type="button" data-open="youtube"><svg viewBox="0 0 24 24" fill="#ff3b30" aria-hidden="true"><path d="M22 8.2a2.8 2.8 0 0 0-2-2C18.3 5.8 12 5.8 12 5.8s-6.3 0-8 .4a2.8 2.8 0 0 0-2 2A29 29 0 0 0 1.6 12 29 29 0 0 0 2 15.8a2.8 2.8 0 0 0 2 2c1.7.4 8 .4 8 .4s6.3 0 8-.4a2.8 2.8 0 0 0 2-2 29 29 0 0 0 .4-3.8 29 29 0 0 0-.4-3.8ZM10 15.2V8.8L15.5 12Z"/></svg>YouTube</button>
+          <button class="qbtn" type="button" data-open="instagram"><svg viewBox="0 0 24 24" fill="none" stroke="#e1306c" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.3" fill="#e1306c" stroke="none"/></svg>Instagram</button>
+          <button class="qbtn" type="button" data-open="website"><svg viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9S14.5 18.4 12 21c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"/></svg>Meri Website</button>
+          <button class="qbtn" type="button" data-open="ajeetos"><svg viewBox="0 0 24 24" fill="none" stroke="#32ade6" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="3"/><path d="M9 21h6M12 17v4"/></svg>AJEET OS</button>
+          <button class="qbtn" type="button" data-open="songs"><svg viewBox="0 0 24 24" fill="none" stroke="#bf5af2" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 18V6l10-2v11.5"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="15.5" r="2.5"/></svg>Gaana Chalao</button>
+        </div>
+      </section>
+
+      <!-- Chat -->
+      <section class="chat glass" aria-label="Chat">
+        <h2>Baat-Cheet</h2>
+        <div class="msgs" id="msgs" aria-live="polite"></div>
+        <div class="chips" id="chips">
+          <button class="chip" type="button">Time batao</button>
+          <button class="chip" type="button">Ek joke sunao</button>
+          <button class="chip" type="button">YouTube kholo</button>
+          <button class="chip" type="button">Note karo: kal subah jaldi uthna hai</button>
+          <button class="chip" type="button">G71 cycle samjhao</button>
+          <button class="chip" type="button">Arijit Singh ka gaana chalao</button>
+        </div>
+        <form class="input-row" id="inputForm">
+          <input id="textInput" type="text" placeholder="Yahan likho ya mic se bolo…" autocomplete="off" aria-label="Message likho" />
+          <button class="icon-btn" id="micBtn" type="button" aria-label="Mic se bolo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3.2M8.8 21.2h6.4"/></svg></button>
+          <button class="icon-btn send" type="submit" aria-label="Bhejo"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.4 20.4 21.8 12 3.4 3.6l-.01 6.53L14 12 3.39 13.87z"/></svg></button>
+        </form>
+      </section>
+
+      <!-- Notes -->
+      <section class="notes glass" aria-label="Notes">
+        <h2>Mere Notes</h2>
+        <ul id="notesList"></ul>
+        <p class="empty" id="notesEmpty">"Note karo…" bolkar ya likhkar pehla note banao — jaise: <em>Note karo, kal market jana hai.</em></p>
+      </section>
+
+      <p class="foot">Mic aur awaaz ke liye Chrome sabse best rahega — pehli baar mic permission maange to <strong>Allow</strong> kar dena. Notes aur baat-cheet is web copy me isi session ke liye rehte hain.</p>
+    </div>
+
+    <script>
+      (function () {
+        "use strict";
+        var $ = function (id) { return document.getElementById(id); };
+        var stage = $("stage"), riya = $("charRiya"), zoya = $("charZoya");
+        var statusDot = $("statusDot"), statusText = $("statusText");
+        var liveText = $("liveText"), heardText = $("heardText"), orbHint = $("orbHint");
+        var msgs = $("msgs"), notesList = $("notesList"), notesEmpty = $("notesEmpty");
+        var hfToggle = $("hfToggle"), voiceToggle = $("voiceToggle");
+        var micBtn = $("micBtn"), textInput = $("textInput");
+
+        var handsFree = false, voiceOn = true, listening = false, speaking = false;
+        var notes = [], greeted = false, poseTimer = null, recog = null;
+
+        var URLS = {
+          whatsapp: "https://www.whatsapp.com/",
+          youtube: "https://www.youtube.com/",
+          instagram: "https://www.instagram.com/",
+          website: "https://theajeetbhai.netlify.app",
+          ajeetos: "https://ajeet1030.github.io/ajeetcnc.github.io/ajeet-os/"
+        };
+
+        /* ---------- Character reactions ---------- */
+        function react(riyaMood, riyaPose, zoyaMood, zoyaPose, holdMs) {
+          riya.setAttribute("data-mood", riyaMood); riya.setAttribute("data-pose", riyaPose);
+          zoya.setAttribute("data-mood", zoyaMood || riyaMood); zoya.setAttribute("data-pose", zoyaPose || "idle");
+          if (poseTimer) clearTimeout(poseTimer);
+          poseTimer = setTimeout(function () {
+            riya.setAttribute("data-pose", "idle"); zoya.setAttribute("data-pose", "idle");
+            if (!speaking && !listening) { riya.setAttribute("data-mood", "idle"); zoya.setAttribute("data-mood", "idle"); }
+          }, holdMs || 2600);
+        }
+        // Pick a reaction from the words of the reply itself
+        function moodFor(text) {
+          var t = text.toLowerCase();
+          if (/joke|haha|😄|hasna/.test(t)) return ["laugh", "nod", "laugh", "cheer"];
+          if (/khul gaya|khol diya|kholo|open ho/.test(t)) return ["happy", "point", "happy", "nod"];
+          if (/note.*(save|likh)|save ho gaya/.test(t)) return ["happy", "nod", "happy", "idle"];
+          if (/samajh nahi|nahi samajh|phir se/.test(t)) return ["care", "care", "care", "idle"];
+          if (/soch|ek second|hmm/.test(t)) return ["think", "think", "think", "idle"];
+          if (/wow|arre wah|surprise|kya baat/.test(t)) return ["surprise", "cheer", "surprise", "cheer"];
+          if (/hello|namaste|welcome|milke|khushi/.test(t)) return ["happy", "wave", "happy", "wave"];
+          if (/dhyaan|fikr|pareshan|sambhal/.test(t)) return ["care", "care", "care", "idle"];
+          if (/badhiya|shandaar|great|perfect|ho gaya/.test(t)) return ["happy", "cheer", "happy", "cheer"];
+          return ["happy", "nod", "happy", "idle"];
+        }
+
+        /* ---------- Stage state ---------- */
+        function setState(s, label) {
+          stage.setAttribute("data-state", s);
+          statusDot.className = "dot" + (s === "listening" ? " listening" : s === "speaking" ? " speaking" : "");
+          if (label) statusText.textContent = label;
+          orbHint.textContent = s === "listening" ? "Sun rahi hoon… bolo" : s === "speaking" ? "Bol rahi hoon…" : "Orb tap karo — main sunungi";
+        }
+
+        /* ---------- Chat + speech out ---------- */
+        function addMsg(who, text) {
+          var d = document.createElement("div");
+          d.className = "msg " + (who === "me" ? "me" : "ai");
+          var w = document.createElement("span"); w.className = "who";
+          w.textContent = who === "me" ? "Tum" : "Riya";
+          d.appendChild(w); d.appendChild(document.createTextNode(text));
+          msgs.appendChild(d); msgs.scrollTop = msgs.scrollHeight;
+        }
+        function pickVoice() {
+          try {
+            var vs = speechSynthesis.getVoices();
+            var pref = null, i, v;
+            for (i = 0; i < vs.length; i++) { v = vs[i]; if (/hi[-_]IN/i.test(v.lang) && /female|महिला/i.test(v.name)) { pref = v; break; } }
+            if (!pref) for (i = 0; i < vs.length; i++) { if (/hi[-_]IN/i.test(vs[i].lang)) { pref = vs[i]; break; } }
+            if (!pref) for (i = 0; i < vs.length; i++) { if (/en[-_]IN/i.test(vs[i].lang)) { pref = vs[i]; break; } }
+            if (!pref) for (i = 0; i < vs.length; i++) { if (/female|zira|samantha|google.*hindi/i.test(vs[i].name)) { pref = vs[i]; break; } }
+            return pref;
+          } catch (e) { return null; }
+        }
+        if ("speechSynthesis" in window) speechSynthesis.onvoiceschanged = function () {};
+        function speak(text) {
+          liveText.textContent = text;
+          var m = moodFor(text); react(m[0], m[1], m[2], m[3], Math.max(2400, text.length * 62));
+          if (!voiceOn || !("speechSynthesis" in window)) { setState("idle", "Ready — orb tap karo aur bolo"); maybeListenAgain(); return; }
+          try {
+            speechSynthesis.cancel();
+            var u = new SpeechSynthesisUtterance(text);
+            var v = pickVoice(); if (v) u.voice = v;
+            u.lang = (v && v.lang) || "hi-IN"; u.rate = 1.02; u.pitch = 1.12;
+            speaking = true; setState("speaking", "Riya bol rahi hai…");
+            u.onend = u.onerror = function () { speaking = false; setState("idle", "Ready — orb tap karo aur bolo"); maybeListenAgain(); };
+            speechSynthesis.speak(u);
+          } catch (e) { speaking = false; setState("idle", "Ready"); maybeListenAgain(); }
+        }
+        function reply(text) { addMsg("ai", text); speak(text); }
+
+        /* ---------- Notes ---------- */
+        function addNote(text) {
+          notes.push({ text: text, at: new Date() });
+          notesEmpty.style.display = "none";
+          var li = document.createElement("li");
+          var tm = document.createElement("time");
+          tm.textContent = notes[notes.length - 1].at.toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit" });
+          li.appendChild(tm); li.appendChild(document.createTextNode(text));
+          notesList.appendChild(li);
+        }
+
+        /* ---------- Open helpers ---------- */
+        function openUrl(url) { window.open(url, "_blank", "noopener"); }
+        function playSong(query) {
+          openUrl("https://www.youtube.com/results?search_query=" + encodeURIComponent(query));
+        }
+
+        var jokes = [
+          "Ek joke suno — programmer apni biwi se bola: bazaar se ek bread lana, aur agar ande milein to chhe le aana. Biwi chhe bread le aayi!",
+          "Teacher: batao, future tense kise kehte hain? Student: jab papa bole — kal se pakka padhunga!",
+          "CNC wala joke — machine boli: mera mood bilkul G90 jaisa hai, absolute! Relative baatein mujhe samajh nahi aati."
+        ];
+        var jokeIdx = 0;
+        var fallbacks = [
+          "Samajh gayi! Ye kaam main kar sakti hoon — apps kholna, gaana chalana, call karna, time-date batana, note banana aur CNC me madad. Bas bol do, kya karna hai?",
+          "Hmm, ye wala command meri list me nahi hai — par tum ye try karo: 'YouTube kholo', 'Note karo…', ya 'Ek joke sunao'. Main turant kar dungi!",
+          "Main sun rahi hoon Ajeet. Kuch kholun, gaana chalau, ya note banau? Bas ek line me bol do."
+        ];
+        var fbIdx = 0;
+
+        function timeStr() {
+          return new Date().toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit" });
+        }
+        function dateStr() {
+          return new Date().toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+        }
+
+        /* ---------- Brain: commands ---------- */
+        function processCommand(raw) {
+          var t = " " + raw.toLowerCase().replace(/\s+/g, " ").trim() + " ";
+          var m;
+
+          if (/(note karo|note kar lo|note bana|note karlo)/.test(t)) {
+            var note = raw.replace(/.*?(note karo|note kar lo|note bana|note karlo)\s*[:\-]?\s*/i, "").trim();
+            if (note) { addNote(note); reply("Ho gaya! Note save kar liya: " + note); }
+            else reply("Note me kya likhun? Aise bolo — note karo, kal market jana hai.");
+            return;
+          }
+          if (/(call karo|call kar do|phone karo|dial)/.test(t)) {
+            m = raw.match(/(\+?\d[\d\s-]{6,}\d)/);
+            if (m) { var num = m[1].replace(/[\s-]/g, ""); react("happy", "point", "happy", "nod"); reply("Call laga rahi hoon " + num + " par…"); setTimeout(function () { window.location.href = "tel:" + num; }, 700); }
+            else reply("Kis number par call karun? Aise bolo — call karo, uske baad number.");
+            return;
+          }
+          if (/(gaana|gana|song|music|chalao|bajao|play)/.test(t) && /(chalao|bajao|play|suno|sunao|lagao)/.test(t)) {
+            var q = raw.replace(/(riya|zoya|please|koi|ek|ka|ki|gaana|gana|song|music|chalao|bajao|play|lagao|suna[oo]?)/gi, " ").replace(/\s+/g, " ").trim();
+            if (!q) q = "trending hindi songs";
+            react("laugh", "cheer", "laugh", "cheer");
+            reply("Abhi chalaya! YouTube par '" + q + "' khul raha hai — suno aur enjoy karo.");
+            playSong(q);
+            return;
+          }
+          if (/whatsapp/.test(t)) { react("happy", "point", "happy", "nod"); reply("WhatsApp khol diya!"); openUrl(URLS.whatsapp); return; }
+          if (/youtube/.test(t)) { react("happy", "point", "happy", "nod"); reply("YouTube khul gaya! Koi gaana ya video bol do, main wahi chala dungi."); openUrl(URLS.youtube); return; }
+          if (/instagram|insta/.test(t)) { react("happy", "point", "happy", "nod"); reply("Instagram khol diya!"); openUrl(URLS.instagram); return; }
+          if (/(ajeet os|os kholo)/.test(t)) { react("happy", "point", "happy", "nod"); reply("AJEET OS khul gaya!"); openUrl(URLS.ajeetos); return; }
+          if (/(website|site kholo|meri site)/.test(t)) { react("happy", "point", "happy", "nod"); reply("Tumhari website khul gayi!"); openUrl(URLS.website); return; }
+          if (/(time|samay|baj)/.test(t)) { reply("Abhi time hai " + timeStr() + "."); return; }
+          if (/(date|tarikh|aaj kya|din)/.test(t)) { reply("Aaj hai " + dateStr() + "."); return; }
+          if (/(joke|hasao|mazak)/.test(t)) { reply(jokes[jokeIdx++ % jokes.length]); return; }
+          if (/g71/.test(t)) { reply("G71 turning cycle: pehle line me G71 U(depth) R(retract), dusri line me G71 P(start block) Q(end block) U(X finish allowance) W(Z allowance) F(feed). Profile P se Q ke beech likhte hain. Pehli baar dry-run aur single-block se check karna — bilkul jaise humne lesson me seekha tha!"); return; }
+          if (/g76/.test(t)) { reply("G76 threading cycle: pehli line G76 P(m r a) Q(min depth) R(finish allowance), dusri line G76 X(core dia) Z(length) P(thread height) Q(first depth) F(pitch). Lesson 4 me hum isko pura practice karenge!"); return; }
+          if (/(g02|g03|arc|radius|chamfer)/.test(t)) { reply("G02 clockwise aur G03 counter-clockwise arc hota hai. End point ke saath R (radius) ya I/K dete hain. Chamfer ke liye corner par C value use hota hai — jaise Lesson 2 me C2 chamfer aur R5 fillet banaya tha."); return; }
+          if (/(hello|hi|hey|namaste|kaise ho|kaisi ho)/.test(t)) { reply("Hello Ajeet! Main bilkul badhiya hoon — tum sunao, aaj kya karna hai? Gaana, note, ya koi app kholun?"); return; }
+          if (/(thank|shukriya|dhanyavad)/.test(t)) { react("love", "care", "love", "care"); reply("Anytime Ajeet! Tum bas bolte raho, main aur Zoya yahin hain tumhare liye."); return; }
+          if (/(bye|alvida|good night|so jao)/.test(t)) { react("care", "wave", "care", "wave"); reply("Bye Ajeet! Dhyaan rakhna apna — jab zaroorat ho, bas orb tap karke bula lena."); return; }
+          if (/(kaun ho|tum kaun|your name|naam kya)/.test(t)) { reply("Main Riya hoon, tumhari apni voice assistant — aur ye saath me Zoya hai. Hum dono tumhare har command par react bhi karte hain aur kaam bhi!"); return; }
+          reply(fallbacks[fbIdx++ % fallbacks.length]);
+        }
+
+        function handleUserText(text) {
+          if (!text || !text.trim()) return;
+          addMsg("me", text.trim());
+          heardText.textContent = "";
+          react("think", "think", "think", "idle", 900);
+          setTimeout(function () { processCommand(text); }, 450);
+        }
+
+        /* ---------- Speech recognition ---------- */
+        var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        function maybeListenAgain() { if (handsFree && !speaking) setTimeout(startListening, 350); }
+        function startListening() {
+          if (!SR) { reply("Is browser me voice sunne ki suvidha nahi hai — Chrome me kholo, ya neeche likh kar bhejo, main waisa hi jawab dungi."); return; }
+          if (listening) { stopListening(); return; }
+          try {
+            recog = new SR();
+            recog.lang = "hi-IN"; recog.interimResults = true; recog.continuous = handsFree;
+            recog.onstart = function () { listening = true; micBtn.classList.add("rec"); setState("listening", "Sun rahi hoon… bolo"); react("happy", "idle", "happy", "idle", 1200); };
+            recog.onresult = function (ev) {
+              var interim = "", final = "";
+              for (var i = ev.resultIndex; i < ev.results.length; i++) {
+                if (ev.results[i].isFinal) final += ev.results[i][0].transcript;
+                else interim += ev.results[i][0].transcript;
+              }
+              if (interim) heardText.textContent = "Tum: " + interim;
+              if (final) { heardText.textContent = "Tum: " + final; handleUserText(final); }
+            };
+            recog.onerror = function (ev) {
+              listening = false; micBtn.classList.remove("rec");
+              if (ev.error === "not-allowed") { setState("idle", "Mic permission nahi mili"); liveText.textContent = "Mic ki permission nahi mili — browser ke lock icon se mic Allow karke phir try karo."; }
+              else setState("idle", "Ready — orb tap karo aur bolo");
+            };
+            recog.onend = function () {
+              listening = false; micBtn.classList.remove("rec");
+              if (!speaking) setState("idle", "Ready — orb tap karo aur bolo");
+              maybeListenAgain();
+            };
+            if (speaking && "speechSynthesis" in window) speechSynthesis.cancel();
+            recog.start();
+          } catch (e) { setState("idle", "Ready"); }
+        }
+        function stopListening() { try { if (recog) recog.stop(); } catch (e) {} }
+
+        /* ---------- Wiring ---------- */
+        $("orbBtn").addEventListener("click", function () {
+          if (!greeted) {
+            greeted = true;
+            addMsg("ai", "Hello Ajeet! Main Riya — aur saath me Zoya bhi hai. Kuch bhi bolo, hum sun rahe hain.");
+            react("happy", "wave", "happy", "wave", 3000);
+            speak("Hello Ajeet! Main Riya, aur saath me Zoya bhi hai. Kuch bhi bolo, hum sun rahe hain.");
+            setTimeout(startListening, 2600);
+            return;
+          }
+          if (listening) stopListening(); else startListening();
+        });
+        micBtn.addEventListener("click", function () { if (listening) stopListening(); else startListening(); });
+        $("inputForm").addEventListener("submit", function (ev) {
+          ev.preventDefault(); var v = textInput.value; textInput.value = ""; handleUserText(v);
+        });
+        $("chips").addEventListener("click", function (ev) {
+          var b = ev.target.closest("button"); if (b) handleUserText(b.textContent);
+        });
+        document.querySelector(".quick-grid").addEventListener("click", function (ev) {
+          var b = ev.target.closest("button[data-open]"); if (!b) return;
+          var key = b.getAttribute("data-open");
+          if (key === "songs") { handleUserText("Trending hindi gaana chalao"); return; }
+          handleUserText(key === "website" ? "Meri website kholo" : key === "ajeetos" ? "AJEET OS kholo" : key + " kholo");
+        });
+        hfToggle.addEventListener("click", function () {
+          handsFree = !handsFree;
+          hfToggle.setAttribute("aria-pressed", handsFree ? "true" : "false");
+          if (handsFree) { reply("Hands-Free mode ON! Ab mic baar-baar dabana nahi padega — bas bolte raho, baat-cheet chalti rahegi."); setTimeout(startListening, 1800); }
+          else { stopListening(); reply("Hands-Free mode OFF kar diya."); }
+        });
+        voiceToggle.addEventListener("click", function () {
+          voiceOn = !voiceOn;
+          voiceToggle.setAttribute("aria-pressed", voiceOn ? "true" : "false");
+          if (!voiceOn && "speechSynthesis" in window) { speechSynthesis.cancel(); speaking = false; setState("idle", "Ready"); }
+        });
+
+        /* First paint: greeting bubble + wave (speech waits for first tap — browser rule) */
+        addMsg("ai", "Hello Ajeet! Main Riya — aur saath me Zoya bhi hai. Orb tap karo, main awaaz me greet karke sunna shuru kar dungi.");
+        react("happy", "wave", "happy", "wave", 3200);
+      })();
+    </script>
+  </body>
+</html>
