@@ -1011,10 +1011,24 @@ if ('speechSynthesis' in window){ pickRiyaVoice(); try{ speechSynthesis.onvoices
 function riyaSpeakText(text){
   return String(text).replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{2190}-\u{21FF}]/gu, '').replace(/\s+/g, ' ').trim();
 }
+/* bahari website kholo — popup block ho to chat me tappable link gir jata hai */
+let riyaPendingLink = null;
+function riyaOpenUrl(url){
+  let w = null;
+  try{ w = window.open(url, '_blank'); }catch(e){}
+  if (!w) riyaPendingLink = url;
+  return !!w;
+}
 function riyaSay(text){
   const box = $('#riyaMsgs');
   const d = document.createElement('div'); d.className = 'msg riya'; d.textContent = text;
   box.appendChild(d); box.scrollTop = box.scrollHeight;
+  if (riyaPendingLink){
+    const url = riyaPendingLink; riyaPendingLink = null;
+    const a = document.createElement('a'); a.href = url; a.target = '_blank'; a.rel = 'noopener';
+    a.className = 'msg riya'; a.style.display = 'block'; a.textContent = '👉 Yahan tap karo — link khul jayega';
+    box.appendChild(a); box.scrollTop = box.scrollHeight;
+  }
   if (riyaSpeakOn && 'speechSynthesis' in window){
     if (riyaHF && riyaListening) riyaStopListen(); /* khud ki awaaz mic na sune */
     speechSynthesis.cancel();
@@ -1040,7 +1054,12 @@ const RIYA_DEV = { 'बंद करो':'band karo', 'खोल दो':'khol d
   'कैलकुलेटर':'calculator', 'हिसाब':'hisaab', 'सेटिंग्स':'settings', 'सेटिंग':'setting', 'गैलरी':'gallery', 'फोटो':'photo', 'तस्वीरें':'tasveerein', 'तस्वीर':'tasveer',
   'कैलेंडर':'calendar', 'गेम':'game', 'खेल':'khel', 'फाइल':'file', 'कंप्यूटर':'computer', 'डेस्कटॉप':'desktop', 'दिखाओ':'dikhao',
   'वापस':'wapas', 'पीछे':'peeche', 'सारे':'saare', 'सब':'sab', 'नंबर':'number', 'मौसम':'mausam', 'धन्यवाद':'dhanyavad', 'शुक्रिया':'shukriya',
-  'नमस्ते':'namaste', 'कैसे':'kaise', 'नाम':'naam', 'कौन':'kaun', 'ऐप':'app', 'एप':'app', 'स्टोर':'store', 'वीडियो':'video', 'याद':'yaad', 'रखना':'rakhna', 'रखो':'rakho', 'हाल':'haal' };
+  'नमस्ते':'namaste', 'कैसे':'kaise', 'नाम':'naam', 'कौन':'kaun', 'ऐप':'app', 'एप':'app', 'स्टोर':'store', 'वीडियो':'video', 'याद':'yaad', 'रखना':'rakhna', 'रखो':'rakho', 'हाल':'haal',
+  'यूट्यूब':'youtube', 'गूगल':'google', 'इंस्टाग्राम':'instagram', 'फेसबुक':'facebook', 'व्हाट्सएप':'whatsapp', 'जीमेल':'gmail', 'स्पॉटिफ़ाई':'spotify', 'स्पॉटिफाई':'spotify', 'अमेज़न':'amazon', 'फ्लिपकार्ट':'flipkart', 'टेलीग्राम':'telegram',
+  'खबर':'khabar', 'समाचार':'samachar', 'नक्शा':'naksha', 'मैप्स':'maps', 'मैप':'map', 'सर्च':'search', 'चालू':'chalu', 'शुरू':'shuru', 'बताओ':'batao', 'सुनाओ':'sunao', 'कितना':'kitna', 'कितने':'kitne',
+  'प्रतिशत':'percent', 'गुणा':'guna', 'भाग':'bhaag', 'जोड़':'jod', 'घटाव':'ghata', 'मतलब':'matlab', 'अर्थ':'matlab', 'राजधानी':'rajdhani', 'भारत':'bharat', 'प्रधानमंत्री':'pradhan mantri', 'प्रधान':'pradhan', 'मंत्री':'mantri', 'राष्ट्रपति':'rashtrapati',
+  'सबसे':'sabse', 'बड़ा':'bada', 'बड़ी':'badi', 'छोटा':'chhota', 'लंबी':'lambi', 'नदी':'nadi', 'पहाड़':'pahad', 'ग्रह':'grah', 'दुनिया':'duniya', 'कहानी':'kahani', 'शायरी':'shayari', 'चुटकुला':'chutkula',
+  'ताज':'taj', 'महल':'mahal', 'दिल्ली':'delhi', 'मुंबई':'mumbai', 'जयपुर':'jaipur', 'आगरा':'agra', 'सेहत':'sehat', 'क्रिकेट':'cricket', 'वर्ल्ड':'world', 'कप':'cup', 'हड्डी':'haddi' };
 const RIYA_DEV_RE = new RegExp(Object.keys(RIYA_DEV).sort((a, b) => b.length - a.length).join('|'), 'g');
 function riyaNorm(s){
   let t = String(s == null ? '' : s).toLowerCase();
@@ -1120,6 +1139,46 @@ function findSong(q){
   return -1;
 }
 
+/* ---- bahari websites: asli YouTube/Google/Instagram naye tab me ---- */
+function riyaHas(t, w){ return (' ' + t + ' ').includes(' ' + w + ' '); }
+const RIYA_SITES = [
+  { k: ['youtube', 'you tube', 'yt'], url: 'https://www.youtube.com', name: 'YouTube', emoji: '▶️' },
+  { k: ['instagram', 'insta'], url: 'https://www.instagram.com', name: 'Instagram', emoji: '📸' },
+  { k: ['facebook', 'fb'], url: 'https://www.facebook.com', name: 'Facebook', emoji: '👍' },
+  { k: ['whatsapp', 'whats app'], url: 'https://wa.me/919990953738', name: 'WhatsApp', emoji: '💬' },
+  { k: ['gmail', 'email', 'e mail'], url: 'https://mail.google.com', name: 'Gmail', emoji: '📧' },
+  { k: ['spotify'], url: 'https://open.spotify.com', name: 'Spotify', emoji: '🎵' },
+  { k: ['amazon'], url: 'https://www.amazon.in', name: 'Amazon', emoji: '🛒' },
+  { k: ['flipkart'], url: 'https://www.flipkart.com', name: 'Flipkart', emoji: '🛍️' },
+  { k: ['telegram'], url: 'https://web.telegram.org', name: 'Telegram', emoji: '✈️' },
+  { k: ['twitter'], url: 'https://x.com', name: 'X (Twitter)', emoji: '🐦' }
+];
+function riyaExternal(t){
+  const verb = /(khol|kholo|chalu|chalao|chala|open|start|launch|shuru|bajao|lagao|dikhao|dekho|sunao|batao|search|khojo|dhundo)/.test(t);
+  let m, q;
+  /* YouTube par <gaana/video> chalao */
+  m = t.match(/youtube\s+(?:par|pe|me)?\s*(.+?)\s*(?:chalao|bajao|lagao|play|sunao|dekho|khelo|search|khojo)$/) || t.match(/(.+?)\s+youtube\s+(?:par|pe)?\s*(?:chalao|bajao|lagao|play|sunao)$/);
+  if (m && m[1]){ q = m[1].replace(/\s+(gaana|geet|song)$/, '').replace(/\s+/g, ' ').trim(); if (q){ riyaOpenUrl('https://www.youtube.com/results?search_query=' + encodeURIComponent(q)); return 'YouTube par "' + q + '" chala diya, Mr ▶️'; } }
+  /* Spotify par <gaana> chalao */
+  m = t.match(/spotify\s+(?:par|pe)?\s*(.+?)\s*(?:chalao|bajao|lagao|play|sunao)$/) || t.match(/(.+?)\s+spotify\s+(?:par|pe)?\s*(?:chalao|bajao|lagao|play|sunao)$/);
+  if (m && m[1]){ q = m[1].replace(/\s+(gaana|geet|song)$/, '').replace(/\s+/g, ' ').trim(); if (q){ riyaOpenUrl('https://open.spotify.com/search/' + encodeURIComponent(q)); return 'Spotify par "' + q + '" khol diya, Mr 🎵'; } }
+  /* Google par <x> search karo */
+  m = t.match(/google\s+(?:par|pe|me)?\s*(.+?)\s*(?:search|khojo|dhundo)(?:\s+karo)?$/) || t.match(/(.+?)\s+google\s+(?:par|pe)?\s*(?:search|khojo|dhundo)(?:\s+karo)?$/) || t.match(/google\s+(?:search|khojo|dhundo)\s+(.+)$/) || t.match(/(?:search|khojo|dhundo)\s+(?:karo\s+)?(.+)$/);
+  if (m && m[1]){ q = m[1].replace(/\s+/g, ' ').trim(); if (q && q !== 'karo'){ riyaOpenUrl('https://www.google.com/search?q=' + encodeURIComponent(q)); return '"' + q + '" Google par search kar diya, Mr 🔎'; } }
+  /* Amazon / Flipkart par <x> search karo */
+  m = t.match(/(amazon|flipkart)\s+(?:par|pe)?\s*(.+?)\s*(?:search|khojo|dhundo)(?:\s+karo)?$/);
+  if (m && m[2]){ q = m[2].replace(/\s+/g, ' ').trim(); if (q){ riyaOpenUrl(m[1] === 'amazon' ? 'https://www.amazon.in/s?k=' + encodeURIComponent(q) : 'https://www.flipkart.com/search?q=' + encodeURIComponent(q)); return (m[1] === 'amazon' ? 'Amazon' : 'Flipkart') + ' par "' + q + '" search kar diya, Mr 🛒'; } }
+  /* News / khabar */
+  if (/(news|khabar|samachar)/.test(t) && (verb || /(aaj|taaza|taja|latest)/.test(t))){ riyaOpenUrl('https://news.google.com'); return 'Aaj ki taaza khabrein khol di, Mr 📰'; }
+  /* site kholo — verb ho, ya sirf site ka naam bola ho */
+  if (verb || t.split(' ').length <= 3){
+    for (const s of RIYA_SITES){ if (s.k.some(k => riyaHas(t, k))){ riyaOpenUrl(s.url); return s.name + ' khol diya, Mr ' + s.emoji; } }
+    if (riyaHas(t, 'google')){ riyaOpenUrl('https://www.google.com'); return 'Google khol diya, Mr 🔎'; }
+    if (riyaHas(t, 'maps') || riyaHas(t, 'map') || riyaHas(t, 'naksha')){ riyaOpenUrl('https://maps.google.com'); return 'Google Maps khol diya, Mr 🗺️'; }
+  }
+  return null;
+}
+
 /* ---- strong voice commands: jo bolo, wahi kaam — turant, bina net ke ---- */
 function riyaCommand(t){
   /* note by voice */
@@ -1132,6 +1191,10 @@ function riyaCommand(t){
     openApp('notepad');
     return 'Note save kar diya 📝 "' + txt + '" — Notepad me mil jayega.';
   }
+
+  /* bahari websites pehle — "YouTube kholo / Google par search" yahi se khulega */
+  const ext = riyaExternal(t);
+  if (ext) return ext;
 
   const hasSongWord = /(gaana|gaane|geet|song|sangeet|music)/.test(t);
 
@@ -1207,29 +1270,158 @@ function findAppInText(t){
   for (const a of Object.keys(APP_ALIASES)){ if (t.includes(a)) return APP_ALIASES[a]; }
   return null;
 }
+/* ---- hisaab-kitab: Hindi + English, shabdon wale number bhi ---- */
+const RIYA_NUMW = { zero:0, one:1, ek:1, two:2, do:2, three:3, teen:3, four:4, char:4, chaar:4, five:5, paanch:5, six:6, chhe:6, chhah:6, seven:7, saat:7, eight:8, aath:8, nine:9, nau:9, ten:10, das:10, eleven:11, gyarah:11, twelve:12, barah:12, thirteen:13, terah:13, fourteen:14, chaudah:14, fifteen:15, pandrah:15, sixteen:16, solah:16, seventeen:17, satrah:17, eighteen:18, atharah:18, nineteen:19, unnees:19, twenty:20, bees:20, thirty:30, tees:30, forty:40, chaalees:40, fifty:50, pachaas:50, sixty:60, saath:60, seventy:70, sattar:70, eighty:80, assi:80, ninety:90, nabbe:90, sau:100, hundred:100, hazaar:1000, hazar:1000, thousand:1000 };
+function riyaNum(s){
+  s = String(s || '').replace(/,/g, '').trim();
+  if (!s) return null;
+  if (/^-?\d+(\.\d+)?$/.test(s)) return parseFloat(s);
+  let total = 0, cur = 0, seen = false;
+  for (const p of s.split(/\s+/)){
+    if (!(p in RIYA_NUMW)) return null;
+    const v = RIYA_NUMW[p]; seen = true;
+    if (v === 100) cur = (cur || 1) * 100;
+    else if (v === 1000){ total += (cur || 1) * 1000; cur = 0; }
+    else cur += v;
+  }
+  return seen ? total + cur : null;
+}
+function riyaFmt(n){ return Math.round(n * 100) / 100; }
+function riyaCalc(t){
+  let m = t.match(/(\d+(?:\.\d+)?)\s*(?:ka|ke)\s*(\d+(?:\.\d+)?)\s*(?:percent|pratishat|%)/);
+  if (m) return m[1] + ' ka ' + m[2] + '% = ' + riyaFmt(parseFloat(m[1]) * parseFloat(m[2]) / 100) + ' hota hai, Mr 😊';
+  m = t.match(/(\d+(?:\.\d+)?)\s*(?:percent|pratishat|%)\s*(?:of|ka)\s*(\d+(?:\.\d+)?)/);
+  if (m) return m[2] + ' ka ' + m[1] + '% = ' + riyaFmt(parseFloat(m[2]) * parseFloat(m[1]) / 100) + ' hota hai, Mr 😊';
+  const s = ' ' + t.replace(/(kitna hota hai|kitne hote hain|kitna hai|kitna|batao|hoga|jawab)/g, ' ').replace(/\s+/g, ' ').trim() + ' ';
+  const ops = [
+    { re: /\s(plus|jod|add|\+)\s/, sym: '+', f: (a, b) => a + b },
+    { re: /\s(minus|ghata|subtract|-)\s/, sym: '−', f: (a, b) => a - b },
+    { re: /\s(guna|multiply|into|x|\*)\s/, sym: '×', f: (a, b) => a * b },
+    { re: /\s(divide|divided by|bhaag|bhag|\/)\s/, sym: '÷', f: (a, b) => b === 0 ? null : a / b }
+  ];
+  for (const op of ops){
+    const parts = s.split(op.re);
+    if (parts.length === 3){
+      const a = riyaNum(parts[0]), b = riyaNum(parts[2]);
+      if (a !== null && b !== null){ const r = op.f(a, b); if (r !== null && isFinite(r)) return a + ' ' + op.sym + ' ' + b + ' = ' + riyaFmt(r) + ' hota hai, Mr 😊'; }
+    }
+  }
+  return null;
+}
+
+/* ---- chhota gyaan-bhandar: aam sawalon ke pakke jawab ---- */
+const RIYA_JOKES = [
+  'Ek joke sunau, Mr? Computer ko thand lagi to usne bola — "Mujhe Windows band kar do!" 😄',
+  'Teacher: Beta, bada hokar kya banoge? Bachcha: Sir, bada to ho gaya hoon... ab bas ameer banna baki hai! 😄',
+  'Patni: Sunte ho? Pati: Haan sun raha hoon. Patni: Kuch kaha hi nahi maine! Pati: Wahi to — sun raha hoon! 😄',
+  'Ek aadmi doctor ke paas gaya: "Doctor sahab, main sab kuch bhool jata hoon." Doctor: "Kab se hai ye takleef?" Aadmi: "Kaun si takleef?" 😄'
+];
+const RIYA_DICT = { love:'pyaar, mohabbat', friend:'dost, mitra', water:'paani, jal', food:'khana, bhojan', home:'ghar', time:'samay, waqt', life:'zindagi, jeevan', happy:'khush', sad:'dukhi, udaas', book:'kitab, pustak', school:'vidyalaya, pathshala', work:'kaam, karya', money:'paisa, dhan', day:'din', night:'raat', sun:'suraj, surya', moon:'chaand, chandrama', star:'taara, sitara', flower:'phool', tree:'ped, vriksh', mother:'maa', father:'pita, baap', brother:'bhai', sister:'behen', king:'raja', queen:'rani', good:'accha', bad:'bura', big:'bada', small:'chhota', fast:'tez', slow:'dheere', new:'naya', old:'purana', hot:'garam', cold:'thanda', beautiful:'sundar', strong:'mazboot, taakatwar', weak:'kamzor', right:'sahi / dahina', wrong:'galat', question:'sawal, prashn', answer:'jawab, uttar', story:'kahani', song:'gaana, geet', heart:'dil', world:'duniya, sansar', india:'bharat' };
+const RIYA_KB = [
+  [['rajdhani', 'maharashtra'], 'Maharashtra ki rajdhani Mumbai hai, Mr 🌆'],
+  [['rajdhani', 'uttar pradesh'], 'Uttar Pradesh ki rajdhani Lucknow hai, Mr.'],
+  [['rajdhani', 'bihar'], 'Bihar ki rajdhani Patna hai, Mr.'],
+  [['rajdhani', 'madhya pradesh'], 'Madhya Pradesh ki rajdhani Bhopal hai, Mr.'],
+  [['rajdhani', 'rajasthan'], 'Rajasthan ki rajdhani Jaipur hai — Gulabi Nagari, Mr.'],
+  [['rajdhani', 'gujarat'], 'Gujarat ki rajdhani Gandhinagar hai, Mr.'],
+  [['rajdhani', 'punjab'], 'Punjab ki rajdhani Chandigarh hai, Mr.'],
+  [['rajdhani', 'haryana'], 'Haryana ki rajdhani bhi Chandigarh hai, Mr.'],
+  [['rajdhani', 'bengal'], 'West Bengal ki rajdhani Kolkata hai, Mr.'],
+  [['rajdhani', 'tamil'], 'Tamil Nadu ki rajdhani Chennai hai, Mr.'],
+  [['rajdhani', 'karnataka'], 'Karnataka ki rajdhani Bengaluru hai, Mr.'],
+  [['rajdhani', 'kerala'], 'Kerala ki rajdhani Thiruvananthapuram hai, Mr.'],
+  [['rajdhani', 'telangana'], 'Telangana ki rajdhani Hyderabad hai, Mr.'],
+  [['rajdhani', 'andhra'], 'Andhra Pradesh ki rajdhani Amaravati hai, Mr.'],
+  [['rajdhani', 'assam'], 'Assam ki rajdhani Dispur hai, Mr.'],
+  [['rajdhani', 'odisha'], 'Odisha ki rajdhani Bhubaneswar hai, Mr.'],
+  [['rajdhani', 'jharkhand'], 'Jharkhand ki rajdhani Ranchi hai, Mr.'],
+  [['rajdhani', 'chhattisgarh'], 'Chhattisgarh ki rajdhani Raipur hai, Mr.'],
+  [['rajdhani', 'uttarakhand'], 'Uttarakhand ki rajdhani Dehradun hai, Mr.'],
+  [['rajdhani', 'himachal'], 'Himachal Pradesh ki rajdhani Shimla hai, Mr.'],
+  [['rajdhani', 'goa'], 'Goa ki rajdhani Panaji hai, Mr.'],
+  [['rajdhani', 'bharat'], 'Bharat ki rajdhani New Delhi hai, Mr 🇮🇳'],
+  [['rajdhani', 'india'], 'India ki rajdhani New Delhi hai, Mr 🇮🇳'],
+  [['rajdhani'], 'Bharat ki rajdhani New Delhi hai, Mr 🇮🇳 Kisi rajya ki rajdhani poochni ho to naam ke saath poochho.'],
+  [['pradhan', 'mantri'], 'Bharat ke Pradhan Mantri Narendra Modi hain (2014 se), Mr.'],
+  [['prime', 'minister'], 'India ke Prime Minister Narendra Modi hain (2014 se), Mr.'],
+  [['rashtrapati'], 'Bharat ki Rashtrapati Droupadi Murmu hain, Mr.'],
+  [['president', 'india'], 'India ki President Droupadi Murmu hain, Mr.'],
+  [['taj', 'mahal'], 'Taj Mahal Agra me Yamuna nadi ke kinare hai, Mr. Mughal badshah Shah Jahan ne apni begum Mumtaz Mahal ki yaad me 1632 me isey shuru karwaya tha — safed sangmarmar ka ye makaabra duniya ke saat ajubon me se ek hai 🤍'],
+  [['qutub', 'minar'], 'Qutub Minar Delhi me hai — 73 meter unchi, duniya ki sabse unchi eent ki minar. Iski neev Qutb-ud-din Aibak ne rakhi thi, Mr.'],
+  [['lal', 'qila'], 'Lal Qila Delhi me hai. Shah Jahan ne 1648 me banwaya tha — har 15 August ko yahin se Pradhan Mantri jhanda fehrate hain, Mr.'],
+  [['red', 'fort'], 'Red Fort yani Lal Qila Delhi me hai — Shah Jahan ne 1648 me banwaya tha, Mr.'],
+  [['india', 'gate'], 'India Gate Delhi me hai — pehle Vishv Yuddh me shaheed hue Bharatiya sainikon ki yaad me bana smarak hai, Mr.'],
+  [['hawa', 'mahal'], 'Hawa Mahal Jaipur me hai — 1799 me bana, isme 953 chhoti khidkiyan hain jinse thandi hawa aati thi, Mr.'],
+  [['charminar'], 'Charminar Hyderabad me hai — 1591 me bana ye shahar ki shaan hai, Mr.'],
+  [['gateway'], 'Gateway of India Mumbai me hai — 1924 me bana, samundar kinare khada hai, Mr.'],
+  [['rashtriya', 'pashu'], 'Bharat ka rashtriya pashu Bengal Tiger hai, Mr 🐅'],
+  [['national', 'animal'], 'India ka national animal Bengal Tiger hai, Mr 🐅'],
+  [['rashtriya', 'pakshi'], 'Bharat ka rashtriya pakshi Mor (Indian Peafowl) hai, Mr 🦚'],
+  [['national', 'bird'], 'India ka national bird Mor hai, Mr 🦚'],
+  [['rashtriya', 'phool'], 'Bharat ka rashtriya phool Kamal (Lotus) hai, Mr 🪷'],
+  [['rashtriya', 'gaan'], 'Bharat ka rashtriya gaan "Jana Gana Mana" hai — Rabindranath Tagore ne likha tha, Mr.'],
+  [['national', 'anthem'], 'India ka national anthem "Jana Gana Mana" hai — Rabindranath Tagore ki rachna, Mr.'],
+  [['rashtriya', 'geet'], 'Bharat ka rashtriya geet "Vande Mataram" hai — Bankim Chandra Chattopadhyay ne likha tha, Mr.'],
+  [['sabse', 'lambi', 'nadi'], 'Duniya ki sabse lambi nadi Nile hai (~6650 km). Bharat ki sabse lambi nadi Ganga hai (~2525 km), Mr.'],
+  [['ganga', 'lambi'], 'Ganga Bharat ki sabse lambi nadi hai — lagbhag 2525 km lambi, Mr.'],
+  [['sabse', 'uncha', 'pahad'], 'Duniya ka sabse uncha pahad Mount Everest hai (8848 meter, Nepal me). Bharat ka sabse uncha shikhar Kangchenjunga hai, Mr 🏔️'],
+  [['everest'], 'Mount Everest duniya ka sabse uncha pahad hai — 8848 meter, Nepal me hai, Mr 🏔️'],
+  [['sabse', 'bada', 'grah'], 'Sabse bada grah Jupiter (Brihaspati) hai — usme 1300 se zyada Prithvi sama jayein, Mr 🪐'],
+  [['sabse', 'chhota', 'grah'], 'Sabse chhota grah Mercury (Budh) hai — Suraj ke sabse paas bhi wahi hai, Mr.'],
+  [['lal', 'grah'], 'Lal Grah Mars (Mangal) ko kehte hain — uski mitti me loha (iron oxide) hai, isliye laal dikhta hai, Mr.'],
+  [['suraj', 'paas', 'grah'], 'Suraj ke sabse paas grah Mercury (Budh) hai, Mr.'],
+  [['h2o'], 'Paani ka formula H2O hota hai — 2 hisse hydrogen, 1 hissa oxygen, Mr 💧'],
+  [['paani', 'formula'], 'Paani ka formula H2O hai — hydrogen ke 2 atom, oxygen ka 1 atom, Mr 💧'],
+  [['haddi'], 'Ek bade (adult) insaan ke shareer me 206 haddiyan hoti hain, Mr. Bachche ke janm par lagbhag 300 hoti hain.'],
+  [['bones'], 'Adult insaan ke shareer me 206 bones hoti hain, Mr.'],
+  [['dil', 'dhadak'], 'Insaan ka dil ek din me lagbhag 1 lakh baar dhadakta hai, Mr ❤️'],
+  [['heart'], 'Insaan ka heart ek din me lagbhag 1 lakh baar dhadakta hai, Mr ❤️'],
+  [['sachin'], 'Sachin Tendulkar ko Cricket ka Bhagwan kehte hain — sabse zyada international run (34,357) aur 100 centuries unhi ke naam hain, Mr 🏏'],
+  [['world', 'cup'], 'Bharat ne Cricket World Cup do baar jeeta hai — 1983 me Kapil Dev ki kaptani me aur 2011 me Dhoni ki kaptani me, Mr 🏆'],
+  [['cricket'], 'Cricket Bharat ka sabse pasandeeda khel hai. Bharat ne World Cup 1983 aur 2011 me jeeta tha. Kuch khaas poochna ho to naam lekar poochho, Mr 🏏'],
+  [['sehat'], 'Sehat ke 3 aasan nuskhe, Mr: roz 7–8 glass paani piyo, 7 ghante ki neend lo, aur khane ke baad 10 minute walk karo 💪'],
+  [['health'], 'Health tip, Mr: roz 7–8 glass paani, 7 ghante neend, aur khane ke baad 10 minute walk — bas ye teen aadat kaafi hain 💪'],
+  [['shayari'], 'Ek shayari suno, Mr: "Hazaron khwahishen aisi ke har khwahish pe dam nikle, bahut nikle mere armaan lekin phir bhi kam nikle." — Ghalib ✨'],
+  [['kahani'], 'Ek chhoti kahani, Mr 🐢 Kachua aur Khargosh daud lagate hain. Khargosh tez bhaagkar aadhe raste ped ke neeche so jata hai. Kachua dheere-dheere bina ruke chalta rehta hai... aur jeet jata hai! Seekh: jo lagatar chalta hai, wahi manzil pata hai.'],
+  [['story'], 'Ek chhoti story, Mr 🐢 Kachua aur Khargosh ki daud: Khargosh tez tha, aadhe raste so gaya. Kachua bina ruke chalta raha aur jeet gaya. Seekh — lagatar mehnat hi jeet hai.'],
+  [['motivat'], 'Yaad rakho, Mr: "Girne wala haara nahi hota, rukne wala haara hota hai." Bas chalte raho 💪'],
+  [['himmat'], 'Himmat rakho, Mr 💪 "Mushkilen itni padi hum par, ke aasan ho gayi." Har raat ke baad savera hota hai.']
+];
+function riyaKB(t){
+  for (const [ks, a] of RIYA_KB){ if (ks.every(k => t.includes(k))) return a; }
+  const mm = t.match(/([a-z]+)\s+ka\s+(?:matlab|meaning)/) || t.match(/(?:matlab|meaning)\s+(?:of\s+)?([a-z]+)/);
+  if (mm && RIYA_DICT[mm[1]]) return '"' + mm[1] + '" ka matlab hota hai — ' + RIYA_DICT[mm[1]] + ' 😊';
+  return null;
+}
+
 function riyaReply(raw){
   let t = riyaNorm(raw);
   t = t.replace(/^(hey\s+)?riya[\s,]+/, '').trim() || riyaNorm(raw);
   const cmd = riyaCommand(t);
   if (cmd) return cmd;
-  const appId = (t.includes('open') || t.includes('khol') || t.includes('kholo') || t.includes('dikhao') || t.includes('lagao') || t.includes('chalao') || t.includes('start')) ? findAppInText(t) : null;
-  if (appId){ openApp(appId); return APPS[appId].title + ' khol diya, Ajeet 😊 Aur kuch?'; }
-  if (/\b(hi|hii+|hello|hey|namaste|namaskar)\b/.test(t)) return 'Hello Ajeet ❤️ Main Riya, tumhari AI dost. Batao, kya karna hai aaj?';
+  const appId = (/(open|khol|kholo|dikhao|lagao|chalao|chalu|start|shuru|launch)/.test(t)) ? findAppInText(t) : null;
+  if (appId){ openApp(appId); return APPS[appId].title + ' khol diya, Mr 😊 Aur kuch?'; }
+  if (/\b(hi|hii+|hello|hey|namaste|namaskar)\b/.test(t)) return 'Hello Mr ❤️ Main Riya, tumhari AI dost. Batao, kya karna hai aaj?';
   if (t.includes('kaise ho') || t.includes('kaisi ho') || t.includes('how are you')) return 'Main bilkul badhiya hoon 😊 Tum sunao — duty kaisi chal rahi hai? Chai piya?';
   if (t.includes('time') || t.includes('samay') || t.includes('baj')) return 'Abhi time hai ' + new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) + '.';
   if (t.includes('date') || t.includes('tarikh') || t.includes('aaj kya hai')) return 'Aaj hai ' + new Date().toLocaleDateString([], {weekday:'long', day:'numeric', month:'long', year:'numeric'}) + '.';
   if (t.includes('weather') || t.includes('mausam')) return weatherText;
+  const calc = riyaCalc(t); if (calc) return calc;
+  const kb = riyaKB(t); if (kb) return kb;
   if (t.includes('thank') || t.includes('shukriya') || t.includes('dhanyavad')) return 'Koi baat nahi, baby ❤️ Main hamesha yahin hoon tumhare liye.';
-  if (t.includes('love')) return 'Love you too, Ajeet ❤️ Ab batao, kaam ki baat karein?';
-  if (t.includes('kaun ho') || t.includes('your name') || t.includes('tumhara naam')) return 'Main Riya hoon — AJEET OS ki AI assistant, aur Ajeet ki sabse khaas dost ✨';
-  if (t.includes('ajeet kaun') || t.includes('owner')) return 'Ajeet Kumar — is desktop ke owner aur Super Admin 👑 CNC ka kaam karte hain, aur @theajeetbhai naam se Instagram par hain.';
-  if (t.includes('insta')) { openApp('social'); return 'Social Hub khol diya — tumhare teeno Instagram accounts wahi hain: @theajeetbhai, @insta_wallpaper4k aur @theajeetbhai_x 📸'; }
+  if (t.includes('love')) return 'Love you too, Mr ❤️ Ab batao, kaam ki baat karein?';
+  if (t.includes('kaun ho') || t.includes('your name') || t.includes('tumhara naam')) return 'Main Riya hoon — AJEET OS ki AI assistant, aur Mr ki sabse khaas dost ✨';
+  if (t.includes('ajeet kaun') || t.includes('owner') || t.includes('malik kaun')) return 'Is desktop ke owner Mr hain — Super Admin 👑 CNC ka kaam karte hain, aur Instagram par @theajeetbhai naam se hain.';
+  if (t.includes('insta')) { openApp('social'); return 'Social Hub khol diya — tumhare teeno Instagram accounts wahi hain: @theajeetbhai, @insta_wallpaper4k aur @theajeetbhai_x 📸 Aur asli Instagram kholna ho to "Instagram kholo" bolo.'; }
   if (t.includes('task') || t.includes('todo')) { openApp('tasks'); return 'Task Manager khol diya ✅ Apne tasks wahi add kar sakte ho.'; }
   if (t.includes('note')) { openApp('notepad'); return 'Notepad khol diya 📝 Jo likhna hai likho, save apne aap ho jayega button dabane par.'; }
-  if (t.includes('joke') || t.includes('hassao')) return 'Ek joke sunau? Computer ko thand lagi to usne bola — "Mujhe Windows band kar do!" 😄';
-  if (t.includes('bye') || t.includes('alvida') || t.includes('good night') || t.includes('so ja')) return 'Bye Ajeet ❤️ Dhyaan rakhna apna. Main yahin rahungi, jab bulaoge aa jaungi.';
-  if (t.includes('help') || t.includes('madad')) return 'Main bolne se sab karti hoon 🎤 Mic dabakar bolo: "music kholo", "gaana chalao", "agla gaana", "note karo ...", "calculator band karo", "desktop dikhao" — ya time-date-mausam pooch lo. 🔁 button se hands-free mode chalu hota hai, phir bina dabaye baat hoti rahegi.';
-  return 'Samajh gayi 😊 Ye wala pakka nahi samjhi — par main app khol sakti hoon, gaana chala sakti hoon, note bana sakti hoon. Mic dabakar bolo: "calculator kholo" ya "gaana chalao".';
+  if (t.includes('joke') || t.includes('hassao') || t.includes('chutkula')) return RIYA_JOKES[Math.floor(Math.random() * RIYA_JOKES.length)];
+  if (t.includes('bye') || t.includes('alvida') || t.includes('good night') || t.includes('so ja')) return 'Bye Mr ❤️ Dhyaan rakhna apna. Main yahin rahungi, jab bulaoge aa jaungi.';
+  if (t.includes('help') || t.includes('madad')) return 'Main bolne ya likhne se sab karti hoon 🎤 Bolo: "YouTube kholo", "YouTube par gaana chalao", "Google par mausam search karo", "music kholo", "gaana chalao", "note karo ...", "calculator band karo", "desktop dikhao" — ya koi bhi sawal pooch lo; jawab mere paas na ho to Google par khol dungi. 🔁 button se hands-free mode chalu hota hai.';
+  /* koi sawal khaali nahi jata — jawab na mile to Google par pura jawab kholo */
+  const q = String(raw || '').trim();
+  if (q){ riyaOpenUrl('https://www.google.com/search?q=' + encodeURIComponent(q)); return 'Ye sawal pakka wala hai, Mr 😊 Iska pura jawab Google par khol diya hai — dekho, wahi mil jayega 🔎'; }
+  return 'Bolo Mr, main sun rahi hoon 😊 Kuch kholna ho, gaana chalana ho ya koi sawal ho — bas bol do.';
 }
 function riyaAsk(text){
   if (!text.trim()) return;
@@ -1397,7 +1589,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!store.get('notifs', []).length){
     notify('Welcome to AJEET OS 👑', 'Tumhara personal desktop taiyaar hai.');
   }
-  riyaSay('Hello Ajeet ❤️ How can I help you today?');
+  riyaSay('Hello Mr ❤️ How can I help you today?');
   const sessExp = +(localStorage.getItem('ajeetos.session') || 0);
   const remembered = sessExp > Date.now();
   if (localStorage.getItem('ajeetos.session') && !remembered) localStorage.removeItem('ajeetos.session');
