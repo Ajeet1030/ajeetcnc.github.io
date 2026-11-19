@@ -484,7 +484,7 @@
             <div class="char-name">ZOYA</div>
           </div>
         </div>
-        <p class="live-line"><span id="liveText">Hello Ajeet! Main Riya — aur saath me Zoya bhi hai. Kuch bhi pucho, har sawal ka jawab milega — aur jo bologe, wo kaam bhi hoga.</span><span class="heard" id="heardText"></span></p>
+        <p class="live-line"><span id="liveText">Hello Mr! Main Riya — aur saath me Zoya bhi hai. Kuch bhi pucho, har sawal ka jawab milega — aur jo bologe, wo kaam bhi hoga.</span><span class="heard" id="heardText"></span></p>
       </section>
 
       <!-- Quick actions -->
@@ -683,7 +683,7 @@
           if (!silent) {
             var names = { riya: "Riya — Hindi", zoya: "Zoya — Hindi", priya: "Priya — Indian English", arjun: "Arjun — Hindi Male" };
             reply(key === "priya"
-              ? "Done Ajeet! Now I will speak in Indian English, in Priya's voice. Hindi ke liye bas bolo — Hindi me bolo."
+              ? "Done Mr! Now I will speak in Indian English, in Priya's voice. Hindi ke liye bas bolo — Hindi me bolo."
               : "Ho gaya! Ab main " + names[key] + " awaaz me, Hindi me baat karungi.");
           }
         }
@@ -768,13 +768,13 @@
         ];
         var shayariIdx = 0;
         var motivations = [
-          "Sun Ajeet — haar tab hoti hai jab tum ruk jate ho. Ek chhota step aaj lo, kal wahi bada badlav banega. Main tumhare saath hoon!",
+          "Suniye Mr — haar tab hoti hai jab tum ruk jate ho. Ek chhota step aaj lo, kal wahi bada badlav banega. Main tumhare saath hoon!",
           "Motivation ye hai — perfect din ka intezaar mat karo, aaj ko hi perfect banao. Bas shuru kar do, main yahin hoon madad ke liye.",
           "Yaad rakho — dheere chalna galat nahi hai, ruk jana galat hai. Tum kar sakte ho, pura bharosa hai mujhe tum par!"
         ];
         var motivationIdx = 0;
         var fallbacks = [
-          "Samajh gayi Ajeet! Tumne kaha — aur main kar rahi hoon. Kuch aur chahiye to bas bol do: sawal pucho, app khulwao, gaana chalwao ya note banwao, har baat ka jawab milega.",
+          "Samajh gayi Mr! Tumne kaha — aur main kar rahi hoon. Kuch aur chahiye to bas bol do: sawal pucho, app khulwao, gaana chalwao ya note banwao, har baat ka jawab milega.",
           "Bilkul! Main sun rahi hoon aur samajh rahi hoon. Tum bas bolte raho — puchna ho to pucho, karwana ho to bolo, main jawab bhi dungi aur kaam bhi kar dungi.",
           "Ho gaya, note kar liya tumhari baat dil se! Kuch kholun, kuch search karun, ya kisi sawal ka jawab dun? Bas ek line me bol do."
         ];
@@ -812,7 +812,7 @@
           if (!m) return null;
           var a = parseFloat(m[1]), b = parseFloat(m[3]), op = m[2], r;
           if (op === "+") r = a + b; else if (op === "-") r = a - b; else if (op === "*") r = a * b;
-          else { if (b === 0) return "Zero se bhaag nahi de sakte Ajeet — jawab infinite hoga!"; r = a / b; }
+          else { if (b === 0) return "Zero se bhaag nahi de sakte Mr — jawab infinite hoga!"; r = a / b; }
           r = Math.round(r * 10000) / 10000;
           var sym = op === "*" ? "×" : op === "/" ? "÷" : op;
           return "Hisaab kar diya! " + a + " " + sym + " " + b + " = " + r + ".";
@@ -823,7 +823,7 @@
           [/delhi.*rajdhani|new delhi/, "New Delhi Bharat ki rajdhani hai, aur Delhi ek kendra shasit pradesh bhi hai."],
           [/pradhan mantri|prime minister|pm kaun/, "Bharat ke Pradhan Mantri Narendra Modi hain."],
           [/rashtrapati|president.*india|india.*president/, "Bharat ki Rashtrapati Droupadi Murmu hain — wo Bharat ki dusri mahila Rashtrapati hain."],
-          [/mera naam|my name|main kaun/, "Tum Ajeet ho — mere sabse khaas insaan! Main tumhe naam se pehchanti hoon."],
+          [/mera naam|my name|main kaun/, "Aap Mr hain — mere sabse khaas insaan! Main aapko Mr kehkar hi bulati hoon."],
           [/tumhara naam|riya kaun|zoya kaun|kaun ho tum/, "Main Riya hoon, tumhari apni voice assistant — aur saath me Zoya hai. Hum dono har sawal ka jawab dete hain aur har bola hua kaam bhi karte hain!"],
           [/taj mahal/, "Taj Mahal Agra me hai, Uttar Pradesh me. Shah Jahan ne ise Mumtaz Mahal ki yaad me banwaya tha — ye duniya ke saat ajubon me se ek hai."],
           [/ganga|ganges/, "Ganga Bharat ki sabse pavitra aur lambi nadiyon me se ek hai — ye Gangotri se nikal kar Bay of Bengal me milti hai, lagbhag 2525 kilometre lambi."],
@@ -975,7 +975,7 @@
           if (/(motivat|himmat|haar|thak gaya|thak gayi|pareshan|dukhi|sad |udaas|tension)/.test(t)) { react("care", "care", "care", "idle"); reply(motivations[motivationIdx++ % motivations.length]); return; }
           if (/(kahani|story sunao)/.test(t)) { reply("Ek chhoti si kahani suno — ek chhote se gaon me ek ladka tha jo roz subah suraj se pehle uthta tha. Log haste the, par ek din usi ki mehnat ne use sabse aage khada kar diya. Moral: roz ki chhoti mehnat hi badi jeet hai!"); return; }
           if (/(joke|hasao|mazak)/.test(t)) { reply(jokes[jokeIdx++ % jokes.length]); return; }
-          if (/(tum kya.*kar sakti|kya kya kar sakti|kya kar sakti ho|tumhari.*madad|help.*kya|features)/.test(t)) { reply("Main sab kuch kar sakti hoon Ajeet — har sawal ka jawab: rajdhani, hisaab, samanya gyaan, shabd ka matlab. Aur har bola hua kaam: apps kholna, gaana-video chalana, Google search, Maps, call, note banana, time-date, joke-shayari-motivation. Bas bolo!"); return; }
+          if (/(tum kya.*kar sakti|kya kya kar sakti|kya kar sakti ho|tumhari.*madad|help.*kya|features)/.test(t)) { reply("Main sab kuch kar sakti hoon Mr — har sawal ka jawab: rajdhani, hisaab, samanya gyaan, shabd ka matlab. Aur har bola hua kaam: apps kholna, gaana-video chalana, Google search, Maps, call, note banana, time-date, joke-shayari-motivation. Bas bolo!"); return; }
           if (/(time bata|samay bata|time kya|kitne baj|time|samay)/.test(t) && /(bata|kya|hai|baj)/.test(t)) { reply("Abhi time hai " + timeStr() + "."); return; }
           if (/(\bdate\b|tarikh|aaj.*din|aaj kya|din kya)/.test(t)) { reply("Aaj hai " + dateStr() + "."); return; } /* \bdate\b — warna "update karo" me bhi date bol deti thi */
           if (/(kaun ho|tum kaun|your name|naam kya hai tumhara)/.test(t)) { reply("Main Riya hoon, tumhari apni voice assistant — aur ye saath me Zoya hai. Hum dono tumhare har sawal ka jawab bhi dete hain aur har bola hua kaam bhi karte hain!"); return; }
@@ -988,16 +988,16 @@
             if (/matlab kya|meaning of/.test(t)) { reply(know + " Pura jawab khol bhi rahi hoon."); googleSearch(raw); return; }
             reply(know); return;
           }
-          if (/(\bhello\b|\bhi\b|\bhey\b|namaste|kaise ho|kaisi ho)/.test(t)) { reply("Hello Ajeet! Main bilkul badhiya hoon — tum sunao, aaj kya karna hai? Sawal pucho, gaana chalwao, ya koi app khulwao!"); return; } /* \bhi\b — warna "bhi/nahi/kabhi" wale har sawal par greeting aa jati thi */
-          if (/(thank|shukriya|dhanyavad)/.test(t)) { react("love", "care", "love", "care"); reply("Anytime Ajeet! Tum bas bolte raho, main aur Zoya yahin hain tumhare liye."); return; }
-          if (/(\bbye\b|alvida|good night|so jao)/.test(t)) { react("care", "wave", "care", "wave"); reply("Bye Ajeet! Dhyaan rakhna apna — jab zaroorat ho, bas orb tap karke bula lena."); return; }
-          if (/(khush|bahut badhiya|maza aa|maja aa|love you|pyaar)/.test(t)) { react("love", "cheer", "love", "cheer"); reply("Ye sunkar dil khush ho gaya! Main aur Zoya hamesha tumhare saath hain Ajeet."); return; }
+          if (/(\bhello\b|\bhi\b|\bhey\b|namaste|kaise ho|kaisi ho)/.test(t)) { reply("Hello Mr! Main bilkul badhiya hoon — tum sunao, aaj kya karna hai? Sawal pucho, gaana chalwao, ya koi app khulwao!"); return; } /* \bhi\b — warna "bhi/nahi/kabhi" wale har sawal par greeting aa jati thi */
+          if (/(thank|shukriya|dhanyavad)/.test(t)) { react("love", "care", "love", "care"); reply("Anytime Mr! Tum bas bolte raho, main aur Zoya yahin hain tumhare liye."); return; }
+          if (/(\bbye\b|alvida|good night|so jao)/.test(t)) { react("care", "wave", "care", "wave"); reply("Bye Mr! Dhyaan rakhna apna — jab zaroorat ho, bas orb tap karke bula lena."); return; }
+          if (/(khush|bahut badhiya|maza aa|maja aa|love you|pyaar)/.test(t)) { react("love", "cheer", "love", "cheer"); reply("Ye sunkar dil khush ho gaya! Main aur Zoya hamesha tumhare saath hain Mr."); return; }
           if (/(\bok\b|okay|theek hai|thik hai|samajh gaya|\bacha\b|\bachha\b)/.test(t)) { reply("Perfect! Kuch aur bolo — sawal ho ya kaam, main turant jawab dungi aur kar bhi dungi."); return; } /* \bok\b — warna "book/look" par bhi Perfect bol deti thi */
           /* Har sawal ka jawab — jo na mile, wo Google par kholkar dungi, koi sawal khali nahi jayega */
           var isQuestion = /(\?|kya|kaun|kahan|kaha |kab |kyun|kyu |kaise|kitna|kitne|kitni|batao|bata |samjhao|samjha|bolo|what|who|where|when|why|how|which|tell me|explain)/.test(t);
           if (isQuestion) {
             react("think", "think", "think", "idle");
-            reply("Bahut achha sawal Ajeet! Iska pura aur sahi jawab maine Google par khol diya hai — pehle result me hi tumhe jawab mil jayega. Aur jo bolo, main waisa hi kar dungi.");
+            reply("Bahut achha sawal Mr! Iska pura aur sahi jawab maine Google par khol diya hai — pehle result me hi tumhe jawab mil jayega. Aur jo bolo, main waisa hi kar dungi.");
             googleSearch(raw);
             return;
           }
@@ -1070,12 +1070,12 @@
         $("orbBtn").addEventListener("click", function () {
           if (!greeted) {
             greeted = true;
-            addMsg("ai", "Hello Ajeet! Main Riya — aur saath me Zoya bhi hai. Kuch bhi bolo, hum sun rahe hain.");
+            addMsg("ai", "Hello Mr! Main Riya — aur saath me Zoya bhi hai. Kuch bhi bolo, hum sun rahe hain.");
             react("happy", "wave", "happy", "wave", 3000);
             /* Fixed 2600ms timer greeting ko beech me kaat deta tha (Hindi awaaz
                usse zyada lambi hoti hai) — ab mic greeting PURA hone par khulega. */
             pendingListen = true;
-            speak("Hello Ajeet! Main Riya, aur saath me Zoya bhi hai. Kuch bhi bolo, hum sun rahe hain.");
+            speak("Hello Mr! Main Riya, aur saath me Zoya bhi hai. Kuch bhi bolo, hum sun rahe hain.");
             return;
           }
           if (listening) stopListening(); else startListening();
@@ -1123,8 +1123,8 @@
         $("testVoiceBtn").addEventListener("click", function () {
           if (!voiceOn) { voiceOn = true; voiceToggle.setAttribute("aria-pressed", "true"); }
           reply($("speakLang").value === "english"
-            ? "Hello Ajeet! I am Riya, speaking in Indian English. How can I help you today?"
-            : "Namaste Ajeet! Main Riya hoon. Ye meri awaaz hai — Hindi me, bilkul saaf aur apni si. Kuch bhi bolo, main sun rahi hoon.");
+            ? "Hello Mr! I am Riya, speaking in Indian English. How can I help you today?"
+            : "Namaste Mr! Main Riya hoon. Ye meri awaaz hai — Hindi me, bilkul saaf aur apni si. Kuch bhi bolo, main sun rahi hoon.");
         });
 
         /* ---------- Performance: pause animations + mic when app is in background ---------- */
@@ -1140,7 +1140,7 @@
         });
 
         /* First paint: greeting bubble + wave (speech waits for first tap — browser rule) */
-        addMsg("ai", "Hello Ajeet! Main Riya — aur saath me Zoya bhi hai. Orb tap karo, main awaaz me greet karke sunna shuru kar dungi.");
+        addMsg("ai", "Hello Mr! Main Riya — aur saath me Zoya bhi hai. Orb tap karo, main awaaz me greet karke sunna shuru kar dungi.");
         react("happy", "wave", "happy", "wave", 3200);
       })();
     </script>
