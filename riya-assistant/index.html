@@ -64,7 +64,7 @@
       .char .sway, .orb .ring { will-change: transform; }
 
       .wrap {
-        max-width: 1060px;
+        max-width: 880px;
         margin: 0 auto;
         padding: clamp(12px, 3vw, 28px);
         display: flex;
@@ -494,7 +494,7 @@
       }
       .chips {
         flex: none;
-        max-height: 84px;
+        max-height: 46px;
         overflow-y: auto;
         overscroll-behavior: contain;
         margin-top: 10px;
@@ -633,12 +633,23 @@
         box-shadow: 0 6px 16px rgba(147, 51, 234, 0.35);
       }
 
-      /* ---------- Studio stage ---------- */
-      .stage { flex-direction: column; align-items: stretch; gap: 8px; }
-      .stage-main { display: flex; gap: 12px; align-items: stretch; min-height: 0; flex: 1 1 auto; }
+      /* ---------- Studio stage ----------
+         Ek hi saaf layout system: purane shell ke row/wrap/centre rules ko
+         yahan poori tarah override kiya gaya hai — wahi purani cascade gadbad
+         stage-viewport ko sliver bana kar avatar gayab kar deti thi. */
+      .stage {
+        display: flex; flex-direction: column; flex-wrap: nowrap;
+        align-items: stretch; justify-content: flex-start;
+        gap: 8px; flex: none;
+      }
+      .stage-main {
+        display: flex; flex-direction: row; flex-wrap: nowrap;
+        gap: 12px; align-items: stretch;
+        width: 100%; min-height: 0; flex: none;
+      }
       .stage-viewport {
-        position: relative; flex: 1 1 auto; min-width: 0;
-        height: clamp(170px, 34dvh, 430px);
+        position: relative; flex: 1 1 0%; min-width: 0;
+        height: clamp(140px, 16dvh, 280px);
         border-radius: var(--r); overflow: hidden;
         border: 1px solid var(--glass-edge);
         box-shadow: inset 0 0 0 1px rgba(255,255,255,0.25), 0 14px 34px rgba(76, 29, 149, 0.28);
@@ -708,7 +719,7 @@
       .studio-panel { padding: 14px; display: flex; flex-direction: column; gap: 10px; min-height: 0; position: relative; }
       .studio-panel h3 { margin: 0 2px; font-size: 0.92rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); position: relative; }
       .studio-panel h4 { margin: 8px 2px 0; font-size: 0.8rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); position: relative; }
-      .thumb-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; position: relative; }
+      .thumb-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)); gap: 8px; position: relative; }
       .thumb {
         position: relative; border: 2px solid transparent; background: var(--chip);
         border-radius: var(--r); padding: 4px; min-height: 0;
@@ -747,76 +758,91 @@
       }
       .cam-grid button .ci { font-size: 1.1rem; line-height: 1; }
 
-      /* Phones + tablets: Studio panels live in one bottom sheet */
-      @media (max-width: 1023.5px) {
-        .studio-wrap {
-          position: fixed; left: 0; right: 0; bottom: 0; z-index: 56;
-          max-height: 88dvh; overflow-y: auto; overscroll-behavior: contain;
-          padding: 10px; display: flex; flex-direction: column; gap: 10px;
-          background: linear-gradient(160deg, var(--glass-strong), var(--glass));
-          -webkit-backdrop-filter: blur(14px) saturate(1.3); backdrop-filter: blur(14px) saturate(1.3);
-          border-top: 1px solid var(--glass-edge);
-          border-radius: var(--r) var(--r) 0 0;
-          transform: translateY(106%); visibility: hidden;
-          transition: transform 0.25s ease, visibility 0.25s;
-        }
-        .studio-wrap.sheet-open { transform: translateY(0); visibility: visible; }
-        .studio-wrap > .sheet-close { position: sticky; top: 0; align-self: flex-end; z-index: 5; margin: 0; float: none; }
+      /* ---------- Studio: ONE centred column — tabbed panel under the stage ----------
+         Owner's order: saare functions CENTRE me. Koi left/right side panel nahi —
+         stage ke seedhe neeche ek hi centred tabbed panel:
+         Poses | Emotions | Gestures | Motion | Camera.
+         Desktop par bhi yahi ek column (.wrap max-width + margin auto) —
+         purana 3-column spread aur phone wala bottom-sheet, dono khatam. */
+      .studio-panel { flex: none; }
+      .live-line { flex: none; width: 100%; }
+      .studio-tabs {
+        display: flex; gap: 6px; position: relative;
+        background: var(--chip); border: 1px solid var(--glass-edge);
+        border-radius: var(--r); padding: 5px;
       }
+      .studio-tabs button {
+        flex: 1 1 0; min-width: 0; min-height: 42px;
+        border: 1px solid transparent; background: transparent; color: var(--ink-soft);
+        border-radius: var(--r); padding: 7px 4px;
+        font-size: 0.87rem; font-weight: 700;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+      .studio-tabs button[aria-selected="true"] {
+        background: linear-gradient(135deg, #b45cf0, #7c3aed); color: #fff;
+        box-shadow: 0 6px 16px rgba(147, 51, 234, 0.35);
+      }
+      .studio-pane {
+        margin-top: 0; position: relative;
+        max-height: clamp(104px, 15dvh, 210px);
+        overflow-y: auto; overscroll-behavior: contain;
+        display: flex; flex-direction: column; gap: 10px;
+      }
+      .studio-pane > * { flex: none; }
+      .studio-pane h4 { margin: 2px 2px 0; }
+      .stage-main .orb-cell { justify-content: center; }
+      @media (min-width: 620px) {
+        .motion-grid { display: grid; grid-template-columns: 1fr 1fr; column-gap: 26px; align-items: start; }
+      }
+      @media (max-height: 950px) { .chat h2 { display: none; } }
+      @media (max-height: 720px) { .studio-pane { max-height: 16dvh; } }
 
-      /* Desktop: three-column Studio grid — panels always visible */
-      @media (min-width: 1024px) {
-        .wrap {
-          display: grid;
-          grid-template-columns: 290px minmax(0, 1fr) 290px;
-          grid-template-rows: auto auto minmax(0, 1fr) minmax(0, 1fr) auto;
-          grid-template-areas:
-            "top top top"
-            "nav nav nav"
-            "left stage right"
-            "left chat right"
-            "foot foot foot";
-        }
-        .topbar { grid-area: top; }
-        .mainnav { grid-area: nav; }
-        .stage { grid-area: stage; min-height: 0; }
-        .chat { grid-area: chat; min-height: 0; }
-        .foot { grid-area: foot; }
-        .studio-wrap { display: contents; }
-        .studio-wrap > .sheet-close { display: none; }
-        #panelLeft { grid-area: left; overflow-y: auto; overscroll-behavior: contain; }
-        #panelRight { grid-area: right; overflow-y: auto; overscroll-behavior: contain; }
-        .nav-studio { display: none !important; }
-        .stage-main { flex: 1 1 auto; min-height: 0; }
-        .stage-viewport { height: auto; min-height: 200px; }
-        .orb { width: clamp(88px, 15dvh, 124px); height: clamp(88px, 15dvh, 124px); }
-      }
-      @media (min-width: 1500px) {
-        .wrap { grid-template-columns: 326px minmax(0, 1fr) 326px; max-width: 1560px; }
-      }
-
-      /* Small phones: orb drops under the stage so nothing clips */
+      /* Small phones: orb stage ke side me hi rehta hai (neeche wrap nahi hota),
+         taaki vertical jagah bache aur stage + panel + chat centre me fit hon */
       @media (max-width: 560px) {
         .brand-chip { display: none; }
-        .stage-main { flex-wrap: wrap; }
-        .stage-viewport { flex: 1 1 100%; height: clamp(150px, 27dvh, 280px); }
-        .orb-cell { flex-direction: row; width: 100%; justify-content: center; gap: 10px; }
-        .orb { width: 66px; height: 66px; }
+        .stage-viewport { height: clamp(112px, 15dvh, 190px); }
+        .orb-cell { gap: 4px; }
+        .orb { width: 58px; height: 58px; }
         .orb-hint { display: none; }
-        .stage-name-chip { max-width: calc(100% - 20px); bottom: 56px; }
-        .cam-bar { bottom: 10px; }
+        .stage-name-chip { display: none; }
+        .cam-bar { right: 6px; bottom: 6px; gap: 4px; }
+        .cam-btn { width: 34px; height: 34px; min-height: 34px; font-size: 0.95rem; }
         .thumb span { font-size: 0.68rem; }
+        .studio-tabs { gap: 4px; }
+        .studio-tabs button { font-size: 0.74rem; padding: 6px 1px; letter-spacing: 0; }
+        .studio-panel { padding: 10px; }
+        .stage { padding: 10px 12px; }
+        .studio-pane { max-height: 11dvh; }
+        .chips { max-height: 46px; }
       }
       @media (max-width: 380px) {
         .mainnav button { font-size: 0.76rem; padding: 8px 3px; gap: 4px; }
         .mainnav button svg { width: 16px; height: 16px; }
-        .cam-btn { width: 38px; height: 38px; min-height: 38px; }
+        .cam-btn { width: 32px; height: 32px; min-height: 32px; }
+        .studio-tabs button { font-size: 0.72rem; }
       }
-      /* Short / landscape screens: stage shrinks, sheet nearly full height */
+      /* Short / landscape screens: stage aur compact; pane tab ke upar
+         overlay bankar khulta hai taaki chat + input hamesha dikhe */
       @media (max-height: 580px) {
-        .stage-viewport { height: clamp(92px, 30dvh, 168px); }
-        .studio-wrap { max-height: 94dvh; }
-        .orb { width: 62px; height: 62px; }
+        .stage-viewport { height: clamp(70px, 18dvh, 110px); }
+        .studio-tabs button { min-height: 36px; }
+        .toggle { min-height: 38px; }
+        .mainnav button { min-height: 38px; }
+        .chat { padding: 8px; }
+        .input-row { margin-top: 6px; }
+        .orb { width: 54px; height: 54px; }
+        .topbar { padding: 6px 8px; }
+        .mainnav { padding: 5px; }
+        .studio-panel { overflow: visible; }
+        .studio-pane {
+          position: absolute; left: 0; right: 0; bottom: calc(100% + 8px);
+          max-height: 46dvh; z-index: 45; padding: 12px; margin-top: 0;
+          background: linear-gradient(160deg, var(--glass-strong), var(--glass));
+          -webkit-backdrop-filter: blur(14px) saturate(1.3); backdrop-filter: blur(14px) saturate(1.3);
+          border: 1px solid var(--glass-edge); border-radius: var(--r);
+          box-shadow: 0 18px 42px rgba(30, 8, 70, 0.35);
+        }
       }
       @media (prefers-reduced-motion: reduce) {
         .sway-wrap, #stage[data-breath="1"] .avatar-img.show { animation: none !important; }
@@ -853,11 +879,9 @@
 
       <!-- Status + toggles -->
       <div class="topbar glass">
-        <span class="brand-chip">Riya AI ✦ Avatar Studio</span>
         <div class="status"><span class="dot" id="statusDot"></span><span id="statusText">Ready — orb tap karo aur bolo</span></div>
         <button class="toggle" id="hfToggle" aria-pressed="false" type="button"><span class="sw"></span>Hands-Free</button>
         <button class="toggle" id="voiceToggle" aria-pressed="true" type="button"><span class="sw"></span>Voice Reply</button>
-        <button class="toggle" id="lockBtn" type="button">Lock / Logout</button>
       </div>
 
       <!-- Section nav — panels overlay ke roop me khulte hain, page hamesha ek hi screen par rehta hai -->
@@ -865,8 +889,8 @@
         <button type="button" data-sheet="voice"><svg viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 10v4M8 7v10M12 4v16M16 7v10M20 10v4"/></svg>Voice</button>
         <button type="button" data-sheet="apps"><svg viewBox="0 0 24 24" fill="none" stroke="#bf5af2" stroke-width="2" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg>Apps</button>
         <button type="button" data-sheet="notes"><svg viewBox="0 0 24 24" fill="none" stroke="#f9ab00" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14.5 3v4.5H19M9 12h6M9 16h6"/></svg>Notes</button>
-        <button type="button" data-sheet="studio" class="nav-studio"><svg viewBox="0 0 24 24" fill="none" stroke="#e879f9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 4.6L18.5 9l-4.6 1.9L12 15.5l-1.9-4.6L5.5 9l4.6-1.4z"/><path d="M18.5 15.5l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></svg>Studio</button>
         <button type="button" data-sheet="admin"><svg viewBox="0 0 24 24" fill="none" stroke="#30d158" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c1.2-3.4 3.8-5 7-5s5.8 1.6 7 5"/></svg>Admin</button>
+        <button type="button" id="lockBtn"><svg viewBox="0 0 24 24" fill="none" stroke="#ff453a" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="9.5" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg>Lock</button>
       </nav>
 
       <!-- Voice settings -->
@@ -1016,10 +1040,16 @@
 <p class="live-line"><span id="liveText">Hello Mr! Main tumhari dost-assistant hoon. Dil se pucho jo puchna hai — jawab bhi dungi, aur bola hua kaam bhi kar dungi.</span><span class="heard" id="heardText"></span></p>
       </section>
 
-      <!-- Avatar Studio panels — desktop par side columns, phone par bottom sheet -->
-      <div class="studio-wrap" id="studioWrap">
-        <section class="studio-panel glass" id="panelLeft" aria-label="Pose library, camera aur background">
-          <h3>⭐ Pose Library</h3>
+      <!-- Avatar Studio — saare functions CENTRE me: stage ke seedhe neeche ek hi tabbed panel -->
+      <section class="studio-panel glass" id="studioPanel" aria-label="Avatar Studio — poses, emotions, gestures, motion aur camera controls">
+        <div class="studio-tabs" role="tablist" aria-label="Studio sections">
+          <button type="button" role="tab" data-tab="poses" aria-selected="true">Poses</button>
+          <button type="button" role="tab" data-tab="emotions" aria-selected="false">Emotions</button>
+          <button type="button" role="tab" data-tab="gestures" aria-selected="false">Gestures</button>
+          <button type="button" role="tab" data-tab="motion" aria-selected="false">Motion</button>
+          <button type="button" role="tab" data-tab="camera" aria-selected="false">Camera</button>
+        </div>
+        <div class="studio-pane" data-pane="poses" role="tabpanel" aria-label="Pose Library">
           <div class="thumb-grid">
             <button class="thumb" type="button" data-img="hero"><img alt="Riya — Sitting" loading="lazy" /><span>Sitting</span></button>
             <button class="thumb" type="button" data-img="standing"><img alt="Riya — Standing" loading="lazy" /><span>Standing</span></button>
@@ -1028,7 +1058,58 @@
             <button class="thumb" type="button" data-img="working"><img alt="Riya — Working" loading="lazy" /><span>Working</span></button>
             <button class="thumb" type="button" data-img="waving"><img alt="Riya — Waving" loading="lazy" /><span>Waving</span></button>
           </div>
-          <h4>📷 Camera Control</h4>
+        </div>
+        <div class="studio-pane" data-pane="emotions" role="tabpanel" aria-label="Emotion Selector" hidden>
+          <div class="thumb-grid">
+            <button class="thumb" type="button" data-img="happy"><img alt="Riya — Happy" loading="lazy" /><span>Happy</span></button>
+            <button class="thumb" type="button" data-img="shy"><img alt="Riya — Shy" loading="lazy" /><span>Shy</span></button>
+            <button class="thumb" type="button" data-img="sad"><img alt="Riya — Sad" loading="lazy" /><span>Sad</span></button>
+            <button class="thumb" type="button" data-img="angry"><img alt="Riya — Angry" loading="lazy" /><span>Angry</span></button>
+            <button class="thumb" type="button" data-img="excited"><img alt="Riya — Excited" loading="lazy" /><span>Excited</span></button>
+            <button class="thumb" type="button" data-img="surprised"><img alt="Riya — Surprised" loading="lazy" /><span>Surprised</span></button>
+            <button class="thumb" type="button" data-img="caring"><img alt="Riya — Caring" loading="lazy" /><span>Caring</span></button>
+            <button class="thumb" type="button" data-img="laughing"><img alt="Riya — Laughing" loading="lazy" /><span>Laughing</span></button>
+            <button class="thumb" type="button" data-img="calm"><img alt="Riya — Calm" loading="lazy" /><span>Calm</span></button>
+            <button class="thumb" type="button" data-img="sleepy"><img alt="Riya — Sleepy" loading="lazy" /><span>Sleepy</span></button>
+          </div>
+        </div>
+        <div class="studio-pane" data-pane="gestures" role="tabpanel" aria-label="Hand Gestures" hidden>
+          <div class="thumb-grid">
+            <button class="thumb" type="button" data-img="heart"><img alt="Riya — Heart" loading="lazy" /><span>Heart</span></button>
+            <button class="thumb" type="button" data-img="peace"><img alt="Riya — Peace" loading="lazy" /><span>Peace</span></button>
+            <button class="thumb" type="button" data-img="thumbsup"><img alt="Riya — Thumbs Up" loading="lazy" /><span>Thumbs Up</span></button>
+            <button class="thumb" type="button" data-img="pointing"><img alt="Riya — Pointing" loading="lazy" /><span>Pointing</span></button>
+            <button class="thumb" type="button" data-img="waving"><img alt="Riya — Wave" loading="lazy" /><span>Wave</span></button>
+          </div>
+        </div>
+        <div class="studio-pane" data-pane="motion" role="tabpanel" aria-label="Motion Controls" hidden>
+          <div class="motion-grid">
+            <div class="motion-col">
+              <div class="mrow">
+                <label for="rngSpeed">Animation Speed</label>
+                <input type="range" id="rngSpeed" min="0.1" max="3" step="0.1" value="1" />
+                <output id="outSpeed">1.0×</output>
+              </div>
+              <div class="mrow">
+                <label for="rngIntensity">Motion Intensity</label>
+                <input type="range" id="rngIntensity" min="0" max="100" step="5" value="80" />
+                <output id="outIntensity">80%</output>
+              </div>
+            </div>
+            <div class="motion-col">
+              <div class="mtoggle-row"><span class="mt-label">Breathing</span><button class="toggle" type="button" id="tglBreath" aria-pressed="true"><span class="sw"></span></button></div>
+              <div class="mtoggle-row"><span class="mt-label">Hair Sway</span><button class="toggle" type="button" id="tglSway" aria-pressed="true"><span class="sw"></span></button></div>
+              <div class="mtoggle-row"><span class="mt-label">Auto Emotion — baat-cheet par khud react</span><button class="toggle" type="button" id="tglAutoEmo" aria-pressed="true"><span class="sw"></span></button></div>
+            </div>
+          </div>
+          <div class="studio-actions">
+            <button class="ghost-btn" type="button" id="btnPlayPause">⏸ Pause</button>
+            <button class="ghost-btn" type="button" id="btnStudioReset">↺ Reset</button>
+            <button class="test-btn" type="button" id="btnStudioSave">💾 Save</button>
+          </div>
+          <p class="studio-msg" id="studioMsg" role="status"></p>
+        </div>
+        <div class="studio-pane" data-pane="camera" role="tabpanel" aria-label="Camera aur Background" hidden>
           <div class="cam-grid">
             <button type="button" data-act="rotate"><span class="ci">⟳</span>Rotate</button>
             <button type="button" data-act="zoomin"><span class="ci">＋</span>Zoom</button>
@@ -1043,51 +1124,8 @@
             <button type="button" class="bg-sw" data-bg="sunset" aria-label="Sunset background" style="background:linear-gradient(160deg,#7c2d12,#ea580c 45%,#f59e0b)"></button>
             <button type="button" class="bg-sw" data-bg="mint" aria-label="Mint background" style="background:linear-gradient(160deg,#064e3b,#0d9488 55%,#5eead4)"></button>
           </div>
-        </section>
-        <section class="studio-panel glass" id="panelRight" aria-label="Emotions, gestures aur motion controls">
-          <h3>💜 Emotion Selector</h3>
-          <div class="thumb-grid">
-            <button class="thumb" type="button" data-img="happy"><img alt="Riya — Happy" loading="lazy" /><span>Happy</span></button>
-            <button class="thumb" type="button" data-img="shy"><img alt="Riya — Shy" loading="lazy" /><span>Shy</span></button>
-            <button class="thumb" type="button" data-img="sad"><img alt="Riya — Sad" loading="lazy" /><span>Sad</span></button>
-            <button class="thumb" type="button" data-img="angry"><img alt="Riya — Angry" loading="lazy" /><span>Angry</span></button>
-            <button class="thumb" type="button" data-img="excited"><img alt="Riya — Excited" loading="lazy" /><span>Excited</span></button>
-            <button class="thumb" type="button" data-img="surprised"><img alt="Riya — Surprised" loading="lazy" /><span>Surprised</span></button>
-            <button class="thumb" type="button" data-img="caring"><img alt="Riya — Caring" loading="lazy" /><span>Caring</span></button>
-            <button class="thumb" type="button" data-img="laughing"><img alt="Riya — Laughing" loading="lazy" /><span>Laughing</span></button>
-            <button class="thumb" type="button" data-img="calm"><img alt="Riya — Calm" loading="lazy" /><span>Calm</span></button>
-            <button class="thumb" type="button" data-img="sleepy"><img alt="Riya — Sleepy" loading="lazy" /><span>Sleepy</span></button>
-          </div>
-          <h4>✋ Hand Gestures</h4>
-          <div class="thumb-grid">
-            <button class="thumb" type="button" data-img="heart"><img alt="Riya — Heart" loading="lazy" /><span>Heart</span></button>
-            <button class="thumb" type="button" data-img="peace"><img alt="Riya — Peace" loading="lazy" /><span>Peace</span></button>
-            <button class="thumb" type="button" data-img="thumbsup"><img alt="Riya — Thumbs Up" loading="lazy" /><span>Thumbs Up</span></button>
-            <button class="thumb" type="button" data-img="pointing"><img alt="Riya — Pointing" loading="lazy" /><span>Pointing</span></button>
-            <button class="thumb" type="button" data-img="waving"><img alt="Riya — Wave" loading="lazy" /><span>Wave</span></button>
-          </div>
-          <h4>🎚️ Motion Controls</h4>
-          <div class="mrow">
-            <label for="rngSpeed">Animation Speed</label>
-            <input type="range" id="rngSpeed" min="0.1" max="3" step="0.1" value="1" />
-            <output id="outSpeed">1.0×</output>
-          </div>
-          <div class="mrow">
-            <label for="rngIntensity">Motion Intensity</label>
-            <input type="range" id="rngIntensity" min="0" max="100" step="5" value="80" />
-            <output id="outIntensity">80%</output>
-          </div>
-          <div class="mtoggle-row"><span class="mt-label">Breathing</span><button class="toggle" type="button" id="tglBreath" aria-pressed="true"><span class="sw"></span></button></div>
-          <div class="mtoggle-row"><span class="mt-label">Hair Sway</span><button class="toggle" type="button" id="tglSway" aria-pressed="true"><span class="sw"></span></button></div>
-          <div class="mtoggle-row"><span class="mt-label">Auto Emotion — baat-cheet par khud react</span><button class="toggle" type="button" id="tglAutoEmo" aria-pressed="true"><span class="sw"></span></button></div>
-          <div class="studio-actions">
-            <button class="ghost-btn" type="button" id="btnPlayPause">⏸ Pause</button>
-            <button class="ghost-btn" type="button" id="btnStudioReset">↺ Reset</button>
-            <button class="test-btn" type="button" id="btnStudioSave">💾 Save</button>
-          </div>
-          <p class="studio-msg" id="studioMsg" role="status"></p>
-        </section>
-      </div>
+        </div>
+      </section>
 
       <!-- Quick actions -->
       <section class="quick glass" aria-label="Quick apps">
@@ -2042,8 +2080,7 @@
           voice: document.querySelector(".voice-panel:not(#adminPanel)"),
           apps: document.querySelector(".quick"),
           notes: document.querySelector(".notes"),
-          admin: document.getElementById("adminPanel"),
-          studio: document.getElementById("studioWrap")
+          admin: document.getElementById("adminPanel")
         };
         var backdrop = document.getElementById("sheetBackdrop");
         function closeAll() {
@@ -2247,6 +2284,28 @@
           msg("Save ho gaya, Mr ✓ — Studio settings yaad rahenge.");
         });
         document.addEventListener("riya-studio-change", markActive);
+
+        /* Tabs — saare Studio functions centre panel me, ek samay par ek pane.
+           Panes DOM me hamesha rehte hain (hidden attribute se chhupte hain),
+           isliye sliders/toggles/thumbnails ke saare listeners waise hi chalte hain.
+           Short/landscape screens par pane overlay bankar khulta hai aur
+           shuru me band rehta hai, taaki chat + input hamesha dikhe;
+           khule hue tab ko dobara tap karne se pane band ho jata hai. */
+        var tabBtns = document.querySelectorAll("[data-tab]");
+        var tabPanes = document.querySelectorAll("[data-pane]");
+        var shortScreen = window.matchMedia("(max-height: 580px)");
+        var currentTab = "poses";
+        function activateTab(name) {
+          var closing = shortScreen.matches && currentTab === name;
+          currentTab = closing ? "" : name;
+          for (var ti = 0; ti < tabBtns.length; ti++)
+            tabBtns[ti].setAttribute("aria-selected", tabBtns[ti].getAttribute("data-tab") === currentTab ? "true" : "false");
+          for (var pj = 0; pj < tabPanes.length; pj++)
+            tabPanes[pj].hidden = tabPanes[pj].getAttribute("data-pane") !== currentTab;
+        }
+        for (var tb = 0; tb < tabBtns.length; tb++)
+          tabBtns[tb].addEventListener("click", function () { activateTab(this.getAttribute("data-tab")); });
+        if (shortScreen.matches) activateTab("poses"); /* short screen: pehla pane band karke shuru karo */
 
         applyCam(); applyMotion(); applyBg(bg); markActive();
         /* Baki photos background me preload — pehla crossfade bhi turant hoga */
