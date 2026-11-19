@@ -730,7 +730,7 @@
               </span>
             </button>
             <div class="orb-hint" id="orbHint">Orb tap karo — main sunungi</div>
-        </div><p class="live-line"><span id="liveText">Hello Mr! Main tumhari assistant hoon. Kuch bhi pucho, har sawal ka jawab milega — aur jo bologe, wo kaam bhi hoga.</span><span class="heard" id="heardText"></span></p>
+        </div><p class="live-line"><span id="liveText">Hello Mr! Main tumhari dost-assistant hoon. Dil se pucho jo puchna hai — jawab bhi dungi, aur bola hua kaam bhi kar dungi.</span><span class="heard" id="heardText"></span></p>
       </section>
 
       <!-- Quick actions -->
@@ -1009,8 +1009,8 @@
           if (!silent) {
             var names = { riya: "Riya — Hindi", zoya: "Zoya — Hindi", priya: "Priya — Indian English", arjun: "Arjun — Hindi Male" };
             reply(key === "priya"
-              ? "Done Mr! Now I will speak in Indian English, in Priya's voice. Hindi ke liye bas bolo — Hindi me bolo."
-              : "Ho gaya! Ab main " + names[key] + " awaaz me, Hindi me baat karungi.");
+              ? "Done Mr! Ab main Priya ki awaaz me Indian English bolungi. Hindi wapas chahiye to bas keh dena — Hindi me bolo."
+              : "Ho gaya, Mr! Ab meri awaaz " + names[key] + " wali hai — aur baat hogi apni Hindi me, jaise hamesha.");
           }
         }
         function finishSpeak() {
@@ -1060,14 +1060,15 @@
           var w = null;
           try { w = window.open(url, "_blank"); } catch (e) { w = null; }
           if (w) { try { w.opener = null; } catch (e) {} return; }
-          /* Voice se khulne wale pages ko browser aksar popup samajh kar rok deta
-             hai — pehle "khol diya" bolkar chup-chaap fail hota tha. Ab chat me
-             tappable link aa jayega, ek tap me wahi page khulega. */
+          /* Auto-open: har command me openUrl sabse pehle — bolne se bhi pehle —
+             synchronously chalti hai, taaki browser use user ki apni action maan
+             kar turant khol de; owner ko koi link tap nahi karna padta. Sirf jab
+             browser hard-block kare, tabhi neeche tappable fallback link aata hai. */
           var d = document.createElement("div");
           d.className = "msg ai";
           var who = document.createElement("span"); who.className = "who"; who.textContent = assistantName;
           d.appendChild(who);
-          d.appendChild(document.createTextNode("Browser ne auto-open rok diya — yahan tap karke kholo: "));
+          d.appendChild(document.createTextNode("Mr, browser ne is baar auto-open rok diya — koi baat nahi, yahan tap karo, wahi khul jayega: "));
           var a = document.createElement("a");
           a.href = url; a.target = "_blank"; a.rel = "noopener";
           a.textContent = url.replace(/^https?:\/\//, "").slice(0, 60);
@@ -1094,15 +1095,15 @@
         ];
         var shayariIdx = 0;
         var motivations = [
-          "Suniye Mr — haar tab hoti hai jab tum ruk jate ho. Ek chhota step aaj lo, kal wahi bada badlav banega. Main tumhare saath hoon!",
-          "Motivation ye hai — perfect din ka intezaar mat karo, aaj ko hi perfect banao. Bas shuru kar do, main yahin hoon madad ke liye.",
-          "Yaad rakho — dheere chalna galat nahi hai, ruk jana galat hai. Tum kar sakte ho, pura bharosa hai mujhe tum par!"
+          "Suno Mr — haar tab hoti hai jab tum ruk jate ho. Ek chhota step aaj lo, kal wahi bada badlav banega. Main tumhare saath hoon, hamesha!",
+          "Motivation chahiye? Ye lo, Mr — perfect din ka intezaar mat karo, aaj ko hi perfect banao. Bas shuru kar do, main yahin hoon saath dene ke liye.",
+          "Yaad rakho, Mr — dheere chalna galat nahi hai, ruk jana galat hai. Tum kar sakte ho, mujhe tum par pura bharosa hai!"
         ];
         var motivationIdx = 0;
         var fallbacks = [
-          "Samajh gayi Mr! Tumne kaha — aur main kar rahi hoon. Kuch aur chahiye to bas bol do: sawal pucho, app khulwao, gaana chalwao ya note banwao, har baat ka jawab milega.",
-          "Bilkul! Main sun rahi hoon aur samajh rahi hoon. Tum bas bolte raho — puchna ho to pucho, karwana ho to bolo, main jawab bhi dungi aur kaam bhi kar dungi.",
-          "Ho gaya, note kar liya tumhari baat dil se! Kuch kholun, kuch search karun, ya kisi sawal ka jawab dun? Bas ek line me bol do."
+          "Samajh gayi, Mr! Tumne kaha, maine dil se suna. Ab bolo — sawal puchna hai, gaana chalwana hai, app khulwana hai ya note banana hai? Sab ho jayega.",
+          "Bilkul, Mr! Main yahin hoon — sun bhi rahi hoon, samajh bhi rahi hoon. Bolte raho, jawab bhi milega aur kaam bhi ho jayega.",
+          "Dil se note kar liya, Mr! Ab bolo — kuch kholun, kuch search karun, ya kisi sawal ka jawab dun? Ek line me bol do, bas."
         ];
         var fbIdx = 0;
 
@@ -1132,68 +1133,68 @@
           var m = s.match(/(-?\d+(?:\.\d+)?)\s*([+\-*\/])\s*(-?\d+(?:\.\d+)?)/);
           var pm = s.match(/(\d+(?:\.\d+)?)\s*(?:%|percent|pratishat|feesadi)(?:\s*(?:of|ka|ki))?\s*(\d+(?:\.\d+)?)/);
           var pm2 = s.match(/(\d+(?:\.\d+)?)\s*(?:ka|of)\s*(\d+(?:\.\d+)?)\s*(?:%|percent|pratishat|feesadi)/); /* Hindi order: "500 ka 10%" — pehle ye hisaab fail hota tha */
-          if (pm2) { var pv3 = parseFloat(pm2[1]) * parseFloat(pm2[2]) / 100; return pm2[1] + " ka " + pm2[2] + "% hota hai " + (Math.round(pv3 * 100) / 100) + "."; }
-          if (pm && !m) { var pv = parseFloat(pm[2]) * parseFloat(pm[1]) / 100; return pm[2] + " ka " + pm[1] + "% hota hai " + (Math.round(pv * 100) / 100) + "."; }
-          if (pm && m && /%|percent|pratishat/.test(raw.toLowerCase())) { var pv2 = parseFloat(pm[2]) * parseFloat(pm[1]) / 100; return pm[2] + " ka " + pm[1] + "% hota hai " + (Math.round(pv2 * 100) / 100) + "."; }
+          if (pm2) { var pv3 = parseFloat(pm2[1]) * parseFloat(pm2[2]) / 100; return pm2[1] + " ka " + pm2[2] + "% hota hai " + (Math.round(pv3 * 100) / 100) + ". Pakka hisaab hai, Mr!"; }
+          if (pm && !m) { var pv = parseFloat(pm[2]) * parseFloat(pm[1]) / 100; return pm[2] + " ka " + pm[1] + "% hota hai " + (Math.round(pv * 100) / 100) + ". Pakka hisaab hai, Mr!"; }
+          if (pm && m && /%|percent|pratishat/.test(raw.toLowerCase())) { var pv2 = parseFloat(pm[2]) * parseFloat(pm[1]) / 100; return pm[2] + " ka " + pm[1] + "% hota hai " + (Math.round(pv2 * 100) / 100) + ". Pakka hisaab hai, Mr!"; }
           if (!m) return null;
           var a = parseFloat(m[1]), b = parseFloat(m[3]), op = m[2], r;
           if (op === "+") r = a + b; else if (op === "-") r = a - b; else if (op === "*") r = a * b;
-          else { if (b === 0) return "Zero se bhaag nahi de sakte Mr — jawab infinite hoga!"; r = a / b; }
+          else { if (b === 0) return "Mr, zero se bhaag doge to jawab infinite ho jayega — maths bhi hairan ho jayegi!"; r = a / b; }
           r = Math.round(r * 10000) / 10000;
           var sym = op === "*" ? "×" : op === "/" ? "÷" : op;
-          return "Hisaab kar diya! " + a + " " + sym + " " + b + " = " + r + ".";
+          return "Hisaab ho gaya, Mr! " + a + " " + sym + " " + b + " = " + r + ".";
         }
         /* ---- Har Sawal ka Jawab: knowledge bank ---- */
         var KNOWLEDGE = [
-          [/rajdhani|capital.*india|india.*capital/, "Bharat ki rajdhani New Delhi hai — yahin Sansad Bhavan aur Rashtrapati Bhavan hai."],
-          [/delhi.*rajdhani|new delhi/, "New Delhi Bharat ki rajdhani hai, aur Delhi ek kendra shasit pradesh bhi hai."],
-          [/pradhan mantri|prime minister|pm kaun/, "Bharat ke Pradhan Mantri Narendra Modi hain."],
-          [/rashtrapati|president.*india|india.*president/, "Bharat ki Rashtrapati Droupadi Murmu hain — wo Bharat ki dusri mahila Rashtrapati hain."],
-          [/mera naam|my name|main kaun/, "Aap Mr hain — mere sabse khaas insaan! Main aapko Mr kehkar hi bulati hoon."],
-          [/tumhara naam|riya kaun|zoya kaun|kaun ho tum/, "Main __NAME__ hoon, tumhari apni voice assistant. Main har sawal ka jawab deti hoon aur har bola hua kaam bhi karti hoon!"],
-          [/taj mahal/, "Taj Mahal Agra me hai, Uttar Pradesh me. Shah Jahan ne ise Mumtaz Mahal ki yaad me banwaya tha — ye duniya ke saat ajubon me se ek hai."],
-          [/ganga|ganges/, "Ganga Bharat ki sabse pavitra aur lambi nadiyon me se ek hai — ye Gangotri se nikal kar Bay of Bengal me milti hai, lagbhag 2525 kilometre lambi."],
-          [/himalaya|himalay/, "Himalaya duniya ki sabse unchi parvat shrinkhala hai. Isi me Mount Everest hai — 8848 metre, duniya ki sabse unchi choti."],
-          [/everest|sabse unchi choti|highest mountain/, "Mount Everest duniya ki sabse unchi choti hai — unchai lagbhag 8848 metre, Nepal aur China ki seema par."],
-          [/sabse bada desh|biggest country|largest country/, "Kshetra ke hisaab se duniya ka sabse bada desh Russia hai. Jansankhya me Bharat sabse aage hai."],
-          [/sabse badi nadi|longest river|nile/, "Duniya ki sabse lambi nadi Nile hai — lagbhag 6650 kilometre. Bharat ki sabse lambi nadi Ganga hai."],
-          [/paani ka formula|water formula|h2o/, "Paani ka formula H2O hai — do hydrogen atom aur ek oxygen atom milkar paani banta hai."],
-          [/suraj|sun.*distance|surya/, "Suraj humse lagbhag 15 crore kilometre door hai — uski roshni ko Dharti tak aane me karib 8 minute 20 second lagte hain."],
-          [/chand|moon.*distance|chandrama/, "Chand Dharti se lagbhag 3 lakh 84 hazaar kilometre door hai — ye Dharti ka ekmatra prakritik upagrah hai."],
-          [/dharti.*ghoom|earth.*rotate|prithvi/, "Dharti apni dhuri par 24 ghante me ek chakkar lagati hai — isiliye din aur raat hote hain. Aur Suraj ke chaaron or chakkar lagane me 365 din lagte hain."],
-          [/aazadi|independence|15 august|azadi/, "Bharat 15 August 1947 ko azaad hua tha — isiliye har saal 15 August ko Swatantrata Diwas manate hain."],
-          [/gantantra|republic day|26 january/, "26 January 1950 ko Bharat ka Samvidhan lagu hua tha — isiliye 26 January ko Gantantra Diwas manate hain."],
-          [/samvidhan|constitution/, "Bharat ka Samvidhan duniya ka sabse lamba likhit samvidhan hai — ise Dr. B. R. Ambedkar ki adhyakshta wali samiti ne banaya tha, aur ye 26 January 1950 ko lagu hua."],
-          [/rashtriya geet|national anthem|jana gana/, "Bharat ka rashtriya geet 'Jana Gana Mana' hai — Rabindranath Tagore ne likha tha. Rashtriya gaan 'Vande Mataram' hai."],
-          [/rashtriya khel|national game/, "Bharat ka koi aadhikarik rashtriya khel ghoshit nahi hai — lekin hockey me Bharat ne 8 Olympic gold jeete hain, aur cricket sabse lokpriya khel hai."],
-          [/cricket.*god|sachin/, "Sachin Tendulkar ko Cricket ka Bhagwan kaha jata hai — unhone 100 international shatak lagaye hain, ye record aaj bhi kayam hai."],
-          [/world cup.*cricket|cricket.*world cup/, "Bharat ne Cricket World Cup do baar jeeta hai — 1983 me Kapil Dev ki kaptani me, aur 2011 me M. S. Dhoni ki kaptani me."],
-          [/dhoni/, "Mahendra Singh Dhoni — Captain Cool! Unhi ki kaptani me Bharat ne 2007 T20 World Cup, 2011 World Cup aur 2013 Champions Trophy jeeti."],
-          [/computer.*invent|computer kisne|father of computer/, "Computer ke pita Charles Babbage ko mana jata hai — unhone Analytical Engine ka design banaya tha."],
-          [/bijli|electricity.*invent|bulb.*kisne|edison/, "Bulb ka aavishkar Thomas Alva Edison se joda jata hai — unhone bijli ke bulb ko vyavasayik roop se safal banaya."],
-          [/telephone|phone kisne/, "Telephone ka aavishkar Alexander Graham Bell ne 1876 me kiya tha."],
-          [/internet/, "Internet duniya bhar ke computers ka jaal hai. Iska prarambhik roop ARPANET 1969 me bana tha, aur World Wide Web Tim Berners-Lee ne 1989 me banayi."],
-          [/ai kya|artificial intelligence|ai matlab/, "AI matlab Artificial Intelligence — machine ka sochna-seekhna seekh jana. Jaise main! Main tumhari awaaz samajhti hoon, jawab deti hoon aur kaam bhi karti hoon."],
-          [/hair fall|baal jhad|baal gir/, "Baal jhadne par ye kaam karega: khane me curry patta, bheega methi dana, amla, bhune kaddu ke beej aur moong dal shamil karo. Kami ki jaanch ke liye ferritin, Vitamin D, B12 aur TSH test sabse zaroori hai — doctor ki salah se hi dawa shuru karna."],
-          [/sehat|healthy|fitness|vajjan|weight/, "Sehat ke liye teen cheezein sabse kaam ki hain — roz 30 minute chalna ya exercise, 7-8 ghante ki neend, aur ghar ka saaf khana. Chhota step aaj se shuru karo!"],
-          [/khana|recipe|khane me kya|bhojan/, "Khane ki salah chahiye to bolo kya banana hai — dal, sabzi, roti wala pura desi khana sehat ke liye best hai. Koi khaas dish bolo, main Google par uski recipe khol dungi!"],
-          [/paise|paisa|money|ameer|rich/, "Paise ki sabse seedhi baat — kamai se pehle bachat ki aadat, aur kharch likhne ki aadat. Har mahine thoda-thoda bachana hi lambe samay me bada paisa banata hai."],
-          [/english.*seekh|english.*sikh|seekhna|padhai|study/, "Seekhne ka best tareeka hai — roz thoda-thoda, bina ruke. English ke liye roz 10 naye shabd aur bolne ki practice. Main bhi madad kar sakti hoon — koi shabd bolo, matlab bata dungi!"],
-          [/matlab kya|meaning of|arth kya/, "Is shabd ka sahi matlab main Google par khol kar dikha rahi hoon — wahan pura arth aur udaharan milega."],
-          [/dharti.*gol|earth.*round/, "Haan, Dharti gol hai — thodi si dhruvon par chapti, isiliye ise geoid kehte hain. Antariksh se li gayi tasveerein iska sabse bada saboot hain."],
-          [/aakash.*neela|sky.*blue|aasman neela/, "Aasman neela isiliye dikhta hai kyunki hawa ke kano se suraj ki neeli roshni sabse zyada bikharti hai — ise Rayleigh scattering kehte hain."],
-          [/baarish|barish|rain.*kyun|baarish kyun/, "Baarish tab hoti hai jab badlon me paani ki boondein bhari ho jati hain — samudra aur nadiyon ka paani bhaap bankar upar jata hai, thanda hokar badal banta hai, phir boondein bankar girta hai."],
-          [/samundar|ocean.*sabse|bada sagar/, "Duniya ka sabse bada mahasagar Pacific Ocean hai — ye Dharti ke ek-tihaai se zyada hisse ko dhakta hai."],
-          [/bharat.*jansankhya|population.*india|aabadi/, "Bharat duniya ka sabse zyada jansankhya wala desh hai — 140 crore se zyada log yahan rehte hain."],
-          [/uttar pradesh|up me|u\.p\./, "Uttar Pradesh Bharat ka sabse zyada jansankhya wala rajya hai — iski rajdhani Lucknow hai, aur Taj Mahal wala Agra bhi yahin hai."],
-          [/lucknow/, "Lucknow Uttar Pradesh ki rajdhani hai — nawabon ka shahar, tehzeeb aur kebab ke liye mashhoor!"],
-          [/mumbai/, "Mumbai Maharashtra ki rajdhani hai — Bharat ki aarthik rajdhani aur Bollywood ka ghar."],
-          [/bollywood|sabse.*film|pehli film/, "Bharat ki pehli bolne wali film 'Alam Ara' thi, 1931 me. Usse pehle ki filmein mook (bina awaaz) hoti thi."],
-          [/shahrukh|srk|king khan/, "Shah Rukh Khan ko Bollywood ka King Khan aur Baadshah kaha jata hai — DDLJ, Pathaan aur Jawan jaisi filmein unki pehchan hain."],
-          [/gana.*kisne|arijit/, "Arijit Singh aaj ke samay ke sabse lokpriya Hindi gaayak hain — 'Tum Hi Ho' se unhe har dil me jagah mili. Unka gaana chalau kya? Bas bolo — Arijit Singh ka gaana chalao!"],
-          [/samay.*dhyaan|time management/, "Time ki sabse badi kala — sabse zaroori kaam sabse pehle. Subah 3 kaam likh lo, wahi din ka plan hai. Note kar dun tumhare liye? Bolo — note karo!"],
-          [/neend|sleep|so nahi/, "Achhi neend ke liye — sone se 1 ghanta pehle phone door rakho, kamra thanda aur andhera rakho, aur roz ek hi samay par so jao. Neend hi asli recharge hai."],
-          [/paani.*kitna|water.*kitna|paani peena/, "Roz lagbhag 2.5 se 3 litre paani peena sehat ke liye achha mana jata hai — garmi aur kaam ke hisaab se thoda upar-neeche ho sakta hai."]
+          [/rajdhani|capital.*india|india.*capital/, "Bharat ki rajdhani New Delhi hai, Mr — yahin Sansad Bhavan aur Rashtrapati Bhavan hai."],
+          [/delhi.*rajdhani|new delhi/, "New Delhi hi Bharat ki rajdhani hai, Mr — aur Delhi khud ek kendra shasit pradesh bhi hai."],
+          [/pradhan mantri|prime minister|pm kaun/, "Bharat ke Pradhan Mantri Narendra Modi hain, Mr."],
+          [/rashtrapati|president.*india|india.*president/, "Bharat ki Rashtrapati Droupadi Murmu hain, Mr — wo desh ki dusri mahila Rashtrapati hain."],
+          [/mera naam|my name|main kaun/, "Tum Mr ho — mere sabse khaas insaan! Main tumhe hamesha Mr kehkar hi bulati hoon, ye apna style hai."],
+          [/tumhara naam|riya kaun|zoya kaun|kaun ho tum/, "Main __NAME__ hoon, Mr — tumhari dost aur assistant. Sawal pucho to jawab, kaam bolo to action!"],
+          [/taj mahal/, "Taj Mahal Agra me hai, Mr — Uttar Pradesh me. Shah Jahan ne ise Mumtaz Mahal ki yaad me banwaya tha, aur ye duniya ke saat ajubon me se ek hai."],
+          [/ganga|ganges/, "Ganga Bharat ki sabse pavitra nadiyon me se ek hai, Mr — Gangotri se nikalti hai aur Bay of Bengal me milti hai, lagbhag 2525 kilometre lambi."],
+          [/himalaya|himalay/, "Himalaya duniya ki sabse unchi parvat shrinkhala hai, Mr — isi me Mount Everest hai, 8848 metre, duniya ki sabse unchi choti."],
+          [/everest|sabse unchi choti|highest mountain/, "Mount Everest duniya ki sabse unchi choti hai, Mr — unchai lagbhag 8848 metre, Nepal aur China ki seema par."],
+          [/sabse bada desh|biggest country|largest country/, "Kshetra me duniya ka sabse bada desh Russia hai, Mr. Aur jansankhya me? Apna Bharat sabse aage hai!"],
+          [/sabse badi nadi|longest river|nile/, "Duniya ki sabse lambi nadi Nile hai, Mr — lagbhag 6650 kilometre. Bharat ki sabse lambi nadi Ganga hai."],
+          [/paani ka formula|water formula|h2o/, "Paani ka formula H2O hai, Mr — do hydrogen aur ek oxygen atom, bas itni si chemistry!"],
+          [/suraj|sun.*distance|surya/, "Suraj humse lagbhag 15 crore kilometre door hai, Mr — uski roshni ko Dharti tak aane me karib 8 minute 20 second lagte hain. Socho, kitni tez hai roshni!"],
+          [/chand|moon.*distance|chandrama/, "Chand Dharti se lagbhag 3 lakh 84 hazaar kilometre door hai, Mr — ye Dharti ka ekmatra prakritik upagrah hai."],
+          [/dharti.*ghoom|earth.*rotate|prithvi/, "Dharti apni dhuri par 24 ghante me ek chakkar lagati hai, Mr — isiliye din-raat hote hain. Aur Suraj ke chaaron or ghumne me pure 365 din lagte hain."],
+          [/aazadi|independence|15 august|azadi/, "Bharat 15 August 1947 ko azaad hua tha, Mr — isiliye har saal 15 August ko Swatantrata Diwas manate hain."],
+          [/gantantra|republic day|26 january/, "26 January 1950 ko Bharat ka Samvidhan lagu hua tha, Mr — isiliye 26 January ko Gantantra Diwas manate hain."],
+          [/samvidhan|constitution/, "Bharat ka Samvidhan duniya ka sabse lamba likhit samvidhan hai, Mr — Dr. B. R. Ambedkar ki adhyakshta wali samiti ne banaya tha, aur ye 26 January 1950 ko lagu hua."],
+          [/rashtriya geet|national anthem|jana gana/, "Rashtriya geet 'Jana Gana Mana' hai, Mr — Rabindranath Tagore ne likha tha. Aur rashtriya gaan 'Vande Mataram' hai."],
+          [/rashtriya khel|national game/, "Sach ye hai, Mr — Bharat ka koi aadhikarik rashtriya khel ghoshit nahi hai. Lekin hockey me Bharat ne 8 Olympic gold jeete hain, aur cricket to sabke dil ki dhadkan hai!"],
+          [/cricket.*god|sachin/, "Sachin Tendulkar ko Cricket ka Bhagwan kaha jata hai, Mr — 100 international shatak, ye record aaj bhi kayam hai. Legend hai legend!"],
+          [/world cup.*cricket|cricket.*world cup/, "Bharat ne Cricket World Cup do baar jeeta hai, Mr — 1983 me Kapil Dev ki kaptani me, aur 2011 me M. S. Dhoni ki kaptani me. 2011 wali raat kaun bhool sakta hai!"],
+          [/dhoni/, "Mahendra Singh Dhoni — Captain Cool, Mr! Unhi ki kaptani me Bharat ne 2007 T20 World Cup, 2011 World Cup aur 2013 Champions Trophy jeeti. Thala for a reason!"],
+          [/computer.*invent|computer kisne|father of computer/, "Computer ke pita Charles Babbage ko mana jata hai, Mr — unhone Analytical Engine ka design banaya tha."],
+          [/bijli|electricity.*invent|bulb.*kisne|edison/, "Bulb ka aavishkar Thomas Alva Edison se joda jata hai, Mr — unhone bijli ke bulb ko vyavasayik roop se safal banaya."],
+          [/telephone|phone kisne/, "Telephone ka aavishkar Alexander Graham Bell ne 1876 me kiya tha, Mr."],
+          [/internet/, "Internet duniya bhar ke computers ka jaal hai, Mr. Iski shuruaat ARPANET se 1969 me hui, aur World Wide Web Tim Berners-Lee ne 1989 me banayi."],
+          [/ai kya|artificial intelligence|ai matlab/, "AI matlab Artificial Intelligence, Mr — machine ka sochna-seekhna. Jaise main! Tumhari awaaz samajhti hoon, jawab deti hoon, kaam bhi kar deti hoon — bilkul dost ki tarah."],
+          [/hair fall|baal jhad|baal gir/, "Baal jhad rahe hain to ghabrana mat, Mr — ye kaam karega: khane me curry patta, bheega methi dana, amla, bhune kaddu ke beej aur moong dal rakho. Aur kami ki jaanch ke liye ferritin, Vitamin D, B12 aur TSH test sabse zaroori hai. Dawa sirf doctor ki salah se shuru karna, theek hai?"],
+          [/sehat|healthy|fitness|vajjan|weight/, "Sehat ka funda seedha hai, Mr — roz 30 minute chalna ya exercise, 7-8 ghante ki neend, aur ghar ka saaf khana. Chhota step aaj se hi shuru karo, main saath hoon!"],
+          [/khana|recipe|khane me kya|bhojan/, "Khana banana hai to dish bolo, Mr — dal, sabzi, roti wala desi khana sehat ke liye best hai. Koi khaas dish ki recipe chahiye to naam bolo, main Google par khol dungi!"],
+          [/paise|paisa|money|ameer|rich/, "Paise ki seedhi si baat suno, Mr — kamai se pehle bachat ki aadat, aur kharch likhne ki aadat. Har mahine ka thoda-thoda hi lambe samay me bada paisa banta hai."],
+          [/english.*seekh|english.*sikh|seekhna|padhai|study/, "Seekhne ka best tareeka, Mr — roz thoda-thoda, bina ruke. English ke liye roz 10 naye shabd aur bolne ki practice. Aur main bhi hoon na — koi shabd bolo, matlab turant bata dungi!"],
+          [/matlab kya|meaning of|arth kya/, "Is shabd ka sahi matlab maine Google par khol diya hai, Mr — wahan pura arth aur udaharan bhi milega."],
+          [/dharti.*gol|earth.*round/, "Haan Mr, Dharti gol hai — dhruvon par thodi si chapti, isiliye ise geoid kehte hain. Antariksh se li gayi tasveerein sabse bada saboot hain."],
+          [/aakash.*neela|sky.*blue|aasman neela/, "Aasman neela isiliye dikhta hai, Mr, kyunki hawa ke kano se suraj ki neeli roshni sabse zyada bikharti hai — science me ise Rayleigh scattering kehte hain."],
+          [/baarish|barish|rain.*kyun|baarish kyun/, "Baarish tab hoti hai jab badlon me paani ki boondein bhari ho jati hain, Mr — samudra-nadiyon ka paani bhaap bankar upar jata hai, thanda hokar badal banta hai, phir boondein bankar girta hai."],
+          [/samundar|ocean.*sabse|bada sagar/, "Duniya ka sabse bada mahasagar Pacific Ocean hai, Mr — ye Dharti ke ek-tihaai se zyada hisse ko dhakta hai."],
+          [/bharat.*jansankhya|population.*india|aabadi/, "Bharat duniya ka sabse zyada jansankhya wala desh hai, Mr — 140 crore se zyada log yahan rehte hain."],
+          [/uttar pradesh|up me|u\.p\./, "Uttar Pradesh Bharat ka sabse zyada jansankhya wala rajya hai, Mr — rajdhani Lucknow hai, aur Taj Mahal wala Agra bhi yahin hai."],
+          [/lucknow/, "Lucknow Uttar Pradesh ki rajdhani hai, Mr — nawabon ka shahar, tehzeeb aur kebab ke liye mashhoor!"],
+          [/mumbai/, "Mumbai Maharashtra ki rajdhani hai, Mr — Bharat ki aarthik rajdhani aur Bollywood ka ghar."],
+          [/bollywood|sabse.*film|pehli film/, "Bharat ki pehli bolne wali film 'Alam Ara' thi, Mr — 1931 me aayi thi. Usse pehle filmein bina awaaz ki hoti thi."],
+          [/shahrukh|srk|king khan/, "Shah Rukh Khan — Bollywood ke King Khan, Mr! DDLJ, Pathaan aur Jawan jaisi filmein unki pehchan hain."],
+          [/gana.*kisne|arijit/, "Arijit Singh aaj ke sabse lokpriya Hindi gaayak hain, Mr — 'Tum Hi Ho' se har dil me jagah bana li. Unka gaana chalau kya? Bas bolo — Arijit Singh ka gaana chalao!"],
+          [/samay.*dhyaan|time management/, "Time sambhalne ki kala suno, Mr — sabse zaroori kaam sabse pehle. Subah 3 kaam likh lo, wahi din ka plan. Note kar dun? Bas bolo — note karo!"],
+          [/neend|sleep|so nahi/, "Achhi neend chahiye to suno, Mr — sone se 1 ghanta pehle phone door, kamra thanda aur andhera, aur roz ek hi samay par sona. Neend hi asli recharge hai."],
+          [/paani.*kitna|water.*kitna|paani peena/, "Roz lagbhag 2.5 se 3 litre paani peena sehat ke liye achha mana jata hai, Mr — garmi aur kaam ke hisaab se thoda upar-neeche chalega."]
         ];
         var DICT = { hello:"Namaste / Hello — milne par bola jane wala shabd", thank:"Dhanyavaad", love:"Pyaar / Prem", friend:"Dost / Mitra", water:"Paani", food:"Khana", home:"Ghar", time:"Samay", money:"Paisa", happy:"Khush", morning:"Subah / Suprabhat", night:"Raat", book:"Kitaab", school:"Vidyalaya", work:"Kaam" };
         function answerKnowledge(t) {
@@ -1229,17 +1230,17 @@
           if (/(note karo|note kar lo|note bana|note karlo)/.test(t)) {
             var note = raw.replace(/.*?(note karo|note kar lo|note bana|note karlo)\s*[:\-]?\s*/i, "").trim();
             if (note === raw.trim()) note = raw.replace(/.*?नोट\s*(करो|कर|लिखो)?\s*[:\-]?\s*/, "").trim(); /* Devanagari me bola gaya note */
-            if (note) { addNote(note); reply("Ho gaya! Note save kar liya: " + note); }
-            else reply("Note me kya likhun? Aise bolo — note karo, kal market jana hai.");
+            if (note) { addNote(note); reply("Ho gaya, Mr! Note save kar liya: " + note); }
+            else reply("Note me likhun kya, Mr? Aise bolo — note karo, kal market jana hai. Main turant likh dungi.");
             return;
           }
           if (/(call karo|call kar do|phone karo|dial)/.test(t)) {
             m = raw.match(/(\+?\d[\d\s-]{6,}\d)/);
-            if (m) { var num = m[1].replace(/[\s-]/g, ""); react("happy", "point", "happy", "nod"); reply("Call laga rahi hoon " + num + " par…"); setTimeout(function () { window.location.href = "tel:" + num; }, 700); }
-            else reply("Kis number par call karun? Aise bolo — call karo, uske baad number.");
+            if (m) { var num = m[1].replace(/[\s-]/g, ""); react("happy", "point", "happy", "nod"); reply("Call laga rahi hoon " + num + " par, Mr…"); setTimeout(function () { window.location.href = "tel:" + num; }, 700); }
+            else reply("Number to batao, Mr! Aise bolo — call karo, phir number. Main turant laga dungi.");
             return;
           }
-          if (/play store/.test(t)) { react("happy", "point", "happy", "nod"); reply("Play Store khol diya!"); openUrl("https://play.google.com/store"); return; }
+          if (/play store/.test(t)) { react("happy", "point", "happy", "nod"); openUrl("https://play.google.com/store"); reply("Play Store khol diya, Mr! Jo app chahiye, wahan mil jayega."); return; }
           /* Video/reel ki baat ko gaana wala branch na kha jaye — aur Spotify bola
              ho to gaana Spotify par hi search hoga, YouTube par nahi. */
           if (!/(video|reel)/.test(t) && /(gaana|gana|song|music|chalao|bajao|play)/.test(t) && /(chalao|bajao|play|suno|sunao|lagao)/.test(t)) {
@@ -1247,11 +1248,11 @@
             if (!q) q = "trending hindi songs";
             react("laugh", "cheer", "laugh", "cheer");
             if (/spotify/.test(t)) {
-              reply("Abhi chalaya! Spotify par '" + q + "' search karke khol diya hai.");
               openUrl("https://open.spotify.com/search/" + encodeURIComponent(q));
+              reply("Chala diya, Mr! Spotify par '" + q + "' khol diya hai — suno aur mood fresh karo.");
             } else {
-              reply("Abhi chalaya! YouTube par '" + q + "' khul raha hai — suno aur enjoy karo.");
               playSong(q);
+              reply("Chala diya, Mr! YouTube par '" + q + "' khol diya — volume badhao aur enjoy karo.");
             }
             return;
           }
@@ -1263,68 +1264,69 @@
             var sq = raw.replace(/(riya|zoya|google par|google|search karo|search kar do|search|dhundo|dhund|khojo|khoj karo|please)/gi, " ").replace(/\s+/g, " ").trim();
             if (!sq) sq = raw;
             react("happy", "point", "happy", "nod");
-            reply("Ho gaya! '" + sq + "' Google par search karke khol diya hai — wahan tumhe pura jawab milega.");
             googleSearch(sq);
+            reply("Mil gaya topic! '" + sq + "' Google par khol diya hai, Mr — pehle result me hi pura jawab mil jayega.");
             return;
           }
           /* Maps / rasta */
           if (/(map|maps|naksha|rasta|direction|kahan hai.*(hotel|dukan|shop|station|hospital))/.test(t) && /(khol|kholo|dikhao|search|batao|kahan)/.test(t)) {
             var mq = raw.replace(/(riya|maps?|naksha|kholo|khol|dikhao|search karo|batao)/gi, " ").replace(/\s+/g, " ").trim();
             react("happy", "point", "happy", "nod");
-            reply("Maps khol diya hai" + (mq ? " — '" + mq + "' search kar diya." : ". Jagah bolo, main wahi dhund dungi."));
             if (mq) mapsSearch(mq); else openUrl(URLS.maps);
+            reply("Maps khol diya, Mr" + (mq ? " — '" + mq + "' dhund bhi diya, rasta saaf dikh jayega." : ". Jagah ka naam bolo, main wahi dhund dungi."));
             return;
           }
           /* Video search on YouTube */
           if (/(video|reel)/.test(t) && /(chalao|dikhao|search|dhund|play|dekho)/.test(t)) {
             var vq = raw.replace(/(riya|video|reel|chalao|dikhao|search|dhund|play)/gi, " ").replace(/\s+/g, " ").trim() || "trending videos";
             react("laugh", "cheer", "laugh", "cheer");
-            reply("Video khol diya! YouTube par '" + vq + "' chal raha hai.");
             youtubeSearch(vq);
+            reply("Video khol diya, Mr! YouTube par '" + vq + "' chal raha hai — enjoy karo!");
             return;
           }
-          if (/whatsapp/.test(t)) { react("happy", "point", "happy", "nod"); reply("WhatsApp khol diya!"); openUrl(URLS.whatsapp); return; }
-          if (/spotify/.test(t)) { react("happy", "point", "happy", "nod"); reply("Spotify khol diya! Gaana bolo, main wahan bhi chala dungi."); openUrl(URLS.spotify); return; }
-          if (/gmail|email|mail khol/.test(t)) { react("happy", "point", "happy", "nod"); reply("Gmail khol diya!"); openUrl(URLS.gmail); return; }
-          if (/facebook|fb khol/.test(t)) { react("happy", "point", "happy", "nod"); reply("Facebook khol diya!"); openUrl(URLS.facebook); return; }
-          if (/telegram/.test(t)) { react("happy", "point", "happy", "nod"); reply("Telegram khol diya!"); openUrl(URLS.telegram); return; }
-          if (/amazon/.test(t)) { react("happy", "point", "happy", "nod"); reply("Amazon khol diya! Kya kharidna hai, bolo — main search kar dungi."); openUrl(URLS.amazon); return; }
-          if (/flipkart/.test(t)) { react("happy", "point", "happy", "nod"); reply("Flipkart khol diya!"); openUrl(URLS.flipkart); return; }
-          if (/(news|khabar|samachar)/.test(t) && /(khol|batao|dikhao|suna|aaj|taaza|latest)/.test(t)) { react("happy", "point", "happy", "nod"); reply("Aaj ki taaza khabrein khol di hain — Google News par sabse nayi khabar milegi."); openUrl(URLS.news); return; }
-          if (/(mausam|weather)/.test(t)) { react("happy", "point", "happy", "nod"); reply("Mausam ki jaankari khol di hai — aaj ka temperature aur baarish ka haal wahan dikhega. Mausam chahe jaisa ho, apna dhyaan rakhna!"); openUrl(URLS.weather); return; }
-          if (/google/.test(t)) { react("happy", "point", "happy", "nod"); reply("Google khol diya! Jo search karna hai bolo, main karke dungi."); openUrl(URLS.google); return; }
-          if (/youtube/.test(t)) { react("happy", "point", "happy", "nod"); reply("YouTube khul gaya! Koi gaana ya video bol do, main wahi chala dungi."); openUrl(URLS.youtube); return; }
-          if (/instagram|insta/.test(t)) { react("happy", "point", "happy", "nod"); reply("Instagram khol diya!"); openUrl(URLS.instagram); return; }
-          if (/(ajeet os|os kholo)/.test(t)) { react("happy", "point", "happy", "nod"); reply("AJEET OS khul gaya!"); openUrl(URLS.ajeetos); return; }
-          if (/(website|site kholo|meri site)/.test(t)) { react("happy", "point", "happy", "nod"); reply("Tumhari website khul gayi!"); openUrl(URLS.website); return; }
+          if (/whatsapp/.test(t)) { react("happy", "point", "happy", "nod"); openUrl(URLS.whatsapp); reply("WhatsApp khol diya, Mr! Kisse baat karni hai, lag jao."); return; }
+          if (/spotify/.test(t)) { react("happy", "point", "happy", "nod"); openUrl(URLS.spotify); reply("Spotify khol diya, Mr! Gaana bolo, main wahi chala dungi."); return; }
+          if (/gmail|email|mail khol/.test(t)) { react("happy", "point", "happy", "nod"); openUrl(URLS.gmail); reply("Gmail khol diya, Mr! Mail check kar lo."); return; }
+          if (/facebook|fb khol/.test(t)) { react("happy", "point", "happy", "nod"); openUrl(URLS.facebook); reply("Facebook khol diya, Mr!"); return; }
+          if (/telegram/.test(t)) { react("happy", "point", "happy", "nod"); openUrl(URLS.telegram); reply("Telegram khol diya, Mr!"); return; }
+          if (/amazon/.test(t)) { react("happy", "point", "happy", "nod"); openUrl(URLS.amazon); reply("Amazon khol diya, Mr! Kya kharidna hai, bolo — main search kar dungi."); return; }
+          if (/flipkart/.test(t)) { react("happy", "point", "happy", "nod"); openUrl(URLS.flipkart); reply("Flipkart khol diya, Mr!"); return; }
+          if (/(news|khabar|samachar)/.test(t) && /(khol|batao|dikhao|suna|aaj|taaza|latest)/.test(t)) { react("happy", "point", "happy", "nod"); openUrl(URLS.news); reply("Taaza khabrein khol di hain, Mr — Google News par aaj ki sabse nayi khabar mil jayegi."); return; }
+          if (/(mausam|weather)/.test(t)) { react("happy", "point", "happy", "nod"); openUrl(URLS.weather); reply("Mausam khol diya, Mr — temperature aur baarish ka haal wahan dikh jayega. Aur haan, mausam jaisa bhi ho, apna dhyaan rakhna!"); return; }
+          if (/google/.test(t)) { react("happy", "point", "happy", "nod"); openUrl(URLS.google); reply("Google khol diya, Mr! Jo dhundna hai bas bolo, main khud search kar dungi."); return; }
+          if (/youtube/.test(t)) { react("happy", "point", "happy", "nod"); openUrl(URLS.youtube); reply("YouTube khul gaya, Mr! Gaana ya video bolo, main wahi chala dungi — bina haath lagaye."); return; }
+          if (/instagram|insta/.test(t)) { react("happy", "point", "happy", "nod"); openUrl(URLS.instagram); reply("Instagram khol diya, Mr! Reels ka time ho gaya lagta hai."); return; }
+          if (/(ajeet os|os kholo)/.test(t)) { react("happy", "point", "happy", "nod"); openUrl(URLS.ajeetos); reply("AJEET OS khul gaya, Mr!"); return; }
+          if (/(website|site kholo|meri site)/.test(t)) { react("happy", "point", "happy", "nod"); openUrl(URLS.website); reply("Tumhari website khul gayi, Mr! Dekho, shandaar lag rahi hai."); return; }
           if (/(shayari|shayri|poetry|kavita)/.test(t)) { react("love", "care", "love", "idle"); reply(shayari[shayariIdx++ % shayari.length]); return; }
           if (/(motivat|himmat|haar|thak gaya|thak gayi|pareshan|dukhi|sad |udaas|tension)/.test(t)) { react("care", "care", "care", "idle"); reply(motivations[motivationIdx++ % motivations.length]); return; }
-          if (/(kahani|story sunao)/.test(t)) { reply("Ek chhoti si kahani suno — ek chhote se gaon me ek ladka tha jo roz subah suraj se pehle uthta tha. Log haste the, par ek din usi ki mehnat ne use sabse aage khada kar diya. Moral: roz ki chhoti mehnat hi badi jeet hai!"); return; }
+          if (/(kahani|story sunao)/.test(t)) { reply("Ek chhoti si kahani suno, Mr — ek gaon me ek ladka tha jo roz suraj se pehle uthta tha. Log haste the, par ek din usi ki mehnat ne use sabse aage khada kar diya. Moral samjhe? Roz ki chhoti mehnat hi badi jeet hoti hai!"); return; }
           if (/(joke|hasao|mazak)/.test(t)) { reply(jokes[jokeIdx++ % jokes.length]); return; }
-          if (/(tum kya.*kar sakti|kya kya kar sakti|kya kar sakti ho|tumhari.*madad|help.*kya|features)/.test(t)) { reply("Main sab kuch kar sakti hoon Mr — har sawal ka jawab: rajdhani, hisaab, samanya gyaan, shabd ka matlab. Aur har bola hua kaam: apps kholna, gaana-video chalana, Google search, Maps, call, note banana, time-date, joke-shayari-motivation. Bas bolo!"); return; }
-          if (/(time bata|samay bata|time kya|kitne baj|time|samay)/.test(t) && /(bata|kya|hai|baj)/.test(t)) { reply("Abhi time hai " + timeStr() + "."); return; }
-          if (/(\bdate\b|tarikh|aaj.*din|aaj kya|din kya)/.test(t)) { reply("Aaj hai " + dateStr() + "."); return; } /* \bdate\b — warna "update karo" me bhi date bol deti thi */
-          if (/(kaun ho|tum kaun|your name|naam kya hai tumhara)/.test(t)) { reply("Main " + assistantName + " hoon, tumhari apni voice assistant. Main tumhare har sawal ka jawab bhi deti hoon aur har bola hua kaam bhi karti hoon!"); return; }
+          if (/(tum kya.*kar sakti|kya kya kar sakti|kya kar sakti ho|tumhari.*madad|help.*kya|features)/.test(t)) { reply("Kya-kya kar sakti hoon? Suno Mr — har sawal ka jawab deti hoon: rajdhani, hisaab, GK, shabd ke matlab. Aur bola hua har kaam bhi: apps-websites kholna, gaana-video chalana, Google search, Maps, call, note banana, time-date, joke, shayari, motivation. Bolna tumhara kaam, karna mera!"); return; }
+          if (/(time bata|samay bata|time kya|kitne baj|time|samay)/.test(t) && /(bata|kya|hai|baj)/.test(t)) { reply("Abhi time hai " + timeStr() + ", Mr."); return; }
+          if (/(\bdate\b|tarikh|aaj.*din|aaj kya|din kya)/.test(t)) { reply("Aaj " + dateStr() + " hai, Mr."); return; } /* \bdate\b — warna "update karo" me bhi date bol deti thi */
+          if (/(kaun ho|tum kaun|your name|naam kya hai tumhara)/.test(t)) { reply("Main " + assistantName + " hoon — tumhari dost, tumhari assistant. Sawal pucho to jawab, kaam bolo to action — dono me full expert!"); return; }
           /* Shabd ka matlab — dictionary */
           var dictMatch = t.match(/(?:matlab|meaning|arth).*?(hello|thank|love|friend|water|food|home|time|money|happy|morning|night|book|school|work)/) || t.match(/(hello|thank|love|friend|water|food|home|money|happy|morning|night|book|school|work)\s*(?:ka matlab|meaning|ka arth)/);
           if (dictMatch) { var dw = dictMatch[1]; reply("'" + dw + "' ka matlab hai — " + DICT[dw] + "."); return; }
           /* Knowledge bank — har aam sawal ka seedha jawab */
           var know = answerKnowledge(t);
           if (know) {
-            if (/matlab kya|meaning of/.test(t)) { reply(know + " Pura jawab khol bhi rahi hoon."); googleSearch(raw); return; }
+            if (/matlab kya|meaning of/.test(t)) { googleSearch(raw); reply(know + " Aur pura jawab Google par khol bhi diya hai, Mr."); return; }
+            if (/recipe/.test(t)) { googleSearch(raw); reply(know); return; }
             reply(know); return;
           }
-          if (/(\bhello\b|\bhi\b|\bhey\b|namaste|kaise ho|kaisi ho)/.test(t)) { reply("Hello Mr! Main bilkul badhiya hoon — tum sunao, aaj kya karna hai? Sawal pucho, gaana chalwao, ya koi app khulwao!"); return; } /* \bhi\b — warna "bhi/nahi/kabhi" wale har sawal par greeting aa jati thi */
-          if (/(thank|shukriya|dhanyavad)/.test(t)) { react("love", "care", "love", "care"); reply("Anytime Mr! Tum bas bolte raho, main aur Zoya yahin hain tumhare liye."); return; }
-          if (/(\bbye\b|alvida|good night|so jao)/.test(t)) { react("care", "wave", "care", "wave"); reply("Bye Mr! Dhyaan rakhna apna — jab zaroorat ho, bas orb tap karke bula lena."); return; }
-          if (/(khush|bahut badhiya|maza aa|maja aa|love you|pyaar)/.test(t)) { react("love", "cheer", "love", "cheer"); reply("Ye sunkar dil khush ho gaya! Main aur Zoya hamesha tumhare saath hain Mr."); return; }
-          if (/(\bok\b|okay|theek hai|thik hai|samajh gaya|\bacha\b|\bachha\b)/.test(t)) { reply("Perfect! Kuch aur bolo — sawal ho ya kaam, main turant jawab dungi aur kar bhi dungi."); return; } /* \bok\b — warna "book/look" par bhi Perfect bol deti thi */
+          if (/(\bhello\b|\bhi\b|\bhey\b|namaste|kaise ho|kaisi ho)/.test(t)) { reply("Hello Mr! Main ekdum badhiya — tum sunao, aaj ka mood kaisa hai? Sawal pucho, gaana chalwao, ya koi app khulwao, main ready hoon!"); return; } /* \bhi\b — warna "bhi/nahi/kabhi" wale har sawal par greeting aa jati thi */
+          if (/(thank|shukriya|dhanyavad)/.test(t)) { react("love", "care", "love", "care"); reply("Anytime, Mr! Apno ko thank-you nahi kehte — bas bolte raho, main yahin hoon tumhare liye."); return; }
+          if (/(\bbye\b|alvida|good night|so jao)/.test(t)) { react("care", "wave", "care", "wave"); reply("Bye Mr! Apna dhyaan rakhna — aur zaroorat pade to bas orb tap karke bula lena, main turant aa jaungi."); return; }
+          if (/(khush|bahut badhiya|maza aa|maja aa|love you|pyaar)/.test(t)) { react("love", "cheer", "love", "cheer"); reply("Ye sunkar dil sach me khush ho gaya, Mr! Main hamesha tumhare saath hoon."); return; }
+          if (/(\bok\b|okay|theek hai|thik hai|samajh gaya|\bacha\b|\bachha\b)/.test(t)) { reply("Perfect, Mr! Ab next bolo — sawal ho ya kaam, turant ho jayega."); return; } /* \bok\b — warna "book/look" par bhi Perfect bol deti thi */
           /* Har sawal ka jawab — jo na mile, wo Google par kholkar dungi, koi sawal khali nahi jayega */
           var isQuestion = /(\?|kya|kaun|kahan|kaha |kab |kyun|kyu |kaise|kitna|kitne|kitni|batao|bata |samjhao|samjha|bolo|what|who|where|when|why|how|which|tell me|explain)/.test(t);
           if (isQuestion) {
             react("think", "think", "think", "idle");
-            reply("Bahut achha sawal Mr! Iska pura aur sahi jawab maine Google par khol diya hai — pehle result me hi tumhe jawab mil jayega. Aur jo bolo, main waisa hi kar dungi.");
             googleSearch(raw);
+            reply("Achha sawal hai, Mr! Iska pura jawab maine Google par khol diya hai — pehle result me hi mil jayega. Dekh lo, phir bolo aage kya karna hai.");
             return;
           }
           reply(fallbacks[fbIdx++ % fallbacks.length]);
@@ -1350,7 +1352,7 @@
           }, 350);
         }
         function startListening() {
-          if (!SR) { reply("Is browser me voice sunne ki suvidha nahi hai — Chrome me kholo, ya neeche likh kar bhejo, main waisa hi jawab dungi."); return; }
+          if (!SR) { reply("Mr, is browser me mic sunne wali suvidha nahi hai — Chrome me kholo to awaaz chalegi. Tab tak neeche likh kar bhejo, jawab waisa hi milega, pakka."); return; }
           if (listening) return; /* pehle se sun raha hai to waisa hi rehne do — band mat karo */
           try {
             recog = new SR();
@@ -1377,7 +1379,7 @@
                 recogBlocked = true; pendingListen = false;
                 if (handsFree) { handsFree = false; hfToggle.setAttribute("aria-pressed", "false"); }
                 setState("idle", "Mic permission nahi mili");
-                liveText.textContent = "Mic ki permission nahi mili — browser ke lock icon se mic Allow karke phir try karo.";
+                liveText.textContent = "Mr, mic ki permission nahi mili — browser ke lock icon se Mic Allow karke phir try karo, phir main sun paungi.";
               }
               else if (ev.error !== "aborted") setState("idle", "Ready — orb tap karo aur bolo");
             };
@@ -1396,12 +1398,12 @@
         $("orbBtn").addEventListener("click", function () {
           if (!greeted) {
             greeted = true;
-            addMsg("ai", "Hello Mr! Main " + assistantName + " hoon. Kuch bhi bolo, main sun rahi hoon.");
+            addMsg("ai", "Hello Mr! Main " + assistantName + " hoon. Aa gaye tum — ab bas bolte jao, main sun rahi hoon aur sab kar dungi.");
             react("happy", "wave", "happy", "wave", 3000);
             /* Fixed 2600ms timer greeting ko beech me kaat deta tha (Hindi awaaz
                usse zyada lambi hoti hai) — ab mic greeting PURA hone par khulega. */
             pendingListen = true;
-            speak("Hello Mr! Main " + assistantName + " hoon. Kuch bhi bolo, main sun rahi hoon.");
+            speak("Hello Mr! Main " + assistantName + " hoon. Aa gaye tum — ab bas bolte jao, main sun rahi hoon aur sab kar dungi.");
             return;
           }
           if (listening) stopListening(); else startListening();
@@ -1422,8 +1424,8 @@
         hfToggle.addEventListener("click", function () {
           handsFree = !handsFree;
           hfToggle.setAttribute("aria-pressed", handsFree ? "true" : "false");
-          if (handsFree) { recogBlocked = false; reply("Hands-Free mode ON! Ab mic baar-baar dabana nahi padega — bas bolte raho, baat-cheet chalti rahegi."); /* mic reply ki awaaz khatm hote hi khud khulega (finishSpeak → maybeListenAgain) — alag timer se double-start hota tha */ }
-          else { stopListening(); reply("Hands-Free mode OFF kar diya."); }
+          if (handsFree) { recogBlocked = false; reply("Hands-Free ON, Mr! Ab mic dabane ki jhanjhat khatm — bas bolte jao, main sunti rahungi aur jawab deti rahungi."); /* mic reply ki awaaz khatm hote hi khud khulega (finishSpeak → maybeListenAgain) — alag timer se double-start hota tha */ }
+          else { stopListening(); reply("Hands-Free OFF kar diya, Mr. Jab bolna ho, orb tap kar lena."); }
         });
         voiceToggle.addEventListener("click", function () {
           voiceOn = !voiceOn;
@@ -1441,16 +1443,16 @@
           if (v === "english" && voicePreset !== "priya") setVoicePreset("priya", true);
           if (v !== "english" && voicePreset === "priya") setVoicePreset("riya", true);
           reply(v === "english"
-            ? "Done! Now I will speak in Indian English. To switch back, just say — Hindi me bolo."
+            ? "Done, Mr! Ab Indian English chalegi. Wapas Hindi chahiye to bas bol dena — Hindi me bolo."
             : v === "hinglish"
-              ? "Hinglish mode ON! Main Hindi-English mix me baat karungi — jaise tum bolte ho."
-              : "Hindi mode ON! Ab main pure local Hindi me baat karungi — yahi meri main language hai.");
+              ? "Hinglish mode ON, Mr! Ab bilkul tumhari style me — Hindi-English mix, full dost-wali baat."
+              : "Hindi mode ON! Ab apni wali Hindi chalegi — saaf, seedhi aur dil se.");
         });
         $("testVoiceBtn").addEventListener("click", function () {
           if (!voiceOn) { voiceOn = true; voiceToggle.setAttribute("aria-pressed", "true"); }
           reply($("speakLang").value === "english"
-            ? "Hello Mr! I am " + assistantName + ", speaking in Indian English. How can I help you today?"
-            : "Namaste Mr! Main " + assistantName + " hoon. Ye meri awaaz hai — Hindi me, bilkul saaf aur apni si. Kuch bhi bolo, main sun rahi hoon.");
+            ? "Hello Mr! I am " + assistantName + " — your friend, speaking in Indian English. Bas bolo, aaj kya karna hai?"
+            : "Namaste Mr! Main " + assistantName + " hoon — ye meri awaaz hai, Hindi wali, bilkul apni si. Kuch bhi bolo, main yahin hoon, sun rahi hoon.");
         });
 
         /* ---------- Performance: pause animations + mic when app is in background ---------- */
@@ -1534,7 +1536,7 @@
           var cn = document.querySelector(".cell-riya .char-name");
           if (cn) cn.textContent = assistantName.toUpperCase();
           $("adminName").value = assistantName;
-          if (!greeted) liveText.textContent = "Hello Mr! Main " + assistantName + " hoon. Kuch bhi pucho, har sawal ka jawab milega — aur jo bologe, wo kaam bhi hoga.";
+          if (!greeted) liveText.textContent = "Hello Mr! Main " + assistantName + " hoon. Kuch bhi pucho — jawab bhi milega, aur jo bologe wo kaam bhi ho jayega, pakka.";
         }
         function applyAvatarMode(mode) {
           avatarMode = mode;
@@ -1575,7 +1577,7 @@
               LS.set("riya_custom_avatar", customAvatar);
               applyAvatarMode("custom");
               $("adminMsg").textContent = "Tumhari photo avatar ban gayi aur save ho gayi!";
-              reply("Ho gaya Mr! Tumhari photo ab meri avatar hai — stage par wahi dikhegi.");
+              reply("Ho gaya, Mr! Ab stage par tumhari wali photo hi meri pehchan hai.");
             };
             img.src = rd.result;
           };
@@ -1589,7 +1591,7 @@
           LS.set("riya_assistant_name", v);
           applyName();
           $("adminMsg").textContent = "Naam save ho gaya — ab assistant khud ko '" + v + "' bulayegi.";
-          reply("Ho gaya Mr! Ab se mera naam " + v + " hai.");
+          reply("Ho gaya, Mr! Ab se mujhe " + v + " kehna — naya naam, wahi purani dost.");
         });
         $("changePwBtn").addEventListener("click", function () {
           var cur = $("curPw").value, nw = $("newPw").value;
@@ -1611,7 +1613,7 @@
         })();
 
         /* First paint: greeting bubble + wave (speech waits for first tap — browser rule) */
-        addMsg("ai", "Hello Mr! Main " + assistantName + " hoon. Orb tap karo, main awaaz me greet karke sunna shuru kar dungi.");
+        addMsg("ai", "Hello Mr! Main " + assistantName + " hoon — tumhari dost, tumhari assistant, sab kuch. Orb tap karo, phir bas bolte jao, main sun rahi hoon.");
         react("happy", "wave", "happy", "wave", 3200);
       })();
     </script>
