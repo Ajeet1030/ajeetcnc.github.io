@@ -150,6 +150,17 @@
     <button class="dicon" data-app="games"><span><svg viewBox="0 0 48 48"><rect x="5" y="14.5" width="38" height="20" rx="10" fill="#334155"/><path d="M15.5 20v9M11 24.5h9" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/><circle cx="31" cy="21.5" r="2.5" fill="#f43f5e"/><circle cx="36.5" cy="25" r="2.5" fill="#f59e0b"/><circle cx="31" cy="28.5" r="2.5" fill="#22c55e"/><circle cx="25.5" cy="25" r="2.5" fill="#38bdf8"/></svg></span>Games</button>
     <button class="dicon" data-app="tools"><span><svg viewBox="0 0 48 48"><rect x="7" y="19" width="34" height="19" rx="3.5" fill="#f97316"/><path d="M17.5 19v-3.2A3.3 3.3 0 0 1 20.8 12.5h6.4a3.3 3.3 0 0 1 3.3 3.3V19" fill="none" stroke="#c2410c" stroke-width="3.4"/><rect x="7" y="26" width="34" height="3.4" fill="#ea580c"/><rect x="20.8" y="24.5" width="6.4" height="6" rx="1.6" fill="#ffedd5"/></svg></span>Tools</button>
     <button class="dicon" data-app="moreapps"><span><svg viewBox="0 0 48 48"><rect x="7.5" y="7.5" width="15" height="15" rx="4.5" fill="#38bdf8"/><rect x="25.5" y="7.5" width="15" height="15" rx="4.5" fill="#a78bfa"/><rect x="7.5" y="25.5" width="15" height="15" rx="4.5" fill="#34d399"/><rect x="25.5" y="25.5" width="15" height="15" rx="4.5" fill="#fbbf24"/></svg></span>More Apps</button>
+    <button class="dicon" data-app="uthja"><span>💥</span>Uth Ja Bhai</button>
+    <button class="dicon" data-app="thappad"><span>👑</span>Thappad Queen</button>
+    <button class="dicon" data-app="gulel"><span>🎯</span>Gulel King</button>
+    <button class="dicon" data-app="carracing"><span>🏎️</span>Car Racing Game</button>
+    <button class="dicon" data-app="riya"><span>🤖</span>Riya AI Assistant</button>
+    <button class="dicon" data-app="riyasuper"><span>⚡</span>Riya Super AI</button>
+    <button class="dicon" data-app="neuralguard"><span>🛡️</span>NEURAL GUARD</button>
+    <button class="dicon" data-app="attendpro"><span>🕒</span>AttendPro</button>
+    <button class="dicon" data-app="attendproweb"><span>🌐</span>AttendPro Website</button>
+    <button class="dicon" data-app="personal"><span>👤</span>Personal Website</button>
+    <button class="dicon" data-app="github"><span>🐙</span>GitHub</button>
   </aside>
 
   <!-- Right widgets -->
@@ -227,6 +238,8 @@
           <button data-app="calendar"><span><svg viewBox="0 0 48 48"><rect x="7.5" y="9" width="33" height="32" rx="4" fill="#fff" stroke="#cbd5e1"/><path d="M7.5 13a4 4 0 0 1 4-4h25a4 4 0 0 1 4 4v6h-33z" fill="#ef4444"/><rect x="14" y="5.5" width="4" height="9" rx="2" fill="#64748b"/><rect x="30" y="5.5" width="4" height="9" rx="2" fill="#64748b"/><circle cx="15" cy="26" r="2.3" fill="#94a3b8"/><circle cx="24" cy="26" r="2.3" fill="#94a3b8"/><circle cx="33" cy="26" r="2.3" fill="#38bdf8"/><circle cx="15" cy="34" r="2.3" fill="#94a3b8"/><circle cx="24" cy="34" r="2.3" fill="#94a3b8"/><circle cx="33" cy="34" r="2.3" fill="#94a3b8"/></svg></span>Calendar</button>
           <button data-app="images"><span><svg viewBox="0 0 48 48"><defs><linearGradient id="gIm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7dd3fc"/><stop offset="1" stop-color="#6366f1"/></linearGradient></defs><rect x="5.5" y="8.5" width="37" height="31" rx="4.5" fill="url(#gIm)"/><circle cx="33" cy="16.5" r="3.8" fill="#fde68a"/><path d="M5.5 35.5l11.5-12 8 7.5 6.5-5.5 11 10v.5a3.5 3.5 0 0 1-3.5 3.5H9a3.5 3.5 0 0 1-3.5-3.5z" fill="#0c4a6e" opacity=".55"/></svg></span>Camera</button>
         </div>
+        <div class="sp-head"><span>🚀 My Apps, Games & Websites</span></div>
+        <div class="sp-socials" id="spMyApps" style="margin-bottom:13px"></div>
         <div class="sp-head"><span>My Social Accounts</span><a href="#" id="spSocialEdit">Edit →</a></div>
         <div class="sp-socials" id="spSocials"></div>
       </div>
@@ -486,6 +499,10 @@
 
 <template id="tpl-moreapps">
   <div class="app-body">
+    <h4 class="store-head">🚀 My Apps, Games &amp; Websites</h4>
+    <p class="muted">Mere saare apps, games aur websites — sab ek hi jagah. Kisi par bhi tap karo, naya tab khulega.</p>
+    <div class="store-grid js-myapps-grid"></div>
+    <h4 class="store-head">All AJEET OS Apps</h4>
     <div class="store-grid js-more-grid"></div>
   </div>
 </template>

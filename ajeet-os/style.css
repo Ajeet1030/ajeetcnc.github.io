@@ -476,3 +476,11 @@ input[type=range]{accent-color:var(--accent)}
 #radioHost{position:fixed;left:-9999px;top:0;width:2px;height:2px;overflow:hidden;visibility:hidden;pointer-events:none}
 @media (max-width:640px){ #radioPill{left:8px;bottom:calc(var(--tb-h) + 62px)} }
 @media (max-height:500px){ .calc-display{padding:9px 12px;font-size:1.5rem} .calc-grid button{padding:8px 0} }
+/* ---- My Apps, Games & Websites (link apps) ---- */
+.app-emoji{font-style:normal;line-height:1}
+.win-ico .app-emoji{font-size:17px}
+.chip .app-emoji{font-size:13px;margin-right:5px;vertical-align:-1px}
+.store-item .app-emoji{font-size:2rem}
+.sr-ico .app-emoji{font-size:15px;vertical-align:-2px}
+.store-head{margin:14px 0 8px;font-size:.95rem}
+.app-body > .store-head:first-child{margin-top:2px}
