@@ -1,0 +1,1418 @@
+<!doctype html>
+<html lang="en" data-theme="cyberpunk">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="dark" />
+<link rel="icon" type="image/jpeg" href="data:image/jpeg;base64,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" />
+<link rel="apple-touch-icon" href="data:image/jpeg;base64,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" />
+<title>NEURAL GUARD — AI Security Universe</title>
+<style>
+:root{
+  --bg:#02030a; --bg2:#050818; --panel:rgba(10,18,40,.55); --panel2:rgba(16,26,56,.65);
+  --line:rgba(0,229,255,.28); --txt:#e8f6ff; --muted:#9db8d6; --a1:#00e5ff; --a2:#2979ff;
+  --a3:#b388ff; --a4:#ff4fd8; --danger:#ff3b5c; --ok:#2dffb3; --warn:#ffd54f; --orange:#ff9100;
+  --glow:0 0 24px rgba(0,229,255,.35); --radius:20px;
+  color-scheme:dark;
+}
+html[data-theme="liquid"]{--bg:#04121c;--bg2:#07222e;--panel:rgba(190,240,255,.08);--panel2:rgba(190,240,255,.14);--line:rgba(160,230,255,.4);--txt:#f2fcff;--muted:#bfe3f2;--a1:#7fe7ff;--a2:#4fc3f7;--a3:#b2ebf2;--a4:#80deea;--glow:0 0 24px rgba(127,231,255,.4)}
+html[data-theme="quantum"]{--bg:#0a0218;--bg2:#160538;--panel:rgba(60,20,120,.4);--panel2:rgba(80,30,160,.45);--line:rgba(179,136,255,.4);--txt:#f3eaff;--muted:#c9b3ec;--a1:#b388ff;--a2:#7c4dff;--a3:#ff80ab;--a4:#82b1ff;--glow:0 0 24px rgba(179,136,255,.45)}
+html[data-theme="neural"]{--bg:#010409;--bg2:#02121f;--panel:rgba(4,20,34,.6);--panel2:rgba(6,30,50,.6);--line:rgba(41,121,255,.35);--txt:#dceeff;--muted:#8fb0cc;--a1:#40c4ff;--a2:#2979ff;--a3:#00e5ff;--a4:#536dfe;--glow:0 0 22px rgba(41,121,255,.4)}
+html[data-theme="matrix"]{--bg:#000800;--bg2:#001a00;--panel:rgba(0,40,0,.5);--panel2:rgba(0,60,0,.5);--line:rgba(0,255,90,.35);--txt:#d8ffd8;--muted:#8fd68f;--a1:#00ff5a;--a2:#00c853;--a3:#69f0ae;--a4:#00e676;--danger:#ff5252;--glow:0 0 22px rgba(0,255,90,.35)}
+html[data-theme="military"]{--bg:#0b0f0a;--bg2:#141a12;--panel:rgba(30,40,28,.6);--panel2:rgba(42,54,38,.6);--line:rgba(168,198,120,.4);--txt:#eef5e2;--muted:#b9c9a4;--a1:#c6e265;--a2:#8bc34a;--a3:#d4e157;--a4:#9ccc65;--glow:0 0 20px rgba(198,226,101,.3)}
+html[data-theme="minimal"]{--bg:#0c0d10;--bg2:#14161a;--panel:rgba(255,255,255,.05);--panel2:rgba(255,255,255,.08);--line:rgba(255,255,255,.18);--txt:#f5f6f8;--muted:#a7adb8;--a1:#e8eaf0;--a2:#c9cedb;--a3:#ffffff;--a4:#9aa3b5;--glow:0 0 16px rgba(255,255,255,.15)}
+html[data-theme="cosmic"]{--bg:#070214;--bg2:#12042e;--panel:rgba(40,16,90,.45);--panel2:rgba(56,24,120,.5);--line:rgba(255,128,171,.35);--txt:#fdeaff;--muted:#d3b8e8;--a1:#ff80ab;--a2:#b388ff;--a3:#82b1ff;--a4:#ff4fd8;--glow:0 0 24px rgba(255,128,171,.35)}
+html[data-theme="holo"]{--bg:#02141a;--bg2:#04303a;--panel:rgba(160,255,240,.08);--panel2:rgba(160,255,240,.13);--line:rgba(160,255,240,.45);--txt:#eafffb;--muted:#a8ddd3;--a1:#64ffda;--a2:#18ffff;--a3:#ea80fc;--a4:#8c9eff;--glow:0 0 24px rgba(100,255,218,.4)}
+html[data-theme="ultrablack"]{--bg:#000;--bg2:#050505;--panel:rgba(255,255,255,.03);--panel2:rgba(255,255,255,.05);--line:rgba(120,120,140,.3);--txt:#e6e6ee;--muted:#8a8a9c;--a1:#8e9aaf;--a2:#5c677d;--a3:#c77dff;--a4:#7f5539;--glow:0 0 14px rgba(140,140,170,.25)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(1200px 800px at 70% -10%,var(--bg2),var(--bg) 60%);color:var(--txt);
+ font-family:"Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif;overflow-x:hidden;transition:background .6s,color .6s}
+button,[role="button"],select,input:not([type="checkbox"],[type="radio"]){min-height:2.25rem}
+#bgCanvas,#rainCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+#trailCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:60;pointer-events:none}
+nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);background:color-mix(in srgb,var(--bg) 72%,transparent);
+ border-bottom:1px solid var(--line);display:flex;align-items:center;gap:.4rem;padding:.5rem .8rem;flex-wrap:wrap}
+.brand{font-weight:800;letter-spacing:.22em;font-size:.95rem;color:var(--a1);text-shadow:var(--glow);margin-right:.4rem;white-space:nowrap}
+.brand span{color:var(--a4)}
+nav a{color:var(--muted);text-decoration:none;font-size:.8rem;letter-spacing:.08em;padding:.55rem .6rem;border-radius:10px;min-height:2.25rem;display:inline-flex;align-items:center}
+nav a:hover,nav a:focus-visible{color:var(--txt);background:var(--panel2);outline:none}
+.navsp{flex:1}
+main{position:relative;z-index:2;max-width:1180px;margin:0 auto;padding:0 1rem 3rem}
+section{padding:2.6rem 0 .6rem}
+h1{font-size:clamp(2rem,6vw,3.6rem);letter-spacing:.14em;margin:.2rem 0 .4rem;font-weight:800;line-height:1.08}
+h1 .neon{color:var(--a1);text-shadow:var(--glow)}
+h2{font-size:clamp(1.35rem,3.4vw,2rem);letter-spacing:.12em;margin:0 0 .3rem;font-weight:800}
+h2 .neon{color:var(--a1);text-shadow:var(--glow)}
+.sub{color:var(--muted);max-width:64ch;line-height:1.55;margin:.2rem 0 1rem}
+.kicker{font-size:.72rem;letter-spacing:.34em;color:var(--a3);text-transform:uppercase;margin:0 0 .4rem}
+.glass{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);backdrop-filter:blur(16px);
+ box-shadow:0 18px 50px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.08);padding:1.1rem;transition:transform .35s,box-shadow .35s,background .6s,border-color .6s}
+.grid{display:grid;gap:1rem}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.btn{appearance:none;border:1px solid var(--line);background:linear-gradient(135deg,var(--panel2),transparent);color:var(--txt);
+ border-radius:12px;padding:.55rem 1rem;font:inherit;font-size:.88rem;letter-spacing:.06em;cursor:pointer;min-height:2.5rem;
+ transition:transform .15s,box-shadow .2s,background .3s}
+.btn:hover{box-shadow:var(--glow);transform:translateY(-1px)}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:linear-gradient(135deg,var(--a2),var(--a1));color:#02131c;font-weight:700;border-color:transparent}
+.btn.danger{background:linear-gradient(135deg,#ff3b5c,#ff7043);color:#fff;font-weight:700;border-color:transparent}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+.chip{border:1px solid var(--line);background:var(--panel2);color:var(--txt);border-radius:999px;padding:.45rem .8rem;font-size:.8rem;cursor:pointer;min-height:2.25rem}
+.chip:hover{box-shadow:var(--glow)}
+input[type=text],input[type=password],textarea,select{background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:12px;color:var(--txt);
+ padding:.55rem .8rem;font:inherit;width:100%}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--a1);outline-offset:1px}
+label{font-size:.82rem;color:var(--muted);letter-spacing:.05em;display:block;margin-bottom:.35rem}
+.tag{display:inline-block;font-size:.68rem;letter-spacing:.2em;padding:.25rem .6rem;border-radius:999px;border:1px solid var(--warn);color:var(--warn)}
+.tag.ok{border-color:var(--ok);color:var(--ok)}
+.mono{font-family:ui-monospace,"Cascadia Mono",Consolas,monospace;font-size:.85rem;word-break:break-all}
+.log{background:rgba(0,0,0,.5);border:1px solid var(--line);border-radius:12px;padding:.8rem;height:220px;overflow:auto;font-family:ui-monospace,Consolas,monospace;font-size:.8rem;line-height:1.6}
+.log .dim{color:var(--muted)} .log .bad{color:var(--danger)} .log .good{color:var(--ok)} .log .warnl{color:var(--warn)}
+canvas.stage{width:100%;display:block;border-radius:14px;background:rgba(0,0,0,.35);border:1px solid var(--line);touch-action:manipulation}
+.heroWrap{display:grid;grid-template-columns:1.15fr .85fr;gap:1.2rem;align-items:center}
+@media(max-width:820px){.heroWrap{grid-template-columns:1fr}}
+#coreCanvas{cursor:pointer}
+.meter{height:12px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden}
+.meter>i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--danger),var(--warn),var(--ok));transition:width .3s}
+.statRow{display:flex;gap:1rem;flex-wrap:wrap;margin-top:.6rem}
+.stat{flex:1;min-width:110px;text-align:center;padding:.6rem;border:1px solid var(--line);border-radius:14px;background:var(--panel2)}
+.stat b{display:block;font-size:1.3rem;color:var(--a1)}
+.stat span{font-size:.7rem;letter-spacing:.14em;color:var(--muted)}
+.levelBadge{font-size:1.05rem;font-weight:800;letter-spacing:.18em;padding:.5rem 1rem;border-radius:12px;border:1px solid var(--ok);color:var(--ok);text-align:center;transition:all .4s}
+.shieldWrap{display:grid;grid-template-columns:.9fr 1.1fr;gap:1.2rem;align-items:start}
+@media(max-width:820px){.shieldWrap{grid-template-columns:1fr}}
+.shieldBtns{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+@media(max-width:480px){.shieldBtns{grid-template-columns:1fr}}
+.pulse{animation:pulseAnim .7s ease-out}
+@keyframes pulseAnim{0%{transform:scale(1)}35%{transform:scale(1.045)}100%{transform:scale(1)}}
+.chatBox{height:300px;overflow:auto;display:flex;flex-direction:column;gap:.55rem;padding:.4rem .2rem}
+.msg{max-width:88%;padding:.6rem .8rem;border-radius:14px;line-height:1.5;font-size:.92rem;white-space:pre-wrap}
+.msg.bot{background:var(--panel2);border:1px solid var(--line);align-self:flex-start}
+.msg.user{background:linear-gradient(135deg,var(--a2),var(--a1));color:#02131c;align-self:flex-end;font-weight:600}
+.orb{width:92px;height:92px;border-radius:50%;margin:0 auto;background:radial-gradient(circle at 35% 30%,#fff8,var(--a1) 30%,var(--a2) 62%,transparent 75%);
+ box-shadow:0 0 34px var(--a1),inset 0 0 22px #fff6;animation:orbPulse 3s ease-in-out infinite}
+@keyframes orbPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+.orb.speaking{animation:orbSpeak .5s ease-in-out infinite}
+@keyframes orbSpeak{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
+.gameTabs,.labTabs{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem}
+.tabBtn{border:1px solid var(--line);background:var(--panel);color:var(--muted);border-radius:12px;padding:.55rem .9rem;cursor:pointer;font:inherit;font-size:.85rem;min-height:2.5rem}
+.tabBtn[aria-selected="true"]{color:#02131c;background:linear-gradient(135deg,var(--a2),var(--a1));font-weight:700;border-color:transparent}
+.hidden{display:none!important}
+.msgCard{border:1px solid var(--line);border-radius:14px;padding:1rem;background:rgba(0,0,0,.3);line-height:1.55}
+.linkCard{border:1px solid var(--line);border-radius:14px;padding:.9rem;background:rgba(0,0,0,.3);cursor:pointer;text-align:left;width:100%;color:var(--txt);font:inherit}
+.linkCard:hover{box-shadow:var(--glow)}
+.feedback{border-radius:12px;padding:.7rem .9rem;margin-top:.7rem;line-height:1.5;font-size:.9rem}
+.feedback.good{background:rgba(45,255,179,.12);border:1px solid var(--ok)}
+.feedback.bad{background:rgba(255,59,92,.12);border:1px solid var(--danger)}
+.optBtn{display:block;width:100%;text-align:left;margin:.4rem 0}
+.themeGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem}
+.themeCard{border:1px solid var(--line);border-radius:16px;padding:1rem .8rem;cursor:pointer;background:var(--panel);color:var(--txt);font:inherit;text-align:left;min-height:4.5rem}
+.themeCard[aria-pressed="true"]{outline:2px solid var(--a1);box-shadow:var(--glow)}
+.swatches{display:flex;gap:.3rem;margin-top:.5rem}
+.swatches i{width:18px;height:18px;border-radius:50%;display:block;border:1px solid #fff3}
+.ctlBar{display:flex;gap:1rem;flex-wrap:wrap;align-items:center}
+.switch{display:inline-flex;align-items:center;gap:.5rem;cursor:pointer;padding:.4rem .2rem;min-height:2.5rem;color:var(--txt);font-size:.88rem}
+.switch input{width:20px;height:20px;accent-color:var(--a1)}
+input[type=range]{accent-color:var(--a1);width:130px}
+.tilt{transform-style:preserve-3d;will-change:transform}
+footer{position:relative;z-index:2;text-align:center;color:var(--muted);padding:2rem 1rem 2.6rem;border-top:1px solid var(--line);margin-top:2rem;font-size:.88rem;line-height:1.7}
+footer b{color:var(--a1);letter-spacing:.1em}
+.winFlash{animation:winAnim .8s ease}
+@keyframes winAnim{0%{box-shadow:0 0 0 rgba(45,255,179,0)}40%{box-shadow:0 0 44px rgba(45,255,179,.8)}100%{box-shadow:0 0 0 rgba(45,255,179,0)}}
+.small{font-size:.82rem;color:var(--muted);line-height:1.55}
+.scoreLine{font-weight:700;letter-spacing:.08em;color:var(--a1)}
+@media (prefers-reduced-motion: reduce){
+ *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+</style>
+<meta name="theme-color" content="#02030a" />
+<meta name="description" content="NEURAL GUARD — AI Security Universe: a public interactive futuristic cybersecurity experience by theajeetbhai. Explore an animated AI core, live DEMO threat radar, interactive security shield, bilingual AI assistant, cyber mini-games and a hands-on security lab. No login, no data collected." />
+<meta name="author" content="theajeetbhai" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="NEURAL GUARD — AI Security Universe" />
+<meta property="og:title" content="NEURAL GUARD — AI Security Universe" />
+<meta property="og:description" content="Enter the future of digital security: an interactive AI security universe with a live threat radar, security shield, AI assistant, mini-games and a security lab. Created by theajeetbhai. Fully public — no login." />
+<meta property="og:url" content="https://theajeetbhai.github.io/ajeetcnc.github.io/neural-guard/" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="NEURAL GUARD — AI Security Universe" />
+<meta name="twitter:description" content="A public interactive futuristic cybersecurity experience by theajeetbhai — AI core, DEMO threat radar, shield, games and security lab." />
+</head>
+<body>
+<canvas id="bgCanvas" aria-hidden="true"></canvas>
+<canvas id="rainCanvas" aria-hidden="true"></canvas>
+<canvas id="trailCanvas" aria-hidden="true"></canvas>
+
+<nav aria-label="Main navigation">
+  <div class="brand">NEURAL<span>◆</span>GUARD</div>
+  <a href="#hero">AI Core</a><a href="#universe">Universe</a><a href="#radar">Radar</a><a href="#shield">Shield</a>
+  <a href="#assistant">N.G.A.I.</a><a href="#games">Games</a><a href="#lab">Lab</a><a href="#security">Security Core</a><a href="#themes">Themes</a>
+  <div class="navsp"></div>
+  <button class="chip" id="langBtn" type="button" aria-label="Toggle assistant language">Assistant: EN</button>
+  <button class="chip" id="soundBtn" type="button" aria-pressed="false">Sound: OFF</button>
+</nav>
+
+<main>
+<!-- ============ HERO / AI CORE ============ -->
+<section id="hero" aria-labelledby="heroH">
+  <div class="heroWrap">
+    <div>
+      <p class="kicker">AI Security Universe · 2040</p>
+      <h1 id="heroH">NEURAL <span class="neon">GUARD</span></h1>
+      <p class="sub">An interactive cybersecurity universe. Explore the AI core, run demo threat simulations, play security games and learn how real protection works — everything runs in your browser, nothing is collected.</p>
+      <div style="display:flex;gap:.6rem;flex-wrap:wrap">
+        <button class="btn primary" id="coreScanBtn" type="button">Activate Core Scan</button>
+        <button class="btn" id="heroRadarBtn" type="button">Run Radar Demo</button>
+        <button class="btn" id="heroGamesBtn" type="button">Play Mini-Games</button>
+      </div>
+      <div class="statRow">
+        <div class="stat"><b>6</b><span>MINI-GAMES</span></div>
+        <div class="stat"><b>10</b><span>THEMES</span></div>
+        <div class="stat"><b>0</b><span>DATA COLLECTED</span></div>
+        <div class="stat"><b>100%</b><span>IN-BROWSER</span></div>
+      </div>
+    </div>
+    <div class="glass tilt">
+      <canvas id="coreCanvas" class="stage" width="520" height="520" role="button" tabindex="0" aria-label="AI Core. Activate to run a scan and open the assistant."></canvas>
+      <p class="small" style="text-align:center;margin:.6rem 0 0">Tap the AI Core to scan &amp; wake N.G.A.I. · Move your pointer near it — it reacts.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ UNIVERSE ============ -->
+<section id="universe" aria-labelledby="uniH">
+  <p class="kicker">Live Cyber Universe</p>
+  <h2 id="uniH">THE DIGITAL <span class="neon">UNIVERSE</span></h2>
+  <p class="sub">A living neural starfield drifts behind the whole site. Six holographic objects float in this sector — tap one to open its data card.</p>
+  <div class="glass">
+    <canvas id="uniCanvas" class="stage" width="1040" height="430" aria-label="Interactive universe map with six clickable holographic objects"></canvas>
+    <div id="uniCard" class="feedback good hidden" role="status"></div>
+    <div class="ctlBar" style="margin-top:.8rem">
+      <label class="switch"><input type="checkbox" id="rainToggle"> Digital rain background</label>
+      <label class="switch"><input type="checkbox" id="bgToggle" checked> Universe particles</label>
+    </div>
+  </div>
+</section>
+
+<!-- ============ RADAR ============ -->
+<section id="radar" aria-labelledby="radarH">
+  <p class="kicker">Threat Detection · <span class="tag">DEMO / SIMULATION</span></p>
+  <h2 id="radarH">LIVE THREAT <span class="neon">RADAR</span></h2>
+  <p class="sub">A training simulation only — every blip below is generated on this device for learning. No real network is scanned, ever.</p>
+  <div class="grid g2">
+    <div class="glass">
+      <canvas id="radarCanvas" class="stage" width="520" height="520" aria-label="Demo threat radar"></canvas>
+      <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.8rem;align-items:center">
+        <button class="btn danger" id="radarRun" type="button">RUN DEMO SIMULATION</button>
+        <div class="levelBadge" id="threatLevel" style="flex:1">● SAFE</div>
+      </div>
+      <div id="blipCard" class="feedback hidden" role="status"></div>
+    </div>
+    <div class="glass">
+      <label>AI ANALYSIS LOG — DEMO</label>
+      <div class="log" id="radarLog" aria-live="polite"><div class="dim">[DEMO] Radar idle. Press RUN DEMO SIMULATION to begin a training scenario.</div></div>
+      <p class="small" style="margin-top:.7rem">How it works in real life: security tools watch network traffic for known bad patterns, strange behaviour and failed login bursts — then alert a human team. This demo copies that idea with pretend data.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SHIELD ============ -->
+<section id="shield" aria-labelledby="shieldH">
+  <p class="kicker">Interactive Security Shield</p>
+  <h2 id="shieldH">THE ENERGY <span class="neon">SHIELD</span></h2>
+  <p class="sub">Real protection is layered — no single tool does everything. Tap each layer to learn what it does and jump to its live demo.</p>
+  <div class="shieldWrap">
+    <div class="glass" id="shieldPanel">
+      <svg viewBox="0 0 200 230" width="100%" role="img" aria-label="Animated energy shield" style="max-height:340px">
+        <defs><linearGradient id="shG" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#00e5ff"/><stop offset=".55" stop-color="#2979ff"/><stop offset="1" stop-color="#b388ff"/>
+        </linearGradient></defs>
+        <path id="shieldPath" d="M100 8 L178 34 V104 C178 162 142 202 100 222 C58 202 22 162 22 104 V34 Z" fill="rgba(41,121,255,.12)" stroke="url(#shG)" stroke-width="3"/>
+        <path d="M100 30 L156 48 V102 C156 146 130 178 100 194 C70 178 44 146 44 102 V48 Z" fill="none" stroke="url(#shG)" stroke-width="1.4" opacity=".55"/>
+        <circle id="shieldCoreDot" cx="100" cy="112" r="17" fill="url(#shG)"><animate attributeName="r" values="15;19;15" dur="2.6s" repeatCount="indefinite"/></circle>
+        <circle id="shieldRipple" cx="100" cy="112" r="20" fill="none" stroke="#00e5ff" stroke-width="2" opacity="0"/>
+      </svg>
+      <p class="small" style="text-align:center;margin:0">Six layers. One shield. Tap a layer →</p>
+    </div>
+    <div>
+      <div class="shieldBtns" id="shieldBtns"></div>
+      <div class="glass" id="shieldInfo" style="margin-top:1rem" role="status">
+        <h3 style="margin:.1rem 0 .4rem">Choose a shield layer</h3>
+        <p class="small" style="color:var(--txt)">Each layer blocks a different kind of trouble. Together they form "defence in depth" — the core idea of modern cybersecurity.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ASSISTANT ============ -->
+<section id="assistant" aria-labelledby="asstH">
+  <p class="kicker">AI Assistant · Local Knowledge Base</p>
+  <h2 id="asstH">N.G.<span class="neon">A.I.</span></h2>
+  <p class="sub">Neural Guard Artificial Intelligence — a built-in educational guide. It answers from a knowledge base stored in this page (no external AI calls), in English or Hindi.</p>
+  <div class="grid g2">
+    <div class="glass" style="text-align:center">
+      <div class="orb" id="orb" aria-hidden="true"></div>
+      <p class="scoreLine" style="margin:.8rem 0 .2rem">N.G.A.I. ONLINE</p>
+      <p class="small">Language: <b id="langLabel">English</b> · Voice replies: <b id="voiceLabel">Off</b></p>
+      <div class="ctlBar" style="justify-content:center">
+        <button class="btn" id="greetSpeak" type="button">🔊 Speak greeting</button>
+        <label class="switch"><input type="checkbox" id="voiceToggle"> Spoken replies</label>
+        <button class="btn" id="langBtn2" type="button">Switch to Hindi</button>
+      </div>
+    </div>
+    <div class="glass">
+      <div class="chatBox" id="chatBox" aria-live="polite"></div>
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin:.6rem 0" id="chips"></div>
+      <form id="chatForm" style="display:flex;gap:.5rem">
+        <input type="text" id="chatInput" placeholder="Ask about passwords, phishing, Wi-Fi…" aria-label="Ask N.G.A.I. a question" autocomplete="off">
+        <button class="btn" id="micBtn" type="button" aria-label="Voice input">🎤</button>
+        <button class="btn primary" type="submit">Ask</button>
+      </form>
+      <p class="small" id="micNote">Voice input uses your browser's speech recognition, only when you tap the mic. Honest note: most browsers send that audio to their own speech service to transcribe it, so spoken questions may leave the device — typed questions never do.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GAMES ============ -->
+<section id="games" aria-labelledby="gamesH">
+  <p class="kicker">Cyber Mini-Games · <span class="tag">DEMO / SIMULATION</span></p>
+  <h2 id="gamesH">TRAIN LIKE A <span class="neon">GUARDIAN</span></h2>
+  <p class="sub">Six playable training games. Scores are stored only in this browser.</p>
+  <div class="gameTabs" role="tablist" aria-label="Games">
+    <button class="tabBtn" role="tab" data-game="hoh" aria-selected="true">Hacker or Human?</button>
+    <button class="tabBtn" role="tab" data-game="pwlab" aria-selected="false">Password Lab</button>
+    <button class="tabBtn" role="tab" data-game="phish" aria-selected="false">Phishing Detector</button>
+    <button class="tabBtn" role="tab" data-game="fw" aria-selected="false">Firewall Challenge</button>
+    <button class="tabBtn" role="tab" data-game="defense" aria-selected="false">Cyber Defense</button>
+    <button class="tabBtn" role="tab" data-game="escape" aria-selected="false">Digital Escape Room</button>
+  </div>
+
+  <div class="glass gamePanel" id="game-hoh">
+    <h3 style="margin-top:0">Hacker or Human?</h3>
+    <p class="small">Read each message. Is it from a real, safe sender — or a scammer? <span class="scoreLine" id="hohScore">Score: 0 / 0</span></p>
+    <div class="msgCard" id="hohCard"></div>
+    <div style="display:flex;gap:.6rem;margin-top:.8rem;flex-wrap:wrap">
+      <button class="btn primary" id="hohSafe" type="button">✓ Looks Safe</button>
+      <button class="btn danger" id="hohScam" type="button">⚠ It's a Scam</button>
+      <button class="btn hidden" id="hohNext" type="button">Next message →</button>
+      <button class="btn" id="hohRestart" type="button">↻ Replay</button>
+    </div>
+    <div id="hohFb" class="feedback hidden"></div>
+  </div>
+
+  <div class="glass gamePanel hidden" id="game-pwlab">
+    <h3 style="margin-top:0">Password Lab</h3>
+    <p class="small">Type any password — it is analysed only on this device and never sent anywhere. Try "password123", then try a long passphrase.</p>
+    <label for="pwInput">Test password</label>
+    <input type="text" id="pwInput" placeholder="Type a password to test…" autocomplete="off">
+    <div class="meter" style="margin:.7rem 0"><i id="pwBar"></i></div>
+    <p style="margin:.3rem 0"><b id="pwVerdict">Start typing…</b></p>
+    <p class="mono" id="pwStats"></p>
+    <div id="pwTips" class="small"></div>
+    <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.6rem">
+      <button class="btn primary" id="pwGen" type="button">Generate strong password</button>
+      <button class="btn" id="pwCopy" type="button">Copy generated</button>
+    </div>
+    <p class="mono" id="pwGenOut" style="margin-top:.6rem"></p>
+  </div>
+
+  <div class="glass gamePanel hidden" id="game-phish">
+    <h3 style="margin-top:0">Phishing Detector</h3>
+    <p class="small">Tap the cards you believe are FAKE. Real sites use their exact official domain — scammers change one or two letters. <span class="scoreLine" id="phishScore">Found: 0 / 4 fakes</span></p>
+    <div class="grid g2" id="phishGrid"></div>
+    <div style="margin-top:.8rem;display:flex;gap:.6rem;flex-wrap:wrap">
+      <button class="btn primary" id="phishCheck" type="button">Check my answers</button>
+      <button class="btn" id="phishRestart" type="button">↻ New round</button>
+    </div>
+    <div id="phishFb" class="feedback hidden"></div>
+  </div>
+
+  <div class="glass gamePanel hidden" id="game-fw">
+    <h3 style="margin-top:0">Firewall Challenge</h3>
+    <p class="small">Threat packets fly toward the core. Click / tap them to block. Don't let 3 through! <span class="scoreLine" id="fwScore">Score: 0 · Lives: 3</span></p>
+    <canvas id="fwCanvas" class="stage" width="760" height="380" aria-label="Firewall challenge game area"></canvas>
+    <div style="margin-top:.7rem;display:flex;gap:.6rem;flex-wrap:wrap">
+      <button class="btn primary" id="fwStart" type="button">Start</button>
+      <button class="btn" id="fwStop" type="button">Stop</button>
+    </div>
+    <div id="fwFb" class="feedback hidden"></div>
+  </div>
+
+  <div class="glass gamePanel hidden" id="game-defense">
+    <h3 style="margin-top:0">Cyber Defense — Protect the City</h3>
+    <p class="small">Threats descend on the city nodes. Tap them to zap before they land. Survive the waves! <span class="scoreLine" id="defScore">Wave 1 · Score: 0 · City HP: 100</span></p>
+    <canvas id="defCanvas" class="stage" width="760" height="400" aria-label="Cyber defense game area"></canvas>
+    <div style="margin-top:.7rem;display:flex;gap:.6rem;flex-wrap:wrap">
+      <button class="btn primary" id="defStart" type="button">Start defense</button>
+      <button class="btn" id="defStop" type="button">Stop</button>
+    </div>
+    <div id="defFb" class="feedback hidden"></div>
+  </div>
+
+  <div class="glass gamePanel hidden" id="game-escape">
+    <h3 style="margin-top:0">Digital Escape Room</h3>
+    <p class="small">Three locks stand between you and the exit. Solve them in order.</p>
+    <div id="escBody"></div>
+  </div>
+
+  <div class="glass" style="margin-top:1rem">
+    <h3 style="margin-top:0">🏆 Best Scores — <span class="tag ok">ON THIS DEVICE</span></h3>
+    <p class="small">Best scores from the scored games (Hacker or Human?, Phishing Detector, Firewall Challenge, Cyber Defense and the Escape Room) and the Security Lab quiz — saved in this browser's local storage only. Nothing is uploaded or shared. (Password Lab is a hands-on tool, not a scored game.)</p>
+    <div class="grid g3" id="leaderboard"></div>
+    <button class="btn" id="lbClear" type="button" style="margin-top:.7rem">Clear saved scores</button>
+  </div>
+</section>
+
+<!-- ============ LAB ============ -->
+<section id="lab" aria-labelledby="labH">
+  <p class="kicker">Public Security Lab</p>
+  <h2 id="labH">THE SECURITY <span class="neon">LAB</span></h2>
+  <p class="sub">Hands-on demos that run entirely on your device — including real AES-GCM encryption using your browser's built-in WebCrypto engine.</p>
+  <div class="labTabs" role="tablist" aria-label="Lab tools">
+    <button class="tabBtn" role="tab" data-lab="enc" aria-selected="true">Encryption Visualizer</button>
+    <button class="tabBtn" role="tab" data-lab="privacy" aria-selected="false">Privacy Checker</button>
+    <button class="tabBtn" role="tab" data-lab="quiz" aria-selected="false">Security Quiz</button>
+    <button class="tabBtn" role="tab" data-lab="guide" aria-selected="false">Safe Browsing Guide</button>
+  </div>
+
+  <div class="glass labPanel" id="lab-enc">
+    <h3 style="margin-top:0">Encryption Visualizer</h3>
+    <label for="encInput">Your secret message (stays on this device)</label>
+    <textarea id="encInput" rows="2" placeholder="Type something, e.g. Meet me at the park at 5">Meet me at the park at 5</textarea>
+    <div class="grid g2" style="margin-top:.8rem">
+      <div>
+        <label>1 · Caesar cipher (toy — shifts every letter by 3)</label>
+        <p class="mono" id="caesarOut" style="border:1px dashed var(--line);border-radius:12px;padding:.7rem;min-height:3rem"></p>
+        <p class="small">Fun to learn with, but anyone can break it in seconds. Never use it for real secrets.</p>
+      </div>
+      <div>
+        <label>2 · Real AES-GCM 256 (WebCrypto, key generated in your browser)</label>
+        <p class="mono" id="aesOut" style="border:1px solid var(--ok);border-radius:12px;padding:.7rem;min-height:3rem">Press "Encrypt with AES-GCM".</p>
+        <p class="small" id="aesStatus">Status: no key yet.</p>
+      </div>
+    </div>
+    <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.4rem">
+      <button class="btn primary" id="aesEnc" type="button">Encrypt with AES-GCM</button>
+      <button class="btn" id="aesDec" type="button" disabled>Decrypt back</button>
+    </div>
+    <div id="decOut" class="feedback good hidden"></div>
+  </div>
+
+  <div class="glass labPanel hidden" id="lab-privacy">
+    <h3 style="margin-top:0">Privacy Checker</h3>
+    <p class="small">Answer honestly — your answers never leave this device. There is no server to send them to.</p>
+    <div id="privacyQs"></div>
+    <button class="btn primary" id="privacyGo" type="button" style="margin-top:.6rem">Get my privacy score</button>
+    <div id="privacyOut" class="feedback hidden"></div>
+  </div>
+
+  <div class="glass labPanel hidden" id="lab-quiz">
+    <h3 style="margin-top:0">Security Quiz — 10 Questions</h3>
+    <p class="small"><span class="scoreLine" id="quizScore">Question 1 / 10 · Score: 0</span></p>
+    <div class="msgCard" id="quizQ"></div>
+    <div id="quizOpts"></div>
+    <div id="quizFb" class="feedback hidden"></div>
+    <div style="margin-top:.7rem;display:flex;gap:.6rem;flex-wrap:wrap">
+      <button class="btn hidden" id="quizNext" type="button">Next →</button>
+      <button class="btn" id="quizRestart" type="button">↻ Restart quiz</button>
+    </div>
+  </div>
+
+  <div class="glass labPanel hidden" id="lab-guide">
+    <h3 style="margin-top:0">Safe Browsing Guide</h3>
+    <div class="grid g3" id="guideGrid"></div>
+  </div>
+</section>
+
+<!-- ============ SECURITY SYSTEM ============ -->
+<section id="security" aria-labelledby="secH">
+  <p class="kicker">Neural Guard Security Core</p>
+  <h2 id="secH">THIS SITE'S OWN <span class="neon">SECURITY SYSTEM</span></h2>
+  <p class="sub">Not marketing claims — these are live, working demos of the exact techniques this page itself is built with. Try to break them.</p>
+  <div class="grid g2">
+    <div class="glass">
+      <h3 style="margin-top:0">(a) Input Sanitizer — live demo</h3>
+      <p class="small">Type anything — even HTML like <span class="mono">&lt;script&gt;</span>. It is rendered as harmless text, never as code. Every message and name shown on this site is escaped the same way.</p>
+      <input type="text" id="sanInput" placeholder='Try: <img src=x onerror=alert(1)>' aria-label="Sanitizer test input">
+      <label style="margin-top:.7rem">Safe rendered output:</label>
+      <div class="msgCard" id="sanOut">Your text will appear here — safely.</div>
+      <label style="margin-top:.7rem">What the browser actually receives (escaped):</label>
+      <p class="mono" id="sanEsc"></p>
+    </div>
+    <div class="glass">
+      <h3 style="margin-top:0">(b) Rate Limiter — simulation</h3>
+      <p class="small">Real servers throttle repeated requests to stop bots and brute-force attacks. Spam this button: after 6 fast clicks you get throttled with a cooldown — exactly how login rate limiting feels.</p>
+      <button class="btn primary" id="rlBtn" type="button">Send request</button>
+      <p style="margin:.7rem 0 .3rem"><b id="rlStatus">Requests used: 0 / 6</b></p>
+      <div class="meter"><i id="rlBar" style="background:linear-gradient(90deg,var(--a1),var(--a2))"></i></div>
+      <p class="small" id="rlMsg">Cooldown meter fills while you are throttled.</p>
+    </div>
+    <div class="glass">
+      <h3 style="margin-top:0">(c) Encryption Status</h3>
+      <p class="small">Live status of the real WebCrypto AES-GCM demo in the Lab above:</p>
+      <p><span class="tag" id="encTag">WEBCRYPTO: CHECKING…</span></p>
+      <p class="mono" id="encDetail">—</p>
+      <button class="btn" id="encJump" type="button">Open Encryption Visualizer</button>
+    </div>
+    <div class="glass">
+      <h3 style="margin-top:0">(d) Security Architecture — honestly</h3>
+      <div class="grid" style="gap:.6rem" id="archGrid"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ THEMES & SETTINGS ============ -->
+<section id="themes" aria-labelledby="themeH">
+  <p class="kicker">Customize the Universe</p>
+  <h2 id="themeH">THEMES &amp; <span class="neon">EFFECTS</span></h2>
+  <p class="sub">Ten visual themes, saved on this device. Effects are individually switchable — turn anything off for speed or battery.</p>
+  <div class="themeGrid" id="themeGrid"></div>
+  <div class="glass" style="margin-top:1rem">
+    <h3 style="margin-top:0">Sound &amp; Effects Console</h3>
+    <div class="ctlBar">
+      <label class="switch"><input type="checkbox" id="soundToggle"> Sound ON (WebAudio, generated live)</label>
+      <label>Volume <input type="range" id="volSlider" min="0" max="100" value="60" aria-label="Volume"></label>
+      <button class="btn" id="testSound" type="button">Test sound</button>
+    </div>
+    <div class="ctlBar" style="margin-top:.4rem">
+      <label class="switch"><input type="checkbox" id="trailToggle" checked> Cursor energy trail</label>
+      <label class="switch"><input type="checkbox" id="tiltToggle" checked> Card 3D tilt</label>
+      <label class="switch"><input type="checkbox" id="motionToggle"> Reduce motion</label>
+    </div>
+    <p class="small">Sound is OFF by default and never autoplays — it starts only when you switch it on. Ambience is a soft synth pad generated by WebAudio; there are no audio files.</p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <b>NEURAL GUARD — AI SECURITY UNIVERSE</b><br>
+  A public educational experience. All simulations are demos on your device; no data is collected, no account is needed.<br>
+  Created by <b>theajeetbhai</b>
+</footer>
+<script>
+"use strict";
+const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+const REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+let reduceMotion = REDUCED;
+let quality = (Math.min(innerWidth,innerHeight)<560)?0.55:1;
+const esc = s => String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function lsGet(k,d){try{const v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch(e){return d}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+/* ---------- THEMES ---------- */
+const THEMES=[
+ ["cyberpunk","Cyberpunk Neon",["#00e5ff","#2979ff","#ff4fd8"]],
+ ["liquid","Liquid Glass",["#7fe7ff","#4fc3f7","#b2ebf2"]],
+ ["quantum","Quantum Universe",["#b388ff","#7c4dff","#ff80ab"]],
+ ["neural","Dark Neural",["#40c4ff","#2979ff","#00e5ff"]],
+ ["matrix","Matrix Digital",["#00ff5a","#00c853","#69f0ae"]],
+ ["military","Military Tactical",["#c6e265","#8bc34a","#d4e157"]],
+ ["minimal","Minimal Premium",["#e8eaf0","#c9cedb","#ffffff"]],
+ ["cosmic","Cosmic AI",["#ff80ab","#b388ff","#82b1ff"]],
+ ["holo","Holographic Crystal",["#64ffda","#18ffff","#ea80fc"]],
+ ["ultrablack","Ultra Black",["#8e9aaf","#5c677d","#c77dff"]]
+];
+const themeGrid=$("#themeGrid");
+THEMES.forEach(([id,name,cols])=>{
+  const b=document.createElement("button");b.type="button";b.className="themeCard";b.dataset.theme=id;
+  b.setAttribute("aria-pressed", document.documentElement.dataset.theme===id?"true":"false");
+  b.innerHTML="<b>"+esc(name)+"</b><span class='swatches'>"+cols.map(c=>"<i style='background:"+c+"'></i>").join("")+"</span>";
+  b.addEventListener("click",()=>{applyTheme(id);sfx("click")});
+  themeGrid.appendChild(b);
+});
+function applyTheme(id){
+  document.documentElement.dataset.theme=id; lsSet("ng-theme",id);
+  $$(".themeCard").forEach(c=>c.setAttribute("aria-pressed",c.dataset.theme===id?"true":"false"));
+}
+const savedTheme=lsGet("ng-theme",null); if(savedTheme) applyTheme(savedTheme);
+/* ---------- SOUND (WebAudio, off by default) ---------- */
+let AC=null, masterGain=null, ambNodes=null, soundOn=false, volume=.6;
+function ensureAudio(){
+  if(AC) return true;
+  try{ AC=new (window.AudioContext||window.webkitAudioContext)();
+    masterGain=AC.createGain(); masterGain.gain.value=volume; masterGain.connect(AC.destination); return true;
+  }catch(e){ return false; }
+}
+function tone(freq,dur,type,vol,slideTo){
+  if(!soundOn||!ensureAudio())return;
+  const o=AC.createOscillator(),g=AC.createGain(),t=AC.currentTime;
+  o.type=type||"sine"; o.frequency.setValueAtTime(freq,t);
+  if(slideTo) o.frequency.exponentialRampToValueAtTime(slideTo,t+dur);
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol||.15,t+.015);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g); g.connect(masterGain); o.start(t); o.stop(t+dur+.05);
+}
+function sfx(kind){
+  if(!soundOn)return;
+  if(kind==="click") tone(660,.07,"triangle",.12);
+  else if(kind==="scan"){tone(300,.5,"sawtooth",.06,1400);}
+  else if(kind==="shield"){tone(180,.4,"sine",.18,520); setTimeout(()=>tone(720,.3,"triangle",.1),90);}
+  else if(kind==="success"){[523,659,784].forEach((f,i)=>setTimeout(()=>tone(f,.18,"triangle",.14),i*90));}
+  else if(kind==="bad"){tone(220,.25,"square",.1,110);}
+  else if(kind==="zap"){tone(900,.09,"square",.1,200);}
+  else if(kind==="alarm"){tone(520,.16,"square",.12,760); setTimeout(()=>tone(520,.16,"square",.12,760),200);}
+}
+function startAmbience(){
+  if(!ensureAudio())return;
+  stopAmbience();
+  const g=AC.createGain(); g.gain.value=.035; g.connect(masterGain);
+  const o1=AC.createOscillator(),o2=AC.createOscillator();
+  o1.type="sine";o1.frequency.value=110; o2.type="sine";o2.frequency.value=164.8;
+  const lfo=AC.createOscillator(),lg=AC.createGain(); lfo.frequency.value=.07; lg.gain.value=.015;
+  lfo.connect(lg); lg.connect(g.gain);
+  o1.connect(g);o2.connect(g); o1.start();o2.start();lfo.start();
+  ambNodes={g,o1,o2,lfo};
+}
+function stopAmbience(){ if(ambNodes){try{ambNodes.o1.stop();ambNodes.o2.stop();ambNodes.lfo.stop();ambNodes.g.disconnect()}catch(e){} ambNodes=null;} }
+function setSound(on){
+  soundOn=on;
+  $("#soundBtn").textContent="Sound: "+(on?"ON":"OFF"); $("#soundBtn").setAttribute("aria-pressed",on?"true":"false");
+  $("#soundToggle").checked=on;
+  if(on){ ensureAudio(); if(AC&&AC.state==="suspended")AC.resume(); startAmbience(); sfx("shield"); }
+  else stopAmbience();
+}
+$("#soundBtn").addEventListener("click",()=>setSound(!soundOn));
+$("#soundToggle").addEventListener("change",e=>setSound(e.target.checked));
+$("#volSlider").addEventListener("input",e=>{volume=e.target.value/100; if(masterGain)masterGain.gain.value=volume;});
+$("#testSound").addEventListener("click",()=>{ if(!soundOn){setSound(true);} sfx("success"); });
+/* ---------- BACKGROUND STARFIELD / NEURAL NET ---------- */
+const bgC=$("#bgCanvas"), bgX=bgC.getContext("2d");
+let stars=[], bgOn=true, mx=-999,my=-999, scrollP=0;
+function sizeCanvas(c){const d=Math.min(devicePixelRatio||1,2);c.width=innerWidth*d;c.height=innerHeight*d;const x=c.getContext("2d");x.setTransform(d,0,0,d,0,0);}
+function initStars(){
+  sizeCanvas(bgC); sizeCanvas($("#rainCanvas")); sizeCanvas($("#trailCanvas"));
+  const n=Math.floor(110*quality)+30; stars=[];
+  for(let i=0;i<n;i++)stars.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:Math.random()*1.7+.4,vx:(Math.random()-.5)*.16,vy:(Math.random()-.5)*.16,tw:Math.random()*6.28});
+}
+initStars(); addEventListener("resize",initStars);
+addEventListener("pointermove",e=>{mx=e.clientX;my=e.clientY; trailPush(e.clientX,e.clientY);});
+addEventListener("scroll",()=>{scrollP=scrollY;},{passive:true});
+let fpsCount=0,fpsTime=performance.now();
+function bgLoop(t){
+  requestAnimationFrame(bgLoop);
+  fpsCount++; if(t-fpsTime>3000){ const fps=fpsCount/((t-fpsTime)/1000); if(fps<28&&quality>.3){quality*=.7; initStars();} fpsCount=0;fpsTime=t; }
+  if(!bgOn){bgX.clearRect(0,0,innerWidth,innerHeight); return;}
+  bgX.clearRect(0,0,innerWidth,innerHeight);
+  const par=reduceMotion?0:(scrollP*.04)%40;
+  for(const s of stars){
+    if(!reduceMotion){s.x+=s.vx;s.y+=s.vy; if(s.x<0)s.x=innerWidth; if(s.x>innerWidth)s.x=0; if(s.y<0)s.y=innerHeight; if(s.y>innerHeight)s.y=0;}
+    const dx=s.x-mx, dy=s.y-my, d=Math.hypot(dx,dy);
+    if(d<130){ s.x+=dx/d*.5; s.y+=dy/d*.5; }
+    const a=.45+.4*Math.sin(t*.001+s.tw);
+    bgX.beginPath(); bgX.arc(s.x,s.y-par*.3,s.r,0,6.29);
+    bgX.fillStyle="rgba(140,220,255,"+a.toFixed(2)+")"; bgX.fill();
+  }
+  bgX.lineWidth=.6;
+  for(let i=0;i<stars.length;i++)for(let j=i+1;j<stars.length;j++){
+    const a=stars[i],b=stars[j],d=Math.hypot(a.x-b.x,a.y-b.y);
+    if(d<110){ bgX.strokeStyle="rgba(80,160,255,"+(0.13*(1-d/110)).toFixed(3)+")"; bgX.beginPath(); bgX.moveTo(a.x,a.y-par*.3); bgX.lineTo(b.x,b.y-par*.3); bgX.stroke(); }
+  }
+}
+requestAnimationFrame(bgLoop);
+$("#bgToggle").addEventListener("change",e=>{bgOn=e.target.checked;});
+/* ---------- DIGITAL RAIN ---------- */
+const rainC=$("#rainCanvas"), rainX=rainC.getContext("2d");
+let rainOn=false, rainCols=[];
+$("#rainToggle").addEventListener("change",e=>{rainOn=e.target.checked; if(rainOn){rainCols=[];const n=Math.floor(innerWidth/22);for(let i=0;i<n;i++)rainCols.push({x:i*22,y:Math.random()*innerHeight,s:2+Math.random()*4});} else rainX.clearRect(0,0,innerWidth,innerHeight);});
+const GLYPHS="01アイウエオカキクケコサシスセソ<>/{}#$%&";
+function rainLoop(){
+  requestAnimationFrame(rainLoop);
+  if(!rainOn||reduceMotion)return;
+  rainX.fillStyle="rgba(0,0,0,.08)"; rainX.fillRect(0,0,innerWidth,innerHeight);
+  rainX.font="15px monospace";
+  for(const c of rainCols){
+    const ch=GLYPHS[Math.floor(Math.random()*GLYPHS.length)];
+    rainX.fillStyle="rgba(0,255,140,.5)"; rainX.fillText(ch,c.x,c.y);
+    c.y+=c.s; if(c.y>innerHeight)c.y=-20;
+  }
+}
+requestAnimationFrame(rainLoop);
+/* ---------- CURSOR TRAIL ---------- */
+const trC=$("#trailCanvas"), trX=trC.getContext("2d");
+let trail=[], trailOn=true;
+function trailPush(x,y){ if(trailOn&&!reduceMotion){trail.push({x,y,life:1}); if(trail.length>40)trail.shift();} }
+$("#trailToggle").addEventListener("change",e=>{trailOn=e.target.checked; if(!trailOn)trail=[];});
+function trailLoop(){
+  requestAnimationFrame(trailLoop);
+  trX.clearRect(0,0,innerWidth,innerHeight);
+  for(let i=0;i<trail.length;i++){const p=trail[i]; p.life-=.03;
+    trX.beginPath(); trX.arc(p.x,p.y,9*p.life+1,0,6.29);
+    trX.fillStyle="rgba(0,229,255,"+(p.life*.35).toFixed(2)+")"; trX.fill();}
+  trail=trail.filter(p=>p.life>0);
+}
+requestAnimationFrame(trailLoop);
+/* ---------- 3D TILT ---------- */
+let tiltOn=true;
+$("#tiltToggle").addEventListener("change",e=>{tiltOn=e.target.checked; if(!tiltOn)$$(".tilt").forEach(el=>el.style.transform="");});
+$$(".tilt").forEach(el=>{
+  el.addEventListener("pointermove",e=>{ if(!tiltOn||reduceMotion)return; const r=el.getBoundingClientRect();
+    const rx=((e.clientY-r.top)/r.height-.5)*-7, ry=((e.clientX-r.left)/r.width-.5)*9;
+    el.style.transform="perspective(800px) rotateX("+rx.toFixed(1)+"deg) rotateY("+ry.toFixed(1)+"deg)";});
+  el.addEventListener("pointerleave",()=>{el.style.transform="";});
+});
+$("#motionToggle").addEventListener("change",e=>{reduceMotion=e.target.checked;});
+if(REDUCED)$("#motionToggle").checked=true;
+</script>
+<script>
+"use strict";
+/* ---------- HERO AI CORE ---------- */
+const coreC=$("#coreCanvas"), cx=coreC.getContext("2d");
+const CW=520, CC=260;
+let coreParts=[], coreScan=0, coreHover=0, corePtr={x:-999,y:-999,in:false};
+for(let i=0;i<Math.floor(70*quality)+25;i++)coreParts.push({a:Math.random()*6.28,r:95+Math.random()*130,sp:(Math.random()*.004+.0015)*(Math.random()<.5?1:-1),s:Math.random()*2.2+.7,trail:[]});
+coreC.addEventListener("pointermove",e=>{const r=coreC.getBoundingClientRect();corePtr.x=(e.clientX-r.left)/r.width*CW;corePtr.y=(e.clientY-r.top)/r.height*CW;corePtr.in=true;});
+coreC.addEventListener("pointerleave",()=>{corePtr.in=false;});
+coreC.addEventListener("click",()=>triggerCoreScan());
+coreC.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();triggerCoreScan();}});
+function triggerCoreScan(){
+  coreScan=1; sfx("scan");
+  setTimeout(()=>{ $("#assistant").scrollIntoView({behavior:reduceMotion?"auto":"smooth"});
+    addMsg("bot",GREETING); speak(GREETING); pulseOrb();
+  }, reduceMotion?60:900);
+}
+let coreT=0;
+function coreLoop(){
+  requestAnimationFrame(coreLoop);
+  coreT+=reduceMotion?.004:.016;
+  cx.clearRect(0,0,CW,CW);
+  coreHover+= ((corePtr.in?1:0)-coreHover)*.06;
+  const pulse=1+.05*Math.sin(coreT*2)+.05*coreHover;
+  // energy waves
+  for(let w=0;w<3;w++){ const rr=((coreT*22+w*70)%210); cx.beginPath(); cx.arc(CC,CC,rr,0,6.29);
+    cx.strokeStyle="rgba(0,229,255,"+(0.16*(1-rr/210)).toFixed(3)+")"; cx.lineWidth=1.4; cx.stroke(); }
+  // plasma sphere
+  const R=86*pulse;
+  let g=cx.createRadialGradient(CC-24,CC-28,8,CC,CC,R+36);
+  g.addColorStop(0,"rgba(255,255,255,.95)"); g.addColorStop(.25,"rgba(0,229,255,.85)");
+  g.addColorStop(.6,"rgba(41,121,255,.55)"); g.addColorStop(.85,"rgba(179,136,255,.22)"); g.addColorStop(1,"rgba(0,0,0,0)");
+  cx.beginPath(); cx.arc(CC,CC,R+36,0,6.29); cx.fillStyle=g; cx.fill();
+  // plasma blobs
+  for(let i=0;i<5;i++){ const a=coreT*(0.7+i*.23)+i*1.7, bx=CC+Math.cos(a)*R*.42, by=CC+Math.sin(a*1.3)*R*.42;
+    const bg2=cx.createRadialGradient(bx,by,1,bx,by,26);
+    bg2.addColorStop(0,"rgba(255,79,216,.5)"); bg2.addColorStop(1,"rgba(255,79,216,0)");
+    cx.beginPath(); cx.arc(bx,by,26,0,6.29); cx.fillStyle=bg2; cx.fill(); }
+  cx.beginPath(); cx.arc(CC,CC,R*.5,0,6.29); cx.fillStyle="rgba(255,255,255,.9)"; cx.fill();
+  cx.beginPath(); cx.arc(CC,CC,R*.5+6+3*Math.sin(coreT*3),0,6.29); cx.strokeStyle="rgba(0,229,255,.7)"; cx.lineWidth=1.6; cx.stroke();
+  // 3 orbiting rings
+  const ringCols=["rgba(0,229,255,.85)","rgba(179,136,255,.8)","rgba(255,79,216,.75)"];
+  for(let k=0;k<3;k++){
+    cx.save(); cx.translate(CC,CC); cx.rotate(coreT*(.25+k*.14)*(k%2?-1:1)); cx.scale(1,.34+.1*k);
+    cx.beginPath(); cx.arc(0,0,118+k*26,0,6.29); cx.strokeStyle=ringCols[k]; cx.lineWidth=1.6; cx.stroke();
+    cx.beginPath(); cx.arc(118+k*26,0,4.5,0,6.29); cx.fillStyle="#fff"; cx.fill(); cx.restore();
+  }
+  // orbiting particles with trails + pointer repel
+  for(const p of coreParts){
+    p.a+=p.sp*(reduceMotion?.3:1);
+    let px=CC+Math.cos(p.a)*p.r, py=CC+Math.sin(p.a)*p.r*.92;
+    if(corePtr.in){ const dx=px-corePtr.x, dy=py-corePtr.y, d=Math.hypot(dx,dy)||1;
+      if(d<70){ px+=dx/d*(70-d)*.5; py+=dy/d*(70-d)*.5; } }
+    p.trail.push([px,py]); if(p.trail.length>7)p.trail.shift();
+    for(let i=1;i<p.trail.length;i++){ cx.beginPath(); cx.moveTo(p.trail[i-1][0],p.trail[i-1][1]); cx.lineTo(p.trail[i][0],p.trail[i][1]);
+      cx.strokeStyle="rgba(0,229,255,"+(i/p.trail.length*.4).toFixed(2)+")"; cx.lineWidth=p.s*.7; cx.stroke(); }
+    cx.beginPath(); cx.arc(px,py,p.s,0,6.29); cx.fillStyle="rgba(190,245,255,.95)"; cx.fill();
+  }
+  // scan animation
+  if(coreScan>0){
+    const pr=1-coreScan;
+    for(let i=0;i<3;i++){ const rr=pr*330-i*36; if(rr>0){ cx.beginPath(); cx.arc(CC,CC,rr,0,6.29);
+      cx.strokeStyle="rgba(45,255,179,"+(coreScan*.8).toFixed(2)+")"; cx.lineWidth=2.4; cx.stroke(); } }
+    const sa=pr*6.28;
+    const sg=cx.createConicGradient?cx.createConicGradient(sa,CC,CC):null;
+    cx.beginPath(); cx.moveTo(CC,CC); cx.arc(CC,CC,250,sa-.5,sa); cx.closePath();
+    cx.fillStyle="rgba(45,255,179,.13)"; cx.fill();
+    coreScan-=.012; if(coreScan<0)coreScan=0;
+  }
+}
+requestAnimationFrame(coreLoop);
+$("#coreScanBtn").addEventListener("click",()=>{ $("#hero").scrollIntoView(); triggerCoreScan(); });
+$("#heroRadarBtn").addEventListener("click",()=>{ $("#radar").scrollIntoView({behavior:reduceMotion?"auto":"smooth"}); setTimeout(runRadar,500); });
+$("#heroGamesBtn").addEventListener("click",()=>{ $("#games").scrollIntoView({behavior:reduceMotion?"auto":"smooth"}); });
+/* ---------- UNIVERSE CANVAS ---------- */
+const uniC=$("#uniCanvas"), ux=uniC.getContext("2d");
+const UW=1040, UH=430;
+const UNI_NODES=[
+ {n:"Data Planet",x:.14,y:.38,r:30,c:"#00e5ff",d:"A world-sized archive. In real security, data planets are databases — protected by encryption, access control and backups so that even if one copy is lost or stolen, the information stays safe and recoverable."},
+ {n:"Neural Node",x:.33,y:.62,r:20,c:"#b388ff",d:"A single neuron in the guard's brain. Neural networks learn patterns from millions of examples — like spotting that a login at 3 AM from another country looks nothing like your normal behaviour."},
+ {n:"Shield Satellite",x:.5,y:.26,r:22,c:"#2dffb3",d:"Always watching from orbit. Like a security operations centre, it monitors traffic non-stop and raises the alarm the moment something unusual appears — the radar below works the same way."},
+ {n:"Encryption Stream",x:.66,y:.6,r:18,c:"#ff4fd8",d:"A river of scrambled data. Encryption turns readable messages into noise for everyone except the person holding the key. Try scrambling your own message in the Security Lab below."},
+ {n:"AI Satellite",x:.82,y:.34,r:24,c:"#82b1ff",d:"The assistant's outpost. Modern AI guards analyse behaviour, filter phishing and flag risky files — but a human still makes the final call on anything important."},
+ {n:"Cyber Galaxy",x:.93,y:.68,r:27,c:"#ffd54f",d:"The whole connected universe: billions of devices, one shared responsibility. Every patched phone and strong password makes the entire galaxy a little safer."}
+];
+let uniStars=[]; for(let i=0;i<90;i++)uniStars.push({x:Math.random()*UW,y:Math.random()*UH,r:Math.random()*1.4+.3});
+let uniPtr={x:-999,y:-999};
+uniC.addEventListener("pointermove",e=>{const r=uniC.getBoundingClientRect();uniPtr.x=(e.clientX-r.left)/r.width*UW;uniPtr.y=(e.clientY-r.top)/r.height*UH;});
+uniC.addEventListener("click",e=>{
+  const r=uniC.getBoundingClientRect(), px=(e.clientX-r.left)/r.width*UW, py=(e.clientY-r.top)/r.height*UH;
+  for(const nd of UNI_NODES){ if(Math.hypot(px-nd.x*UW,py-nd.y*UH)<nd.r+16){
+    const card=$("#uniCard"); card.classList.remove("hidden"); card.className="feedback good";
+    card.innerHTML="<b style='color:"+nd.c+"'>◉ "+esc(nd.n)+"</b><br>"+esc(nd.d);
+    sfx("shield"); return; } }
+});
+let uniT=0;
+function uniLoop(){
+  requestAnimationFrame(uniLoop); uniT+=reduceMotion?.002:.01;
+  ux.clearRect(0,0,UW,UH);
+  for(const s of uniStars){ ux.beginPath(); ux.arc(s.x,s.y,s.r,0,6.29); ux.fillStyle="rgba(160,210,255,.6)"; ux.fill(); }
+  // connecting lines
+  ux.lineWidth=.7;
+  for(let i=0;i<UNI_NODES.length;i++)for(let j=i+1;j<UNI_NODES.length;j++){
+    const a=UNI_NODES[i],b=UNI_NODES[j];
+    ux.strokeStyle="rgba(0,229,255,.16)"; ux.beginPath();
+    ux.moveTo(a.x*UW,a.y*UH+Math.sin(uniT+i)*5); ux.lineTo(b.x*UW,b.y*UH+Math.sin(uniT+j)*5); ux.stroke(); }
+  for(let i=0;i<UNI_NODES.length;i++){ const nd=UNI_NODES[i];
+    const y=nd.y*UH+Math.sin(uniT*1.2+i*1.3)*7, x=nd.x*UW;
+    const hov=Math.hypot(uniPtr.x-x,uniPtr.y-y)<nd.r+14;
+    const g=ux.createRadialGradient(x,y,2,x,y,nd.r*(hov?1.9:1.5));
+    g.addColorStop(0,"#ffffff"); g.addColorStop(.3,nd.c); g.addColorStop(1,"rgba(0,0,0,0)");
+    ux.beginPath(); ux.arc(x,y,nd.r*(hov?1.9:1.5),0,6.29); ux.fillStyle=g; ux.fill();
+    ux.beginPath(); ux.arc(x,y,nd.r*.38,0,6.29); ux.fillStyle=nd.c; ux.fill();
+    ux.beginPath(); ux.arc(x,y,nd.r+8+3*Math.sin(uniT*2+i),0,6.29); ux.strokeStyle=nd.c; ux.lineWidth=1.2; ux.stroke();
+    ux.fillStyle="#eaf7ff"; ux.font="600 13px 'Segoe UI',system-ui,sans-serif"; ux.textAlign="center";
+    ux.fillText(nd.n,x,y+nd.r+24);
+  }
+}
+requestAnimationFrame(uniLoop);
+/* ---------- THREAT RADAR (DEMO) ---------- */
+const radC=$("#radarCanvas"), rx=radC.getContext("2d");
+const RW=520, RC=260;
+let sweep=0, blips=[], radarRunning=false, radarTimers=[];
+radC.addEventListener("click",e=>{
+  const r=radC.getBoundingClientRect(), px=(e.clientX-r.left)/r.width*RW, py=(e.clientY-r.top)/r.height*RW;
+  for(const b of blips){ if(Math.hypot(px-b.x,py-b.y)<20){
+    const card=$("#blipCard"); card.classList.remove("hidden"); card.className="feedback "+(b.sev>=3?"bad":"good");
+    card.innerHTML="<b>DEMO threat marker — "+esc(b.type)+"</b><br>"+esc(b.detail)+" <span class='dim'>(Simulated for training; no real device was scanned.)</span>";
+    sfx("click"); return; } }
+});
+function radarLoop(){
+  requestAnimationFrame(radarLoop);
+  if(!reduceMotion)sweep+=.014; else sweep+=.004;
+  rx.clearRect(0,0,RW,RW);
+  rx.fillStyle="rgba(2,12,10,.9)"; rx.fillRect(0,0,RW,RW);
+  for(let i=1;i<=4;i++){ rx.beginPath(); rx.arc(RC,RC,i*58,0,6.29); rx.strokeStyle="rgba(45,255,179,.28)"; rx.lineWidth=1; rx.stroke(); }
+  rx.beginPath(); rx.moveTo(RC,20); rx.lineTo(RC,RW-20); rx.moveTo(20,RC); rx.lineTo(RW-20,RC);
+  rx.strokeStyle="rgba(45,255,179,.16)"; rx.stroke();
+  // sweep beam
+  const grd=rx.createConicGradient?rx.createConicGradient(sweep,RC,RC):null;
+  rx.beginPath(); rx.moveTo(RC,RC); rx.arc(RC,RC,238,sweep-.6,sweep); rx.closePath();
+  rx.fillStyle="rgba(45,255,179,.14)"; rx.fill();
+  rx.beginPath(); rx.moveTo(RC,RC); rx.lineTo(RC+Math.cos(sweep)*238,RC+Math.sin(sweep)*238);
+  rx.strokeStyle="rgba(45,255,179,.95)"; rx.lineWidth=2; rx.stroke();
+  for(const b of blips){
+    const age=(performance.now()-b.born)/1000, a=Math.max(.25,1-age*.06);
+    rx.beginPath(); rx.arc(b.x,b.y,b.dead?5:8+2*Math.sin(performance.now()*.006+b.x),0,6.29);
+    rx.fillStyle=b.dead?"rgba(120,140,160,.6)":((b.sev>=3?"rgba(255,59,92,":"rgba(255,213,79,")+a+")");
+    rx.fill();
+    if(!b.dead){ rx.beginPath(); rx.arc(b.x,b.y,15+4*Math.sin(performance.now()*.005),0,6.29);
+      rx.strokeStyle=b.sev>=3?"rgba(255,59,92,.6)":"rgba(255,213,79,.6)"; rx.stroke(); }
+  }
+}
+requestAnimationFrame(radarLoop);
+function rlog(html,cls){ const d=document.createElement("div"); if(cls)d.className=cls; d.innerHTML=html; const log=$("#radarLog"); log.appendChild(d); log.scrollTop=log.scrollHeight; }
+function setLevel(txt,color){ const el=$("#threatLevel"); el.textContent="● "+txt; el.style.color=color; el.style.borderColor=color; }
+const DEMO_THREATS=[
+ {type:"Port scan pattern",sev:2,detail:"Simulated: one pretend address knocked on many ports in a minute — like a burglar trying every door handle on a street."},
+ {type:"Password-guessing burst",sev:3,detail:"Simulated: hundreds of fake login tries per minute. Real defence: strong passwords, 2FA and rate limiting (try the demo in the Security Core section)."},
+ {type:"Fake update download",sev:3,detail:"Simulated: a file pretending to be a software update. Real defence: only update apps from the official store or the app itself."},
+ {type:"Suspicious data upload",sev:2,detail:"Simulated: an app sending data at 3 AM to an unknown server. Real defence: check app permissions and remove apps you don't use."}
+];
+function runRadar(){
+  if(radarRunning)return; radarRunning=true; sfx("scan");
+  $("#radarRun").disabled=true; blips=[];
+  $("#radarLog").innerHTML=""; $("#blipCard").classList.add("hidden");
+  rlog("[DEMO] Neural Guard training simulation started on this device.","dim");
+  const steps=[
+    [600,()=>{setLevel("SUSPICIOUS","var(--warn)"); rlog("[DEMO] Sweep detected an unusual pattern… analysing.","warnl"); sfx("click");}],
+    [1500,()=>{ spawnBlip(0); rlog("[DEMO] Marker 1: port scan pattern (simulated).","warnl"); }],
+    [2600,()=>{setLevel("HIGH RISK","var(--orange)"); spawnBlip(1); rlog("[DEMO] Marker 2: password-guessing burst (simulated). AI confidence 87%.","bad"); sfx("alarm");}],
+    [3800,()=>{ spawnBlip(2); spawnBlip(3); rlog("[DEMO] Markers 3–4 appeared. Correlating behaviour…","bad"); }],
+    [5000,()=>{setLevel("CRITICAL","var(--danger)"); rlog("[DEMO] THREAT LEVEL: CRITICAL — simulated only. Activating shield response…","bad"); sfx("alarm");}],
+    [6400,()=>{ rlog("[DEMO] Energy shield deployed. Isolating simulated threats…","good"); sfx("shield");
+       const sp=$("#shieldPanel"); sp.classList.remove("pulse"); void sp.offsetWidth; sp.classList.add("pulse"); }],
+    [7800,()=>{ blips.forEach(b=>b.dead=true); rlog("[DEMO] All simulated threats neutralized. No real system was touched.","good"); sfx("success"); }],
+    [8800,()=>{ setLevel("SAFE","var(--ok)"); rlog("[DEMO] Simulation complete. Threat level back to SAFE. Tap any grey marker to review what it was.","good");
+       radarRunning=false; $("#radarRun").disabled=false; }]
+  ];
+  radarTimers=steps.map(([t,f])=>setTimeout(f,reduceMotion?t*.4:t));
+}
+function spawnBlip(i){ const th=DEMO_THREATS[i%DEMO_THREATS.length];
+  const a=Math.random()*6.28, rr=50+Math.random()*170;
+  blips.push({x:RC+Math.cos(a)*rr,y:RC+Math.sin(a)*rr,born:performance.now(),sev:th.sev,type:th.type,detail:th.detail,dead:false}); }
+$("#radarRun").addEventListener("click",runRadar);
+/* ---------- SHIELD ---------- */
+const SHIELD_PARTS=[
+ ["Firewall","A gatekeeper for your network. It checks every connection trying to enter or leave and blocks the ones that break the rules — like a guard at a gate checking IDs.","Firewall Challenge game","fw"],
+ ["Encryption","A secret-language machine. It scrambles your data so that anyone who intercepts it sees only noise, unless they hold the key.","Encryption Visualizer","enc"],
+ ["Identity Protection","Guards who you are online: strong unique passwords, two-factor authentication (2FA) and alerts when your details appear in a data leak.","Password Lab","pwlab"],
+ ["Device Security","Keeps the device itself safe: updates that patch holes, screen locks, app permissions and anti-malware scans.","Privacy Checker","privacy"],
+ ["Network Protection","Secures the road your data travels: safe Wi-Fi settings, a router password that isn't the default, and HTTPS websites.","Security Quiz","quiz"],
+ ["Privacy Protection","Controls what the world can see about you: app permissions, location sharing, social media visibility and tracker blocking.","Privacy Checker","privacy"]
+];
+const sb=$("#shieldBtns");
+SHIELD_PARTS.forEach(([name])=>{
+  const b=document.createElement("button"); b.type="button"; b.className="btn"; b.textContent="◆ "+name;
+  b.addEventListener("click",()=>showShield(name)); sb.appendChild(b);
+});
+function showShield(name){
+  const p=SHIELD_PARTS.find(x=>x[0]===name); if(!p)return;
+  const rip=$("#shieldRipple"); rip.setAttribute("opacity",".9");
+  rip.innerHTML="<animate attributeName='r' values='20;95' dur='0.7s' fill='freeze'/><animate attributeName='opacity' values='.9;0' dur='0.7s' fill='freeze'/>";
+  const panel=$("#shieldPanel"); panel.classList.remove("pulse"); void panel.offsetWidth; panel.classList.add("pulse");
+  sfx("shield");
+  $("#shieldInfo").innerHTML="<h3 style='margin:.1rem 0 .4rem'>"+esc(p[0])+"</h3><p style='line-height:1.6'>"+esc(p[1])+"</p>"+
+   "<button class='btn primary' type='button' id='shieldDemoBtn'>Open demo: "+esc(p[2])+" →</button>";
+  $("#shieldDemoBtn").addEventListener("click",()=>{
+    if(p[3]==="enc"||p[3]==="privacy"||p[3]==="quiz"){ $("#lab").scrollIntoView({behavior:reduceMotion?"auto":"smooth"}); switchLab(p[3]); }
+    else { $("#games").scrollIntoView({behavior:reduceMotion?"auto":"smooth"}); switchGame(p[3]); }
+  });
+}
+</script>
+<script>
+"use strict";
+/* ---------- TAB SWITCHERS ---------- */
+function switchGame(id){
+  $$(".gamePanel").forEach(p=>p.classList.toggle("hidden",p.id!=="game-"+id));
+  $$("[data-game]").forEach(b=>b.setAttribute("aria-selected",b.dataset.game===id?"true":"false"));
+}
+$$("[data-game]").forEach(b=>b.addEventListener("click",()=>{switchGame(b.dataset.game); sfx("click");}));
+function switchLab(id){
+  $$(".labPanel").forEach(p=>p.classList.toggle("hidden",p.id!=="lab-"+id));
+  $$("[data-lab]").forEach(b=>b.setAttribute("aria-selected",b.dataset.lab===id?"true":"false"));
+}
+$$("[data-lab]").forEach(b=>b.addEventListener("click",()=>{switchLab(b.dataset.lab); sfx("click");}));
+/* ---------- BEST SCORES (localStorage, this device) ---------- */
+const BEST_KEY="ng-best-scores";
+function saveBest(game,score){
+  const all=lsGet(BEST_KEY,{}); if(!all[game]||score>all[game]){ all[game]=score; lsSet(BEST_KEY,all); }
+  renderBoard();
+}
+function renderBoard(){
+  const all=lsGet(BEST_KEY,{});
+  const names={hoh:"Hacker or Human?",phish:"Phishing Detector",fw:"Firewall Challenge",defense:"Cyber Defense",quiz:"Security Quiz",escape:"Escape Room"};
+  const el=$("#leaderboard"); el.innerHTML="";
+  Object.keys(names).forEach(k=>{
+    const d=document.createElement("div"); d.className="stat";
+    d.innerHTML="<b>"+(all[k]!==undefined?esc(String(all[k])):"—")+"</b><span>"+esc(names[k].toUpperCase())+"</span>";
+    el.appendChild(d);
+  });
+}
+$("#lbClear").addEventListener("click",()=>{ lsSet(BEST_KEY,{}); renderBoard(); sfx("click"); });
+renderBoard();
+/* ---------- N.G.A.I. ASSISTANT ---------- */
+let LANG="en";
+const GREETING="Welcome to Neural Guard. Your gateway into the future of digital security. What would you like to explore today?";
+const GREETING_HI="Neural Guard mein aapka swagat hai. Yeh digital suraksha ke bhavishya ka darwaza hai. Aaj aap kya explore karna chahenge?";
+const KB=[
+ {k:["what is cybersecurity","cybersecurity kya","साइबर सुरक्षा क्या","cyber security"],
+  en:"Cybersecurity means protecting phones, computers, accounts and data from digital attacks — like locks, guards and alarms for the online world. It has three goals: keep information secret (confidentiality), unchanged (integrity) and available when you need it.",
+  hi:"Cybersecurity ka matlab hai phones, computers, accounts aur data ko digital hamlo se bachana — online duniya ke liye taale, guard aur alarm jaisa. Iske teen maksad hain: jaankari gupt rahe, badli na jaye, aur jab chahiye tab mile."},
+ {k:["encryption","एन्क्रिप्शन","encrypt"],
+  en:"Encryption scrambles a message into unreadable code using a secret key. Only someone with the right key can unscramble it. Think of a locked box: anyone can carry it, but only the key-holder can open it. Try the real AES-GCM demo in the Security Lab on this page!",
+  hi:"Encryption ek secret key se message ko aisi code-bhasha me badal deta hai jo koi padh nahi sakta. Sirf sahi key wala hi use khol sakta hai. Jaise ek band dibba — le jaana sabke bas ki baat hai, kholna sirf chaabi wale ke. Is page ke Security Lab me asli AES-GCM demo try karo!"},
+ {k:["hackers attack","hack","हैकर","account attack","accounts"],
+  en:"Hackers usually don't 'break in' with magic — they trick people. Common methods: phishing messages that steal passwords, guessing weak or reused passwords, fake apps with malware, and unpatched software with known holes. The defence is boring but powerful: unique strong passwords, 2FA, updates, and pausing before you tap a link.",
+  hi:"Hacker aam taur par jaadu se andar nahi ghuste — woh logo ko behkate hain. Aam tareeke: phishing message se password churana, kamzor ya dobara use hue password guess karna, malware wale fake apps, aur purane software ki kamzori. Bachav simple hai: har account ka alag strong password, 2FA, updates, aur link tap karne se pehle ruk kar sochna."},
+ {k:["protect my phone","phone","फोन","mobile"],
+  en:"Protect your phone with these five habits: 1) Set a strong screen lock. 2) Turn on automatic updates. 3) Install apps only from the official store. 4) Review app permissions — a torch app doesn't need your contacts. 5) Turn on 'Find My Device' and keep a backup.",
+  hi:"Apne phone ko in paanch aadaton se surakshit rakho: 1) Strong screen lock lagao. 2) Automatic updates on rakho. 3) Apps sirf official store se lo. 4) App permissions check karo — torch app ko contacts ki zarurat nahi. 5) 'Find My Device' on rakho aur backup rakho."},
+ {k:["phishing","फिशिंग","fake message","scam"],
+  en:"Phishing is a fake message, email or website pretending to be a bank, company or friend, designed to steal your password or money. Warning signs: urgency ('account closing in 1 hour!'), spelling mistakes, strange sender addresses, and links whose real domain looks wrong. When in doubt, open the official app yourself instead of tapping the link.",
+  hi:"Phishing ek nakli message, email ya website hoti hai jo bank, company ya dost ban kar aapka password ya paisa churane aati hai. Pehchan: jaldbazi ('account 1 ghante me band!'), spelling ki galtiyan, ajeeb sender address, aur link ka asli domain galat dikhna. Shak ho to link tap mat karo — khud official app kholo."},
+ {k:["firewall","फ़ायरवॉल"],
+  en:"A firewall is a gatekeeper between your device and the internet. It inspects connections coming in and going out, allows the safe ones and blocks the ones that break its rules — like a security guard checking every visitor at a gate. Try blocking threats yourself in the Firewall Challenge game!",
+  hi:"Firewall aapke device aur internet ke beech ka gatekeeper hai. Woh andar-bahar jaane wale connections ko check karta hai — safe ko jaane deta hai, khatarnak ko rok deta hai. Bilkul gate par khade guard ki tarah. Firewall Challenge game me khud threats rok kar dekho!"},
+ {k:["wi-fi","wifi","वाइफ़ाइ","secure wi"],
+  en:"Secure your Wi-Fi like this: change the router's default admin password, use WPA2 or WPA3 security, set a strong Wi-Fi password, keep the router's software updated, and avoid banking on open public Wi-Fi — or use your mobile data instead.",
+  hi:"Wi-Fi secure karne ke steps: router ka default admin password badlo, WPA2 ya WPA3 security use karo, strong Wi-Fi password rakho, router ka software update rakho, aur khule public Wi-Fi par banking mat karo — mobile data behtar hai."},
+ {k:["password","पासवर्ड"],
+  en:"A strong password is long (14+ characters), unique for every account, and hard to guess — a passphrase like 'purple-tiger-runs-fast-42' beats a short complex one. Never reuse passwords: if one site leaks, attackers try that password everywhere. The Password Lab on this page shows you live strength and crack-time estimates.",
+  hi:"Strong password lamba hota hai (14+ characters), har account ke liye alag, aur guess karna mushkil — 'purple-tiger-runs-fast-42' jaisa passphrase chhote complex password se behtar hai. Password dobara use kabhi mat karo: ek site leak ho to hacker wahi password har jagah try karte hain. Is page ka Password Lab live strength dikhata hai."},
+ {k:["2fa","two factor","two-factor","otp"],
+  en:"Two-factor authentication (2FA) adds a second proof that it's really you — usually a code from an app or your phone — on top of your password. Even if a thief steals your password, they still can't get in without that second factor. Turn it on for email, banking and social accounts first.",
+  hi:"Two-factor authentication (2FA) password ke upar ek dusra saboot maangta hai — aam taur par app ya phone par aaya code. Chor password chura bhi le, dusre factor ke bina andar nahi ja sakta. Email, banking aur social accounts par sabse pehle on karo."},
+ {k:["virus","malware","ransomware"],
+  en:"Malware is harmful software: viruses spread between files, spyware watches you, and ransomware locks your files and demands money. Defence: install apps only from official stores, keep everything updated, don't open unexpected attachments, and keep backups so ransomware has nothing to threaten you with.",
+  hi:"Malware nuksandeh software hai: virus files me failta hai, spyware aap par nazar rakhta hai, aur ransomware files lock karke paisa maangta hai. Bachav: apps sirf official store se, sab kuch updated rakho, anjaan attachments mat kholo, aur backup rakho taaki ransomware dhamka na sake."},
+ {k:["vpn"],
+  en:"A VPN encrypts your connection between your device and a VPN server, hiding your traffic from the local network — useful on public Wi-Fi. It does NOT make you anonymous or invincible: the VPN company itself can see your traffic, so pick a trustworthy one and keep all other habits too.",
+  hi:"VPN aapke device aur VPN server ke beech connection ko encrypt karta hai, jisse local network aapka traffic nahi dekh pata — public Wi-Fi par kaam ka hai. Lekin ye aapko gumnaam ya ajey nahi banata: VPN company khud traffic dekh sakti hai, isliye bharosemand chuno aur baki aadatein bhi rakho."},
+ {k:["theme","color","रंग"],
+  en:"You can change how this whole universe looks! Scroll to the Themes section and pick from 10 styles — Cyberpunk Neon, Matrix Digital, Cosmic AI and more. Your choice is saved on this device.",
+  hi:"Aap is poori universe ka look badal sakte ho! Themes section me jao aur 10 styles me se chuno — Cyberpunk Neon, Matrix Digital, Cosmic AI aur bhi. Aapki pasand is device par save ho jati hai."},
+ {k:["game","play","खेल"],
+  en:"There are six training games in the Games section: Hacker or Human?, Password Lab, Phishing Detector, Firewall Challenge, Cyber Defense and the Digital Escape Room. Your best scores are saved on this device only.",
+  hi:"Games section me chhe training games hain: Hacker or Human?, Password Lab, Phishing Detector, Firewall Challenge, Cyber Defense aur Digital Escape Room. Best scores sirf is device par save hote hain."},
+ {k:["hello","hi","namaste","नमस्ते","hey"],
+  en:"Hello, Guardian! Ask me about passwords, phishing, encryption, firewalls, Wi-Fi safety — or tap one of the quick questions below.",
+  hi:"Namaste, Guardian! Mujhse passwords, phishing, encryption, firewall, Wi-Fi safety ke baare me poochho — ya neeche diye quick questions me se koi tap karo."}
+];
+const FALLBACK={
+ en:"Good question. My built-in knowledge covers: cybersecurity basics, encryption, phishing, how hackers attack accounts, phone protection, firewalls, Wi-Fi safety, passwords, 2FA, malware and VPNs. Try asking about one of those — or tap a quick question chip.",
+ hi:"Achha sawal hai. Meri built-in jaankari in vishayon par hai: cybersecurity ki basics, encryption, phishing, hacker kaise hamla karte hain, phone suraksha, firewall, Wi-Fi safety, passwords, 2FA, malware aur VPN. Inme se kisi par poochho — ya quick question chip tap karo."};
+const CHIP_QS=["What is cybersecurity?","How does encryption work?","How do hackers attack accounts?","How can I protect my phone?","What is phishing?","How does a firewall work?","How can I secure Wi-Fi?"];
+const chipsEl=$("#chips");
+CHIP_QS.forEach(q=>{ const b=document.createElement("button"); b.type="button"; b.className="chip"; b.textContent=q;
+  b.addEventListener("click",()=>{ askNGAI(q); }); chipsEl.appendChild(b); });
+function addMsg(who,text){
+  const d=document.createElement("div"); d.className="msg "+who; d.textContent=text;
+  const box=$("#chatBox"); box.appendChild(d); box.scrollTop=box.scrollHeight; return d;
+}
+function pulseOrb(){ const o=$("#orb"); o.classList.add("speaking"); setTimeout(()=>o.classList.remove("speaking"),1600); }
+function speak(text){
+  if(!$("#voiceToggle").checked && !speak.force) return;
+  try{
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang = LANG==="hi" ? "hi-IN" : "en-IN";
+    const vs=speechSynthesis.getVoices();
+    const v=vs.find(v=>v.lang&&v.lang.toLowerCase().startsWith(LANG==="hi"?"hi":"en"));
+    if(v)u.voice=v;
+    pulseOrb(); speechSynthesis.cancel(); speechSynthesis.speak(u);
+  }catch(e){}
+}
+function askNGAI(q){
+  q=(q||"").trim(); if(!q)return;
+  addMsg("user",q); sfx("click");
+  const low=q.toLowerCase();
+  let ans=null;
+  for(const item of KB){ if(item.k.some(k=>low.includes(k))){ ans=item[LANG]||item.en; break; } }
+  if(!ans) ans=FALLBACK[LANG];
+  setTimeout(()=>{ addMsg("bot",ans); speak(ans); }, reduceMotion?60:420);
+}
+$("#chatForm").addEventListener("submit",e=>{ e.preventDefault(); const inp=$("#chatInput"); askNGAI(inp.value); inp.value=""; });
+$("#greetSpeak").addEventListener("click",()=>{ speak.force=true; speak(LANG==="hi"?GREETING_HI:GREETING); speak.force=false; });
+$("#voiceToggle").addEventListener("change",e=>{ $("#voiceLabel").textContent=e.target.checked?"On":"Off"; if(e.target.checked){speak.force=true; speak(LANG==="hi"?"Awaaz chalu ho gayi hai.":"Voice replies are on."); speak.force=false;} else { try{speechSynthesis.cancel()}catch(err){} } });
+function setLang(l){
+  LANG=l;
+  $("#langBtn").textContent="Assistant: "+(l==="hi"?"हिंदी":"EN");
+  $("#langBtn2").textContent=l==="hi"?"Switch to English":"Switch to Hindi";
+  $("#langLabel").textContent=l==="hi"?"Hindi (हिंदी)":"English";
+  addMsg("bot", l==="hi" ? "Bhasha Hindi ho gayi hai. Ab main Hindi me jawab dungi." : "Language set to English. Ask me anything about staying safe online.");
+}
+$("#langBtn").addEventListener("click",()=>setLang(LANG==="en"?"hi":"en"));
+$("#langBtn2").addEventListener("click",()=>setLang(LANG==="en"?"hi":"en"));
+/* voice input */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(!SR){ $("#micBtn").disabled=true; $("#micNote").textContent="Voice input is not supported in this browser — typing works everywhere."; }
+else{
+  const rec=new SR(); rec.interimResults=false;
+  rec.addEventListener("result",e=>{ const t=e.results[0][0].transcript; $("#chatInput").value=t; askNGAI(t); $("#chatInput").value=""; });
+  rec.addEventListener("error",()=>{ $("#micNote").textContent="Mic didn't catch that — please try again or type your question."; });
+  $("#micBtn").addEventListener("click",()=>{ try{ rec.lang=LANG==="hi"?"hi-IN":"en-IN"; rec.start(); $("#micNote").textContent="Listening… speak now."; }catch(e){} });
+}
+addMsg("bot","N.G.A.I. ready. Tap the AI Core above for the full welcome — or ask me anything about online safety.");
+/* ---------- GAME: HACKER OR HUMAN ---------- */
+const HOH=[
+ {from:"Bank Alert (unknown number)",text:"URGENT! Your bank account will be blocked in 2 hours. Verify your OTP and PIN at secure-bank-verify-now.example to keep it active.",scam:true,why:"SCAM. Banks never ask for OTP or PIN by message, and real banks don't threaten you with a 2-hour deadline. The link is not the bank's real domain."},
+ {from:"Mom (saved contact)",text:"Beta, I reached home safely. Don't forget to bring vegetables on your way back. 🙂",scam:false,why:"SAFE. A normal personal message from a saved contact — no links, no urgency, nothing being asked of you."},
+ {from:"Prize Center",text:"Congratulations! You won a ₹25,00,000 lottery you never entered. Pay a small ₹999 processing fee to claim your prize today!",scam:true,why:"SCAM. You cannot win a lottery you never entered, and real prizes never ask you to pay a fee first."},
+ {from:"Your email app (official alert)",text:"A new device signed in to your account. If this wasn't you, open the app and change your password.",scam:false,why:"SAFE pattern. It asks you to open the official app yourself — not to tap a strange link or share a code. (Always still check inside the app, not via message links.)"},
+ {from:"Delivery Service",text:"Your parcel is held at customs. Pay ₹49 clearance here: parcel-track-india-fast.example — pay within 1 hour or it returns.",scam:true,why:"SCAM. Fake delivery pages use tiny fees to steal full card details, plus fake urgency. Track parcels only inside the official courier app/website."},
+ {from:"Friend (new number)",text:"Hi! This is my new number, save it. Also can you urgently send ₹5,000? I'm stuck, will return tonight. Don't call, phone is broken.",scam:true,why:"SCAM pattern. 'New number + urgent money + don't call' is a classic impersonation trick. Call the friend's OLD number to verify first."},
+ {from:"Office IT (company domain)",text:"Reminder: password change is due this week. Please use the company portal bookmarked in your browser, as usual.",scam:false,why:"SAFE pattern. It points you to your usual bookmarked portal, asks for no codes, and creates no panic."}
+];
+let hohI=0, hohScoreN=0, hohDone=false;
+function hohShow(){
+  hohDone=false; $("#hohFb").classList.add("hidden"); $("#hohNext").classList.add("hidden");
+  $("#hohSafe").disabled=false; $("#hohScam").disabled=false;
+  if(hohI>=HOH.length){ $("#hohCard").innerHTML="<b>Round complete!</b><br>You scored "+hohScoreN+" / "+HOH.length+"."+(hohScoreN>=6?" Excellent instincts, Guardian!":hohScoreN>=4?" Good — replay to sharpen your eye.":" Keep practicing — the explanations are the real training.");
+    $("#hohSafe").disabled=true; $("#hohScam").disabled=true; saveBest("hoh",hohScoreN); if(hohScoreN>=6){$("#game-hoh").classList.add("winFlash"); sfx("success");}
+    $("#hohScore").textContent="Score: "+hohScoreN+" / "+HOH.length; return; }
+  const m=HOH[hohI];
+  $("#hohCard").innerHTML="<div class='small' style='margin-bottom:.4rem'>FROM: <b style='color:var(--a1)'>"+esc(m.from)+"</b> · Message "+(hohI+1)+" of "+HOH.length+"</div>"+esc(m.text);
+  $("#hohScore").textContent="Score: "+hohScoreN+" / "+hohI;
+}
+function hohAnswer(saidScam){
+  if(hohDone||hohI>=HOH.length)return; hohDone=true;
+  const m=HOH[hohI], right=(saidScam===m.scam);
+  if(right){hohScoreN++; sfx("success");} else sfx("bad");
+  const fb=$("#hohFb"); fb.classList.remove("hidden"); fb.className="feedback "+(right?"good":"bad");
+  fb.innerHTML=(right?"✓ Correct! ":"✗ Not quite. ")+esc(m.why);
+  $("#hohSafe").disabled=true; $("#hohScam").disabled=true; $("#hohNext").classList.remove("hidden");
+  $("#hohScore").textContent="Score: "+hohScoreN+" / "+(hohI+1);
+}
+$("#hohSafe").addEventListener("click",()=>hohAnswer(false));
+$("#hohScam").addEventListener("click",()=>hohAnswer(true));
+$("#hohNext").addEventListener("click",()=>{hohI++; hohShow();});
+$("#hohRestart").addEventListener("click",()=>{hohI=0; hohScoreN=0; hohShow();});
+hohShow();
+/* ---------- PASSWORD ENGINE (Lab + Game share it) ---------- */
+function pwAnalyse(pw){
+  if(!pw) return null;
+  let pool=0; if(/[a-z]/.test(pw))pool+=26; if(/[A-Z]/.test(pw))pool+=26; if(/[0-9]/.test(pw))pool+=10; if(/[^a-zA-Z0-9]/.test(pw))pool+=33;
+  if(pool===0)pool=10;
+  const entropy=Math.round(pw.length*Math.log2(pool));
+  const guesses=Math.pow(2,entropy-1), perSec=1e10;
+  const secs=guesses/perSec;
+  const fmt=s=>{ if(s<1)return "instantly"; if(s<60)return Math.round(s)+" seconds"; if(s<3600)return Math.round(s/60)+" minutes";
+    if(s<86400)return Math.round(s/3600)+" hours"; if(s<31557600)return Math.round(s/86400)+" days";
+    if(s<3.15e9)return Math.round(s/31557600)+" years"; if(s<3.15e12)return Math.round(s/3.15e9)+" thousand years";
+    if(s<3.15e15)return Math.round(s/3.15e12)+" million years"; return "billions of years"; };
+  const tips=[];
+  if(pw.length<12)tips.push("Make it longer — length is the #1 strength booster. Aim for 14+ characters.");
+  if(!/[A-Z]/.test(pw))tips.push("Add some UPPERCASE letters.");
+  if(!/[a-z]/.test(pw))tips.push("Add some lowercase letters.");
+  if(!/[0-9]/.test(pw))tips.push("Add numbers.");
+  if(!/[^a-zA-Z0-9]/.test(pw))tips.push("Add a symbol like ! @ # - _");
+  if(/password|1234|qwerty|admin|letmein/i.test(pw))tips.push("Avoid famous words and keyboard patterns — attackers try those first.");
+  if(tips.length===0)tips.push("Excellent — now use a DIFFERENT one for every account, and turn on 2FA.");
+  const score=entropy<28?1:entropy<40?2:entropy<60?3:entropy<80?4:5;
+  const verdict=["","Very weak — a computer guesses this almost instantly.","Weak — fine for nothing important.","Fair — okay, but longer is much better.","Strong — well done.","Excellent — a true vault-grade passphrase."][score];
+  return {entropy,crack:fmt(secs),tips,score,verdict};
+}
+let lastGen="";
+function pwRender(){
+  const pw=$("#pwInput").value, r=pwAnalyse(pw);
+  if(!r){ $("#pwVerdict").textContent="Start typing…"; $("#pwBar").style.width="0"; $("#pwStats").textContent=""; $("#pwTips").innerHTML=""; return; }
+  $("#pwBar").style.width=(r.score*20)+"%";
+  $("#pwVerdict").textContent=r.verdict;
+  $("#pwStats").textContent="Entropy ≈ "+r.entropy+" bits · Guessed at 10 billion tries/sec → crack time ≈ "+r.crack;
+  $("#pwTips").innerHTML=r.tips.map(t=>"• "+esc(t)).join("<br>");
+}
+$("#pwInput").addEventListener("input",pwRender);
+$("#pwGen").addEventListener("click",()=>{
+  const words=["purple","tiger","monsoon","rocket","mango","cipher","velvet","thunder","puzzle","harbor","falcon","meadow","quartz","breeze","onyx","willow"];
+  const rnd=n=>{const a=new Uint32Array(1); crypto.getRandomValues(a); return a[0]%n;};
+  lastGen=words[rnd(16)]+"-"+words[rnd(16)]+"-"+words[rnd(16)]+"-"+(100+rnd(900))+"!";
+  $("#pwGenOut").textContent="Generated: "+lastGen;
+  $("#pwInput").value=lastGen; pwRender(); sfx("success");
+});
+$("#pwCopy").addEventListener("click",()=>{
+  if(!lastGen){ $("#pwGenOut").textContent="Generate a password first."; return; }
+  if(navigator.clipboard) navigator.clipboard.writeText(lastGen).then(()=>{$("#pwGenOut").textContent="Copied to clipboard ✓ (store it in a password manager, not a sticky note!)";});
+});
+/* ---------- GAME: PHISHING DETECTOR ---------- */
+const PHISH_SITES=[
+ {url:"https://www.google.com",fake:false,why:"REAL — exact official domain 'google.com', correct spelling, HTTPS."},
+ {url:"https://www.g00gle-login.com",fake:true,why:"FAKE — zeros instead of the letter 'o', plus an extra '-login' part. Google's real domain is just google.com."},
+ {url:"https://www.amazon.in",fake:false,why:"REAL — Amazon India's official domain is amazon.in."},
+ {url:"https://amaz0n-deals.xyz",fake:true,why:"FAKE — zero instead of 'o', and a suspicious '.xyz' domain promising deals. Real Amazon never uses this."},
+ {url:"https://github.com",fake:false,why:"REAL — the exact official domain github.com."},
+ {url:"https://www.paypa1-secure.com",fake:true,why:"FAKE — the letter 'l' is replaced by the number '1' (paypa1). PayPal's real domain is paypal.com."},
+ {url:"https://www.wikipedia.org",fake:false,why:"REAL — Wikipedia's official domain is wikipedia.org."},
+ {url:"https://sbi-online-verify.top",fake:true,why:"FAKE — SBI's real online banking is at onlinesbi.sbi — banks never ask you to 'verify' on random '.top' domains."}
+];
+let phishPicked=new Set(), phishChecked=false;
+function phishRender(){
+  phishPicked=new Set(); phishChecked=false; $("#phishFb").classList.add("hidden");
+  const grid=$("#phishGrid"); grid.innerHTML="";
+  const shuffled=PHISH_SITES.slice().sort(()=>Math.random()-.5);
+  shuffled.forEach(site=>{
+    const b=document.createElement("button"); b.type="button"; b.className="linkCard"; b.dataset.url=site.url;
+    b.innerHTML="🔗 <span class='mono'>"+esc(site.url)+"</span><div class='small' style='margin-top:.3rem'>Tap to mark as FAKE</div>";
+    b.addEventListener("click",()=>{ if(phishChecked)return;
+      if(phishPicked.has(site.url)){phishPicked.delete(site.url); b.style.outline=""; b.querySelector(".small").textContent="Tap to mark as FAKE";}
+      else{phishPicked.add(site.url); b.style.outline="2px solid var(--danger)"; b.querySelector(".small").textContent="Marked FAKE — tap again to undo";}
+      $("#phishScore").textContent="Marked: "+phishPicked.size+" (there are 4 fakes)"; sfx("click"); });
+    grid.appendChild(b);
+  });
+  $("#phishScore").textContent="Found: 0 / 4 fakes";
+}
+$("#phishCheck").addEventListener("click",()=>{
+  if(phishChecked)return; phishChecked=true;
+  let found=0, wrong=0; const lines=[];
+  PHISH_SITES.forEach(s=>{ const picked=phishPicked.has(s.url);
+    if(s.fake&&picked)found++; if(picked&&!s.fake)wrong++;
+    lines.push((s.fake?"🚩 ":"✓ ")+s.url+" — "+s.why); });
+  const score=Math.max(0,found-wrong);
+  const fb=$("#phishFb"); fb.classList.remove("hidden"); fb.className="feedback "+(score>=3?"good":"bad");
+  fb.innerHTML="<b>You found "+found+" of 4 fakes"+(wrong?", but flagged "+wrong+" real site(s)":"")+". Score: "+score+"</b><br><br>"+lines.map(esc).join("<br>");
+  $("#phishScore").textContent="Found: "+found+" / 4 fakes · Score: "+score;
+  saveBest("phish",score); if(score>=3){sfx("success"); $("#game-phish").classList.add("winFlash");} else sfx("bad");
+});
+$("#phishRestart").addEventListener("click",phishRender);
+phishRender();
+</script>
+<script>
+"use strict";
+/* ---------- GAME: FIREWALL CHALLENGE ---------- */
+const fwC=$("#fwCanvas"), fwx=fwC.getContext("2d");
+let fwRun=false, fwThreats=[], fwScoreN=0, fwLives=3, fwSpawn=0, fwSpeed=1, fwRAF=0;
+function fwPos(e){ const r=fwC.getBoundingClientRect(); return {x:(e.clientX-r.left)/r.width*760, y:(e.clientY-r.top)/r.height*380}; }
+fwC.addEventListener("pointerdown",e=>{
+  if(!fwRun)return; const p=fwPos(e);
+  for(let i=fwThreats.length-1;i>=0;i--){ const t=fwThreats[i];
+    if(Math.hypot(p.x-t.x,p.y-t.y)<t.r+10){ fwThreats.splice(i,1); fwScoreN+=10; sfx("zap"); fwHud(); return; } }
+});
+function fwHud(){ $("#fwScore").textContent="Score: "+fwScoreN+" · Lives: "+fwLives+" · Speed x"+fwSpeed.toFixed(1); }
+function fwLoop(){
+  if(!fwRun)return; fwRAF=requestAnimationFrame(fwLoop);
+  fwx.clearRect(0,0,760,380);
+  const grd=fwx.createRadialGradient(380,190,4,380,190,60);
+  grd.addColorStop(0,"#ffffff"); grd.addColorStop(.4,"rgba(0,229,255,.8)"); grd.addColorStop(1,"rgba(0,229,255,0)");
+  fwx.beginPath(); fwx.arc(380,190,60,0,6.29); fwx.fillStyle=grd; fwx.fill();
+  fwx.beginPath(); fwx.arc(380,190,34,0,6.29); fwx.strokeStyle="rgba(45,255,179,.9)"; fwx.lineWidth=2; fwx.stroke();
+  fwx.fillStyle="#eafffb"; fwx.font="700 13px system-ui"; fwx.textAlign="center"; fwx.fillText("CORE",380,194);
+  fwSpawn-=1;
+  if(fwSpawn<=0){ fwSpawn=Math.max(26,64-fwScoreN*.35);
+    const a=Math.random()*6.28, rr=430;
+    fwThreats.push({x:380+Math.cos(a)*rr,y:190+Math.sin(a)*rr*.5,r:15+Math.random()*7,kind:["VIRUS","WORM","TROJAN","SPYWARE"][Math.floor(Math.random()*4)]}); }
+  for(let i=fwThreats.length-1;i>=0;i--){ const t=fwThreats[i];
+    const dx=380-t.x, dy=190-t.y, d=Math.hypot(dx,dy)||1, sp=(.75+fwScoreN*.004)*fwSpeed;
+    t.x+=dx/d*sp; t.y+=dy/d*sp;
+    fwx.beginPath(); fwx.arc(t.x,t.y,t.r,0,6.29); fwx.fillStyle="rgba(255,59,92,.9)"; fwx.fill();
+    fwx.beginPath(); fwx.arc(t.x,t.y,t.r+5,0,6.29); fwx.strokeStyle="rgba(255,59,92,.45)"; fwx.stroke();
+    fwx.fillStyle="#fff"; fwx.font="700 8px system-ui"; fwx.fillText(t.kind,t.x,t.y+3);
+    if(d<44){ fwThreats.splice(i,1); fwLives--; sfx("bad"); fwHud();
+      if(fwLives<=0){ fwStopGame(); const fb=$("#fwFb"); fb.classList.remove("hidden"); fb.className="feedback bad";
+        fb.innerHTML="<b>Core breached!</b> Final score: "+fwScoreN+". In real life this is why firewalls filter automatically — humans are the backup, not the only line. Hit Start to play again.";
+        saveBest("fw",fwScoreN); } }
+  }
+}
+function fwStopGame(){ fwRun=false; cancelAnimationFrame(fwRAF); }
+$("#fwStart").addEventListener("click",()=>{ fwStopGame(); fwRun=true; fwThreats=[]; fwScoreN=0; fwLives=3; fwSpawn=0; fwHud();
+  $("#fwFb").classList.add("hidden"); fwLoop(); sfx("shield"); });
+$("#fwStop").addEventListener("click",()=>{ fwStopGame(); const fb=$("#fwFb"); fb.classList.remove("hidden"); fb.className="feedback good";
+  fb.textContent="Stopped. Score: "+fwScoreN; saveBest("fw",fwScoreN); });
+fwHud();
+/* ---------- GAME: CYBER DEFENSE ---------- */
+const defC=$("#defCanvas"), dfx=defC.getContext("2d");
+let defRun=false, defThreats=[], defScoreN=0, defHP=100, defWave=1, defSpawnT=0, defKills=0, defRAF=0;
+const CITY=[{x:90,y:368},{x:220,y:368},{x:350,y:368},{x:480,y:368},{x:610,y:368},{x:700,y:368}];
+defC.addEventListener("pointerdown",e=>{
+  if(!defRun)return; const r=defC.getBoundingClientRect();
+  const px=(e.clientX-r.left)/r.width*760, py=(e.clientY-r.top)/r.height*400;
+  for(let i=defThreats.length-1;i>=0;i--){ const t=defThreats[i];
+    if(Math.hypot(px-t.x,py-t.y)<t.r+12){ defThreats.splice(i,1); defScoreN+=15; defKills++; sfx("zap");
+      if(defKills>=defWave*6){ defWave++; const fb=$("#defFb"); fb.classList.remove("hidden"); fb.className="feedback good";
+        fb.innerHTML="<b>Wave "+(defWave-1)+" cleared!</b> Wave "+defWave+" incoming — faster threats."; sfx("success"); }
+      defHud(); return; } }
+});
+function defHud(){ $("#defScore").textContent="Wave "+defWave+" · Score: "+defScoreN+" · City HP: "+Math.max(0,defHP); }
+function defLoop(){
+  if(!defRun)return; defRAF=requestAnimationFrame(defLoop);
+  dfx.clearRect(0,0,760,400);
+  const sky=dfx.createLinearGradient(0,0,0,400); sky.addColorStop(0,"rgba(4,6,24,.9)"); sky.addColorStop(1,"rgba(10,16,48,.9)");
+  dfx.fillStyle=sky; dfx.fillRect(0,0,760,400);
+  for(let i=0;i<40;i++){ dfx.fillStyle="rgba(255,255,255,.5)"; dfx.fillRect((i*97)%760,(i*57)%180,1.6,1.6); }
+  // city
+  CITY.forEach((c,i)=>{ const h=44+((i*29)%36);
+    dfx.fillStyle=defHP>0?"rgba(41,121,255,.75)":"rgba(90,90,100,.6)"; dfx.fillRect(c.x-26,368-h,52,h);
+    dfx.fillStyle="rgba(255,235,160,.9)";
+    for(let wnd=0;wnd<3;wnd++)dfx.fillRect(c.x-16+wnd*14,368-h+10,7,9);
+    dfx.beginPath(); dfx.arc(c.x,368-h-8,5,0,6.29); dfx.fillStyle="#2dffb3"; dfx.fill(); });
+  dfx.fillStyle="rgba(45,255,179,.25)"; dfx.fillRect(0,368,760,3);
+  defSpawnT-=1;
+  if(defSpawnT<=0){ defSpawnT=Math.max(20,58-defWave*5);
+    const target=CITY[Math.floor(Math.random()*CITY.length)];
+    defThreats.push({x:Math.random()*720+20,y:-16,tx:target.x,r:14+Math.random()*6,sp:(0.55+defWave*.14)*(0.8+Math.random()*.5)}); }
+  for(let i=defThreats.length-1;i>=0;i--){ const t=defThreats[i];
+    const dx=t.tx-t.x, dy=356-t.y, d=Math.hypot(dx,dy)||1;
+    t.x+=dx/d*t.sp; t.y+=dy/d*t.sp;
+    dfx.beginPath(); dfx.arc(t.x,t.y,t.r,0,6.29); dfx.fillStyle="rgba(255,79,216,.92)"; dfx.fill();
+    dfx.beginPath(); dfx.arc(t.x,t.y,t.r+5,0,6.29); dfx.strokeStyle="rgba(255,79,216,.45)"; dfx.stroke();
+    dfx.fillStyle="#fff"; dfx.font="900 13px system-ui"; dfx.textAlign="center"; dfx.fillText("!",t.x,t.y+5);
+    if(d<16){ defThreats.splice(i,1); defHP-=12; sfx("bad"); defHud();
+      if(defHP<=0){ defStopGame(); const fb=$("#defFb"); fb.classList.remove("hidden"); fb.className="feedback bad";
+        fb.innerHTML="<b>The city has fallen on wave "+defWave+".</b> Final score: "+defScoreN+". Real cities defend in layers — exactly like the shield in the section above. Start again to beat your best!";
+        saveBest("defense",defScoreN); } }
+  }
+}
+function defStopGame(){ defRun=false; cancelAnimationFrame(defRAF); }
+$("#defStart").addEventListener("click",()=>{ defStopGame(); defRun=true; defThreats=[]; defScoreN=0; defHP=100; defWave=1; defKills=0; defSpawnT=0; defHud();
+  $("#defFb").classList.add("hidden"); defLoop(); sfx("shield"); });
+$("#defStop").addEventListener("click",()=>{ defStopGame(); saveBest("defense",defScoreN);
+  const fb=$("#defFb"); fb.classList.remove("hidden"); fb.className="feedback good"; fb.textContent="Defense stopped. Score saved: "+defScoreN; });
+defHud();
+/* ---------- GAME: DIGITAL ESCAPE ROOM ---------- */
+let escStep=0;
+function escRender(){
+  const b=$("#escBody");
+  if(escStep===0){
+    b.innerHTML="<div class='msgCard'><b>🔒 LOCK 1 — The Suspicious Email</b><br><br>An email says: <i>\"From: support@paypa1-secure.com — Your account is limited! Click now and enter your password to restore it.\"</i><br><br>What is the biggest clue that this is phishing?</div>"+
+    [["The email is too short",0],["The sender domain 'paypa1-secure.com' is a look-alike fake, and it pressures you to enter your password",1],["Emails can never be phishing",0]].map(o=>
+    "<button class='btn optBtn' type='button' data-esc='"+o[1]+"'>"+esc(o[0])+"</button>").join("");
+  } else if(escStep===1){
+    b.innerHTML="<div class='msgCard'><b>🔒 LOCK 2 — The Caesar Code</b><br><br>A sticky note on the guard's desk uses a Caesar cipher, shift <b>3</b> (each letter moved 3 forward). It reads:<br><br><span class='mono' style='font-size:1.15rem'>K H O S</span><br><br>Shift each letter BACK by 3. What word do you get? <span class='small'>(Hint: K→H, H→E…)</span></div>"+
+    "<div style='display:flex;gap:.5rem;margin-top:.7rem;flex-wrap:wrap'><input type='text' id='escCode' placeholder='Type the decoded word' style='flex:1;min-width:180px' autocomplete='off'><button class='btn primary' type='button' id='escTry'>Unlock</button></div><div id='escFb'></div>";
+    $("#escTry").addEventListener("click",()=>{
+      const v=$("#escCode").value.trim().toUpperCase();
+      if(v==="HELP"){ escStep=2; sfx("success"); escRender(); }
+      else{ $("#escFb").innerHTML="<div class='feedback bad'>Not quite — remember K→H, H→E, O→L, S→P.</div>"; sfx("bad"); }
+    });
+    return;
+  } else if(escStep===2){
+    b.innerHTML="<div class='msgCard'><b>🔒 LOCK 3 — The Safe Settings</b><br><br>Last door! Choose the setting set a real security expert would pick for a new phone:</div>"+
+    [["Screen lock OFF, same password everywhere, updates ignored",0],
+     ["Strong screen lock ON, unique password per account + 2FA, automatic updates ON",1],
+     ["Share OTP with anyone who asks politely",0]].map(o=>
+    "<button class='btn optBtn' type='button' data-esc='"+o[1]+"'>"+esc(o[0])+"</button>").join("");
+  } else {
+    b.innerHTML="<div class='feedback good' style='font-size:1.02rem'><b>🎉 YOU ESCAPED!</b><br>You spotted the phishing clue, cracked the cipher and chose the safe settings — the three habits that stop most real attacks. Guardian status: confirmed.</div>"+
+    "<button class='btn primary' type='button' id='escAgain' style='margin-top:.8rem'>↻ Play again</button>";
+    $("#game-escape").classList.add("winFlash"); saveBest("escape",100); sfx("success");
+    $("#escAgain").addEventListener("click",()=>{escStep=0; escRender();});
+    return;
+  }
+  b.querySelectorAll("[data-esc]").forEach(btn=>btn.addEventListener("click",()=>{
+    if(btn.dataset.esc==="1"){ escStep++; sfx("success"); escRender(); }
+    else{ sfx("bad"); btn.style.outline="2px solid var(--danger)"; btn.textContent="✗ "+btn.textContent.replace(/^✗ /,""); }
+  }));
+}
+escRender();
+/* ---------- LAB: ENCRYPTION VISUALIZER ---------- */
+function caesar(txt,shift){ return txt.replace(/[a-zA-Z]/g,c=>{ const base=c<="Z"?65:97; return String.fromCharCode((c.charCodeAt(0)-base+shift+26)%26+base); }); }
+let aesKey=null, aesIV=null, aesCipherBuf=null;
+function renderCaesar(){ $("#caesarOut").textContent=caesar($("#encInput").value,3)||"—"; }
+$("#encInput").addEventListener("input",()=>{ renderCaesar(); });
+renderCaesar();
+function b64(buf){ return btoa(String.fromCharCode(...new Uint8Array(buf).slice(0,4000))); }
+function encStatus(txt){ $("#aesStatus").textContent="Status: "+txt; $("#encDetail").textContent=txt; }
+async function aesEncrypt(){
+  const plain=$("#encInput").value;
+  if(!plain){ $("#aesOut").textContent="Type a message first."; return; }
+  if(!crypto.subtle){ $("#aesOut").textContent="WebCrypto needs a secure context (https or localhost). Caesar still works!"; encStatus("WebCrypto unavailable in this context."); return; }
+  try{
+    aesKey=await crypto.subtle.generateKey({name:"AES-GCM",length:256},true,["encrypt","decrypt"]);
+    aesIV=crypto.getRandomValues(new Uint8Array(12));
+    aesCipherBuf=await crypto.subtle.encrypt({name:"AES-GCM",iv:aesIV},aesKey,new TextEncoder().encode(plain));
+    $("#aesOut").textContent=b64(aesCipherBuf)+"…";
+    $("#aesDec").disabled=false;
+    encStatus("AES-GCM 256 key generated in your browser · message encrypted · IV: "+Array.from(aesIV).map(x=>x.toString(16).padStart(2,"0")).join(""));
+    $("#encTag").textContent="WEBCRYPTO AES-GCM: ACTIVE ✓"; $("#encTag").className="tag ok";
+    sfx("shield");
+  }catch(e){ $("#aesOut").textContent="Encryption failed in this browser."; }
+}
+$("#aesEnc").addEventListener("click",aesEncrypt);
+$("#aesDec").addEventListener("click",async()=>{
+  if(!aesKey||!aesCipherBuf)return;
+  try{
+    const out=await crypto.subtle.decrypt({name:"AES-GCM",iv:aesIV},aesKey,aesCipherBuf);
+    const el=$("#decOut"); el.classList.remove("hidden");
+    el.innerHTML="<b>Decrypted back with the same key:</b><br>"+esc(new TextDecoder().decode(out));
+    sfx("success");
+  }catch(e){ const el=$("#decOut"); el.classList.remove("hidden"); el.className="feedback bad"; el.textContent="Decryption failed — the key or data changed."; }
+});
+$("#encJump").addEventListener("click",()=>{ $("#lab").scrollIntoView({behavior:reduceMotion?"auto":"smooth"}); switchLab("enc"); });
+if(crypto.subtle){ $("#encTag").textContent="WEBCRYPTO AES-GCM: READY"; $("#encTag").className="tag ok"; encStatus("Ready — press 'Encrypt with AES-GCM' in the Lab to generate a fresh 256-bit key."); }
+else { $("#encTag").textContent="WEBCRYPTO: NEEDS HTTPS"; encStatus("Available on secure (https) pages."); }
+/* ---------- LAB: PRIVACY CHECKER ---------- */
+const PRIV_QS=[
+ ["Do you use the same password on more than one account?",["Yes, mostly the same one",0],["A few repeats",1],["No — every account is unique",2]],
+ ["Is two-factor authentication (2FA) on for your email?",["No / what's that?",0],["On some accounts",1],["Yes, email + banking + social",2]],
+ ["How often do you update your phone's software?",["I keep postponing it",0],["Sometimes",1],["Automatically / right away",2]],
+ ["What do apps on your phone get access to?",["Everything they ask for",0],["I check sometimes",1],["Only what each app truly needs",2]],
+ ["On public Wi-Fi, what do you do?",["Banking and shopping, no problem",0],["Browse only",1],["Avoid sensitive logins / use mobile data",2]],
+ ["Your social media profiles are…",["Fully public",0],["Partly public",1],["Private / friends only",2]]
+];
+const privEl=$("#privacyQs");
+PRIV_QS.forEach((q,qi)=>{
+  const wrap=document.createElement("div"); wrap.style.marginBottom=".9rem";
+  wrap.innerHTML="<label>"+(qi+1)+". "+esc(q[0])+"</label>";
+  const sel=document.createElement("select"); sel.id="pq"+qi; sel.setAttribute("aria-label",q[0]);
+  q[1].forEach(o=>{ const op=document.createElement("option"); op.textContent=o[0]; op.value=o[1]; sel.appendChild(op); });
+  wrap.appendChild(sel); privEl.appendChild(wrap);
+});
+$("#privacyGo").addEventListener("click",()=>{
+  let total=0; PRIV_QS.forEach((q,qi)=>{ total+=parseInt($("#pq"+qi).value,10); });
+  const pct=Math.round(total/12*100);
+  const tips=[];
+  PRIV_QS.forEach((q,qi)=>{ if(parseInt($("#pq"+qi).value,10)<2){
+    tips.push(["Use a unique password for every account — a password manager makes this easy.","Turn on 2FA, starting with your email — it protects everything else.","Turn on automatic updates; most updates patch holes attackers already know about.","Review app permissions today: remove location/contacts access from apps that don't need it.","On public Wi-Fi, skip banking and logins — mobile data is safer.","Set social profiles to friends-only and check who can see your posts and number."][qi]); } });
+  const out=$("#privacyOut"); out.classList.remove("hidden");
+  out.className="feedback "+(pct>=70?"good":"bad");
+  out.innerHTML="<b>Your privacy score: "+pct+" / 100</b> — "+(pct>=85?"excellent habits, Guardian!":pct>=70?"strong, with a couple of upgrades left.":pct>=45?"a fair start — the tips below will lift you fast.":"let's fix the basics together — one tip at a time.")+
+   (tips.length?"<br><br><b>Your personal upgrade list:</b><br>"+tips.map(t=>"• "+esc(t)).join("<br>"):"<br>No weak spots found in this check.")+
+   "<br><br><span class='small'>These answers were scored locally and never left this device.</span>";
+  sfx(pct>=70?"success":"click");
+});
+/* ---------- LAB: SECURITY QUIZ ---------- */
+const QUIZ=[
+ ["What makes a password strong?",["Being your pet's name","Length + uniqueness — long and different for every account","Using the same one everywhere so you remember it"],1,"Length and uniqueness win. A long passphrase used on ONE account only is the gold standard."],
+ ["A message says your bank account closes in 1 hour unless you tap a link and enter your OTP. What do you do?",["Tap fast before it closes","Share the OTP — the bank asked","Ignore the link; open the bank's official app yourself"],2,"Banks never ask for OTPs. Urgency is the scammer's favourite tool — slow down and use the official app."],
+ ["What does 2FA do?",["Doubles your password length","Adds a second proof it's really you, beyond the password","Makes Wi-Fi faster"],1,"Even with a stolen password, an attacker still needs the second factor — that's why 2FA blocks most account takeovers."],
+ ["Which Wi-Fi is safest for banking?",["Open café Wi-Fi","Your home Wi-Fi with a strong password, or mobile data","Any Wi-Fi with 'Free' in the name"],1,"Open networks let strangers watch traffic. Home Wi-Fi (WPA2/WPA3) or mobile data is far safer."],
+ ["What is encryption?",["Deleting files forever","Scrambling data so only the key-holder can read it","A type of antivirus"],1,"Encryption = a locked box for data. Apps like WhatsApp use end-to-end encryption so only you and the receiver can read messages."],
+ ["A free game APK from a random website asks for SMS and contacts access. You…",["Install it — it's free","Skip it; install apps only from official stores","Install, then delete quickly"],1,"Sideloaded APKs are a top malware route. Official stores scan apps; random websites don't."],
+ ["Why do updates matter for security?",["They only add new emojis","They patch holes that attackers already know about","They slow the phone down on purpose"],1,"Most updates fix real, known vulnerabilities. Delaying updates leaves the door open."],
+ ["Which is a phishing clue?",["The message greets you by name","The sender address is 'support@paypa1-secure.com'","The message is short"],1,"Look-alike domains (paypa1 with a number 1) are a classic tell. Check the sender's real address carefully."],
+ ["Your friend messages from a NEW number asking for urgent money and says 'don't call me'. Best move?",["Send the money fast","Call their OLD number to verify it's really them","Ask them to prove it with your OTP"],1,"Impersonation scams rely on panic and secrecy. Verify through a channel you already trust."],
+ ["What should you do with an app you no longer use?",["Leave it — it does nothing","Delete it and revoke its permissions","Give it more permissions"],1,"Unused apps still hold permissions and data. Deleting them shrinks your attack surface."]
+];
+let quizI=0, quizScoreN=0, quizDone=false;
+function quizShow(){
+  quizDone=false; $("#quizFb").classList.add("hidden"); $("#quizNext").classList.add("hidden");
+  if(quizI>=QUIZ.length){
+    $("#quizQ").innerHTML="<b>Quiz complete!</b><br>You scored "+quizScoreN+" / 10."+(quizScoreN>=9?" Security Guardian level! 🏆":quizScoreN>=7?" Strong knowledge — almost there.":quizScoreN>=5?" Good base — review the explanations and retry.":" Great start — the explanations teach the key ideas, try again!");
+    $("#quizOpts").innerHTML=""; $("#quizScore").textContent="Final score: "+quizScoreN+" / 10";
+    saveBest("quiz",quizScoreN); if(quizScoreN>=7){$("#lab-quiz").classList.add("winFlash"); sfx("success");} return;
+  }
+  const q=QUIZ[quizI];
+  $("#quizScore").textContent="Question "+(quizI+1)+" / 10 · Score: "+quizScoreN;
+  $("#quizQ").innerHTML="<b>Q"+(quizI+1)+".</b> "+esc(q[0]);
+  const opts=$("#quizOpts"); opts.innerHTML="";
+  q[1].forEach((o,oi)=>{
+    const b=document.createElement("button"); b.type="button"; b.className="btn optBtn"; b.textContent=o;
+    b.addEventListener("click",()=>{ if(quizDone)return; quizDone=true;
+      const right=oi===q[2]; if(right){quizScoreN++; sfx("success");} else sfx("bad");
+      const fb=$("#quizFb"); fb.classList.remove("hidden"); fb.className="feedback "+(right?"good":"bad");
+      fb.innerHTML=(right?"✓ Correct! ":"✗ The right answer is: <b>"+esc(q[1][q[2]])+"</b>. ")+esc(q[3]);
+      $("#quizNext").classList.remove("hidden");
+      $("#quizScore").textContent="Question "+(quizI+1)+" / 10 · Score: "+quizScoreN; });
+    opts.appendChild(b);
+  });
+}
+$("#quizNext").addEventListener("click",()=>{quizI++; quizShow();});
+$("#quizRestart").addEventListener("click",()=>{quizI=0; quizScoreN=0; quizShow();});
+quizShow();
+/* ---------- LAB: SAFE BROWSING GUIDE ---------- */
+const GUIDE=[
+ ["🔒","Check the lock & the domain","Before typing any password, check the site shows HTTPS and the domain is spelled exactly right — one wrong letter means a fake."],
+ ["🚫","Never share OTPs","No bank, company or officer will ever ask for your OTP, PIN or password. Anyone who asks is a scammer — every single time."],
+ ["🔄","Update everything","Turn on auto-updates for your phone, browser and apps. Updates quietly close the holes attackers use most."],
+ ["👆","Pause before you tap","Urgency is a trick. Real companies don't give you 1 hour to save your account. Slow down, verify in the official app."],
+ ["📱","Official stores only","Install apps only from the Play Store / App Store. Random APK and 'mod' links are the most common malware delivery route."],
+ ["🛡️","Turn on 2FA everywhere","Email first, then banking and social accounts. A stolen password alone should never be enough to break in."],
+ ["💾","Keep backups","Back up photos and important files. Backups turn ransomware and lost phones from disasters into small inconveniences."],
+ ["👀","Review permissions","Once a month, check which apps can see your location, contacts, camera and microphone — and take back what isn't needed."]
+];
+const gg=$("#guideGrid");
+GUIDE.forEach(g=>{ const d=document.createElement("div"); d.className="glass tilt";
+  d.innerHTML="<div style='font-size:1.5rem'>"+g[0]+"</div><h3 style='margin:.4rem 0'>"+esc(g[1])+"</h3><p class='small' style='color:var(--txt)'>"+esc(g[2])+"</p>";
+  gg.appendChild(d); });
+/* tilt for dynamically added cards */
+gg.querySelectorAll(".tilt").forEach(el=>{
+  el.addEventListener("pointermove",e=>{ if(!tiltOn||reduceMotion)return; const r=el.getBoundingClientRect();
+    el.style.transform="perspective(800px) rotateX("+(((e.clientY-r.top)/r.height-.5)*-7).toFixed(1)+"deg) rotateY("+(((e.clientX-r.left)/r.width-.5)*9).toFixed(1)+"deg)"; });
+  el.addEventListener("pointerleave",()=>{el.style.transform="";});
+});
+/* ---------- SECURITY CORE: SANITIZER ---------- */
+$("#sanInput").addEventListener("input",e=>{
+  const v=e.target.value;
+  $("#sanOut").textContent=v||"Your text will appear here — safely.";
+  $("#sanEsc").textContent=v?esc(v):"";
+});
+/* ---------- SECURITY CORE: RATE LIMITER ---------- */
+let rlCount=0, rlBlockedUntil=0, rlTimer=null;
+$("#rlBtn").addEventListener("click",()=>{
+  const now=Date.now();
+  if(now<rlBlockedUntil){ $("#rlMsg").textContent="⛔ Still throttled — this is what a bot sees too. Wait for the cooldown."; sfx("bad"); return; }
+  rlCount++;
+  if(rlCount>6){
+    rlBlockedUntil=now+8000; rlCount=0; sfx("alarm");
+    $("#rlStatus").textContent="THROTTLED — too many requests!";
+    const tick=()=>{ const left=Math.max(0,rlBlockedUntil-Date.now());
+      $("#rlBar").style.width=(100-left/80)+"%";
+      $("#rlMsg").textContent="Cooldown: "+(left/1000).toFixed(1)+"s remaining. Real login systems do exactly this to stop password-guessing bots.";
+      if(left>0) rlTimer=setTimeout(tick,100);
+      else{ $("#rlStatus").textContent="Requests used: 0 / 6"; $("#rlBar").style.width="0"; $("#rlMsg").textContent="Cooldown over — you can send requests again."; } };
+    tick(); return;
+  }
+  $("#rlStatus").textContent="Requests used: "+rlCount+" / 6";
+  $("#rlBar").style.width=(rlCount/6*100)+"%";
+  $("#rlMsg").textContent=rlCount>=5?"Careful — one more fast request and the limiter trips.":"Request accepted ✓ (simulation)";
+  sfx("click");
+});
+/* ---------- SECURITY CORE: ARCHITECTURE ---------- */
+const ARCH=[
+ ["No secrets in client code","This page contains zero API keys, passwords or tokens. Anything shipped to a browser is public by nature — so nothing secret is ever put here."],
+ ["No data collection","There is no server, no analytics, no tracking. Everything you type — answers, tested passwords, chat questions — stays on this device. One honest exception, fully in your control: if you tap the mic button, your browser's own speech-recognition service processes your voice, and that audio may leave the device. Typing never does."],
+ ["No external requests","No CDNs, no fonts, no third-party scripts — the page loads nothing from anywhere and works fully offline. The single possible exception is the browser speech service described above, only if you choose voice input."],
+ ["Escaped rendering","Everything you type is rendered with HTML-escaping (try demo (a)), so visitor text can never become executable code — the standard defence against XSS."],
+ ["Demo-only simulations","The radar and games generate pretend threats locally and are labelled DEMO. Nothing here scans, probes or touches any real network or device."],
+ ["Permission-based mic & sound","The microphone activates only when you tap it, and audio starts only when you switch sound on. No autoplay, no silent listening — ever."]
+];
+const ag=$("#archGrid");
+ARCH.forEach(a=>{ const d=document.createElement("div"); d.className="msgCard";
+  d.innerHTML="<b style='color:var(--a1)'>✓ "+esc(a[0])+"</b><br><span class='small' style='color:var(--txt)'>"+esc(a[1])+"</span>"; ag.appendChild(d); });
+</script>
+</body>
+</html>
