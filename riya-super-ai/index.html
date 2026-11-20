@@ -182,6 +182,31 @@ button,[role="button"],select,input:not([type="checkbox"]){min-height:44px}
 .noteitem .d{font-size:12px;color:var(--ink3);margin-top:2px}
 .noteitem .del{flex:none;width:40px;height:40px;min-height:40px;border-radius:14px;border:1px solid rgba(229,72,77,.35);background:transparent;color:var(--red);font-weight:800}
 .priv{background:var(--accent-soft);border:1px solid var(--stroke);border-radius:var(--radius);padding:13px 15px;font-size:13.5px;line-height:1.6;color:var(--ink)}
+
+/* ---------- free ai / memory / security ---------- */
+#freeChip{align-self:center;border:1px solid var(--stroke);background:var(--glass2);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:999px;padding:7px 15px;font-size:12.5px;font-weight:800;color:var(--ink);min-height:38px}
+#freeChip.on{color:var(--green);border-color:rgba(31,174,95,.45)}
+#freeChip:active{transform:scale(.96)}
+.secTitle{font-size:16.5px;font-weight:800;margin:22px 0 4px;text-align:left}
+.fcard{border:1px solid var(--stroke);background:var(--glass2);border-radius:var(--radius);padding:13px 14px;margin:10px 0}
+.fcard .fh{display:flex;align-items:baseline;gap:8px}
+.fcard .fname{font-weight:800;font-size:15px}
+.fcard .fstatus{margin-left:auto;font-size:12px;font-weight:800;color:var(--ink3);text-align:right;flex:none}
+.fcard .fstatus.on{color:var(--green)}
+.fcard input{width:100%;margin-top:9px;border:1px solid var(--stroke);background:var(--glass);border-radius:14px;padding:11px 13px;font-size:14px;outline:none}
+.fcard input:focus{border-color:var(--accent)}
+.fcard .frow{display:flex;gap:8px;margin-top:9px}
+.fcard .frow button{flex:1;border-radius:14px;padding:10px;font-weight:800;font-size:13.5px;border:1px solid var(--stroke);background:var(--glass);min-height:44px}
+.fcard .frow button.main{background:var(--accent);color:#fff;border-color:transparent}
+.fcard .frow button.dngr{color:var(--red)}
+.flink{display:inline-block;margin-top:10px;color:var(--accent);font-weight:800;text-decoration:none;font-size:13.5px}
+.fsteps{font-size:12.5px;color:var(--ink2);line-height:1.6;margin:8px 0 0;padding-left:17px}
+.msg .tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.02em;color:var(--accent);background:var(--accent-soft);padding:2px 9px;border-radius:999px;margin-bottom:6px}
+details.plan{margin-top:9px;border-top:1px dashed var(--stroke);padding-top:7px;font-size:12.5px;color:var(--ink2);line-height:1.55;white-space:normal}
+details.plan summary{cursor:pointer;font-weight:800;color:var(--ink);font-size:12.5px;padding:2px 0}
+.memconfirm{display:flex;gap:8px;justify-content:center;margin-top:8px}
+.memconfirm button{border-radius:999px;border:1px solid var(--stroke);background:var(--glass2);padding:8px 20px;font-weight:800;font-size:13px;min-height:40px}
+.memconfirm button.main{background:var(--accent);color:#fff;border-color:transparent}
 @media (prefers-reduced-motion: reduce){
   .ring,.avatarbtn{animation:none!important}
   .msg{animation:none}
@@ -189,11 +214,9 @@ button,[role="button"],select,input:not([type="checkbox"]){min-height:44px}
 </style>
 <link rel="icon" type="image/jpeg" href="data:image/jpeg;base64,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">
 <link rel="apple-touch-icon" href="data:image/jpeg;base64,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">
-<meta name="theme-color" content="#0b1020">
+<meta name="theme-color" content="#0b0f1a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Riya Super AI">
 </head>
 <body>
 
@@ -255,6 +278,8 @@ button,[role="button"],select,input:not([type="checkbox"]){min-height:44px}
     <button data-mode="fast">Fast</button>
     <button data-mode="offline">Offline</button>
   </div>
+
+  <button id="freeChip" type="button">Free AI: key nahi hai — Settings se jodo</button>
 
   <div class="chips" id="chips">
     <button class="chip" data-q="ek joke sunao">Joke sunao</button>
@@ -335,7 +360,53 @@ button,[role="button"],select,input:not([type="checkbox"]){min-height:44px}
   <div class="field"><label for="setDeviceVoice">Device Voice</label><select id="setDeviceVoice"><option value="">Auto (preset ke hisaab se)</option></select></div>
   <div class="prow"><div class="tx"><div class="t">Bolkar jawab do</div><div class="d">Off karne se Riya sirf likhkar jawab degi, bolegi nahi.</div></div>
     <label class="switch"><input type="checkbox" id="setSpeak"><span class="sw"></span></label></div>
-  <div class="field"><label for="oldPass">Password badlo — purana password</label><input id="oldPass" type="password" autocomplete="current-password"></div>
+  <!-- ===== FREE AI CONNECT ===== -->
+  <div id="freeAiSection">
+    <div class="secTitle">⚡ Free AI Connect</div>
+    <p class="sub" style="text-align:left">Apni khud ki FREE API keys jodo, Mr — bina card ke banti hain. Failover order: Gemini → Groq → OpenRouter.</p>
+    <div class="priv"><b>Note:</b> Is copy me key sirf is phone ke browser me save hoti hai — main app wali copy me key server par safe rehti hai.<br><br>Free plans ki daily limit hoti hai; ek ki limit khatm ho to dusra provider apne aap chalega; teeno khatm ho to Local Brain jawab dega.<br><br>Keys aapke password se encrypt hokar save hoti hain (neeche Security dekho). Free AI judne par sawal chune hue provider ke paas jata hai; Local Brain ke jawab phone me hi rehte hain.</div>
+
+    <div class="fcard">
+      <div class="fh"><span class="fname">Google Gemini</span><span class="fstatus" id="fk-gemini-status">Not connected</span></div>
+      <input type="password" class="fk-input" id="fk-gemini-input" placeholder="Apni free API key yahan paste karo" autocomplete="off">
+      <div class="frow"><button class="main" data-save="gemini">Save</button><button class="dngr" data-disc="gemini">Disconnect</button></div>
+      <a class="flink" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Free key banao ↗</a>
+      <ol class="fsteps"><li>Upar wale link se Google AI Studio kholo — Google account se login karo.</li><li>"Create API Key" dabao — key turant ban jayegi, koi card nahi chahiye.</li><li>Key copy karke upar paste karo aur Save dabao.</li></ol>
+    </div>
+
+    <div class="fcard">
+      <div class="fh"><span class="fname">Groq</span><span class="fstatus" id="fk-groq-status">Not connected</span></div>
+      <input type="password" class="fk-input" id="fk-groq-input" placeholder="Apni free API key yahan paste karo" autocomplete="off">
+      <div class="frow"><button class="main" data-save="groq">Save</button><button class="dngr" data-disc="groq">Disconnect</button></div>
+      <a class="flink" href="https://console.groq.com/keys" target="_blank" rel="noopener">Free key banao ↗</a>
+      <ol class="fsteps"><li>Upar wale link se Groq Console kholo — free account banao ya login karo.</li><li>"Create API Key" dabao aur key copy kar lo — card nahi chahiye.</li><li>Key yahan paste karke Save dabao.</li></ol>
+    </div>
+
+    <div class="fcard">
+      <div class="fh"><span class="fname">OpenRouter</span><span class="fstatus" id="fk-openrouter-status">Not connected</span></div>
+      <input type="password" class="fk-input" id="fk-openrouter-input" placeholder="Apni free API key yahan paste karo" autocomplete="off">
+      <div class="frow"><button class="main" data-save="openrouter">Save</button><button class="dngr" data-disc="openrouter">Disconnect</button></div>
+      <a class="flink" href="https://openrouter.ai/keys" target="_blank" rel="noopener">Free key banao ↗</a>
+      <ol class="fsteps"><li>Upar wale link se OpenRouter kholo — free sign-up karo.</li><li>"Create Key" dabao aur key copy kar lo — card nahi chahiye.</li><li>Key yahan paste karke Save dabao.</li></ol>
+    </div>
+  </div>
+
+  <!-- ===== LONG-TERM MEMORY ===== -->
+  <div class="secTitle">🧠 Long-Term Memory <span id="memCount" style="color:var(--ink3);font-size:13px">(0)</span></div>
+  <p class="sub" style="text-align:left">Jo baat hamesha yaad rakhni ho, chat me bolo — "Yaad rakho ki …" Main khud se kuchh save nahi karti; sirf tumhare bolne par, ya "Yaad karu?" par Haan kehne par hi save hota hai. Ye yaadein Free AI ke jawabon me use hoti hain.</p>
+  <div id="memList"></div>
+
+  <!-- ===== SECURITY ===== -->
+  <div class="secTitle">🔒 Security</div>
+  <div class="priv">
+    • <b>Password:</b> salted PBKDF2 (SHA-256, 1.5 lakh rounds) hash me save hai — asli password kabhi save nahi hota.<br>
+    • <b>Free AI keys:</b> tumhare password se AES-GCM encrypt hokar save hoti hain — bina login koi nahi padh sakta.<br>
+    • <b>Lockout:</b> 5 galat password par 5 minute ka lock lag jata hai.<br>
+    • <b>Auto-Lock:</b> 10 minute koi activity nahi to app khud lock ho jata hai.<br>
+    • Is copy ki security is phone tak hai — server wali main copy sabse strong hai.
+  </div>
+
+  <div class="field"><label for="oldPass">Password badlo — purana password (pehle ye zaroori hai)</label><input id="oldPass" type="password" autocomplete="current-password"></div>
   <div class="field"><label for="newPass">Naya password</label><input id="newPass" type="password" autocomplete="new-password"></div>
   <div class="err" id="setErr"></div>
   <div class="btnrow"><button id="btnSaveSettings" class="main">Save Karo</button><button id="btnCloseSettings">Band Karo</button></div>
@@ -370,12 +441,20 @@ var chat = lsGet("chat", []);
 var notes = lsGet("notes", []);
 var reminders = lsGet("reminders", []);
 var passHash = lsGet("passHash", "");
+var passV2 = lsGet("passV2", null);
+var lockState = lsGet("lock", { fails:0, until:0 });
+var memories = lsGet("memories", []);
+var freeKeys = { gemini:"", groq:"", openrouter:"" };
+var sessionPass = null;
+var lastAct = Date.now();
 var remindedIds = {};
 
 function saveAll(){
   lsSet("settings", settings); lsSet("plugins", plugins); lsSet("brainMode", brainMode);
   lsSet("chat", chat.slice(-200)); lsSet("notes", notes); lsSet("reminders", reminders);
+  lsSet("memories", memories);
 }
+function hasPass(){ return !!(passV2 || passHash); }
 
 /* ================= HASH (SHA-256) ================= */
 function sha256(str){
@@ -424,12 +503,24 @@ function renderMsg(m){
   var empty = log.querySelector(".empty-note"); if (empty) empty.remove();
   var div = document.createElement("div");
   div.className = "msg " + (m.who==="me" ? "me" : m.who==="sys" ? "sys" : "ai");
-  var html = esc(m.text);
+  var html = "";
+  if (m.tag) html += '<span class="tag">'+esc(m.tag)+'</span><br>';
+  html += esc(m.text);
   if (m.link) html += '<br><a class="lk" href="'+esc(m.link.url)+'" target="_blank" rel="noopener">'+esc(m.link.label)+'</a>';
+  if (m.plan) html += '<details class="plan"><summary>🧠 Kaise socha</summary>'+esc(m.plan).replace(/\n/g,"<br>")+'</details>';
   html += '<span class="tm">'+esc(m.t||"")+'</span>';
   div.innerHTML = html;
   log.appendChild(div);
   log.scrollTop = log.scrollHeight;
+  return div;
+}
+function addMsgFull(text, link, tag, plan){
+  var m = { who:"ai", text:text, t:stamp() };
+  if (link) m.link = link;
+  if (tag) m.tag = tag;
+  if (plan) m.plan = plan;
+  chat.push(m); saveAll(); renderMsg(m);
+  return m;
 }
 function addMsg(who, text, link){
   var m = { who:who, text:text, t:stamp() };
@@ -803,18 +894,264 @@ function brain(raw){
 
   /* --- fallback --- */
   if (brainMode==="offline")
-    return { text:pick([
+    return { fallback:true, text:pick([
       "Mr, ye wala mere Local Brain me nahi mila — Offline mode me main sirf apni andar wali jaankari se jawab deti hoon. Thoda doosre shabdon me puchho, ya hisaab/note/joke try karo.",
       "Samajh gayi koshish, Mr — par Offline mode me iska jawab mere paas local me nahi hai. Mode Smart kar doge to Google search ka rasta bhi de dungi."
     ]), mood:"thinking" };
   if (brainMode==="smart" && plugins.web){
-    return { text:"Mr, iska pakka jawab mere Local Brain me nahi hai — jhooth nahi bolungi. Google par sahi jawab mil jayega, button de rahi hoon:", mood:"thinking",
+    return { fallback:true, text:"Mr, iska pakka jawab mere Local Brain me nahi hai — jhooth nahi bolungi. Google par sahi jawab mil jayega, button de rahi hoon:", mood:"thinking",
       link:{ label:"Google par \""+raw.slice(0,28)+"\" search karo", url:"https://www.google.com/search?q="+encodeURIComponent(raw) } };
   }
-  return { text:pick([
+  return { fallback:true, text:pick([
     "Mr, ye baat mere local dimag se bahar hai — par main seekhne ki koshish me hoon. Kuchh aur puchho: hisaab, note, joke, shayari ya aam jaankari — wo sab turant dungi.",
     "Hmm Mr, is par mera Local Brain abhi khamosh hai. Ek kaam karo — doosre shabdon me puchh kar dekho, kabhi-kabhi shabd badalte hi jawab mil jata hai."
   ]), mood:"thinking" };
+}
+
+/* ================= FREE AI (browser-side calls, auto failover) ================= */
+var PNAMES = { gemini:"Gemini", groq:"Groq", openrouter:"OpenRouter" };
+function hasAnyKey(){ return !!(freeKeys.gemini || freeKeys.groq || freeKeys.openrouter); }
+function cleanAI(t){
+  return String(t).replace(/\*\*([^*]+)\*\*/g,"$1").replace(/^#{1,4}\s*/gm,"").replace(/`([^`]+)`/g,"$1").trim();
+}
+function sysPrompt(){
+  var s = "Tum " + settings.name + " ho — ek warm, dost-style AI assistant.\n" +
+    "Rules (hamesha follow karo):\n" +
+    "- Jawab usi language/style me do jo user use kar raha hai — Hindi, Hinglish ya Indian English.\n" +
+    "- User ko sirf 'Mr' kehkar address karo. Kabhi uska naam mat lo — naam pata ho tab bhi nahi.\n" +
+    "- CNC, machining ya usse juda koi bhi content bilkul mat do.\n" +
+    "- Jawab chhota, saaf aur kaam ka rakho. Dost jaisi garam-joshi rakho, robotic mat bano.\n" +
+    "- Jo pakka nahi pata, sach bol do — jhoothi jaankari mat banao.";
+  if (memories.length){
+    s += "\n\nMr ke baare me yaad rakhi hui baatein (zaroorat par jawab me use karo):\n" +
+      memories.map(function(m){ return "- " + m.text; }).join("\n");
+  }
+  return s;
+}
+function buildHistory(){
+  var out = [];
+  chat.slice(-8).forEach(function(m){
+    if (m.who==="me") out.push({ role:"user", text:String(m.text).slice(0,600) });
+    else if (m.who==="ai" && !m.goal) out.push({ role:"assistant", text:String(m.text).slice(0,600) });
+  });
+  while (out.length && out[0].role!=="user") out.shift();
+  if (!out.length) out.push({ role:"user", text:"Namaste" });
+  return out;
+}
+function fetchT(url, opts, ms){
+  if (window.AbortController){
+    var c = new AbortController(); opts.signal = c.signal;
+    var to = setTimeout(function(){ try{ c.abort(); }catch(e){} }, ms);
+    return fetch(url, opts).then(function(r){ clearTimeout(to); return r; }, function(e){ clearTimeout(to); throw e; });
+  }
+  return fetch(url, opts);
+}
+function callGemini(key, msgs, sys){
+  var contents = msgs.map(function(m){ return { role: m.role==="assistant" ? "model" : "user", parts:[{ text:m.text }] }; });
+  return fetchT("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent", {
+    method:"POST",
+    headers:{ "Content-Type":"application/json", "x-goog-api-key":key },
+    body: JSON.stringify({ system_instruction:{ parts:[{ text:sys }] }, contents:contents, generationConfig:{ maxOutputTokens:800, temperature:0.7 } })
+  }, 15000).then(function(r){ if (!r.ok) throw new Error("http "+r.status); return r.json(); })
+  .then(function(j){
+    var c = j && j.candidates && j.candidates[0];
+    var parts = c && c.content && c.content.parts;
+    if (!parts) return null;
+    var t = parts.map(function(p){ return p.text||""; }).join("").trim();
+    return t || null;
+  });
+}
+function callChatStyle(key, msgs, sys, url, model){
+  var messages = [{ role:"system", content:sys }].concat(msgs.map(function(m){ return { role:m.role, content:m.text }; }));
+  return fetchT(url, {
+    method:"POST",
+    headers:{ "Content-Type":"application/json", "Authorization":"Bearer "+key },
+    body: JSON.stringify({ model:model, messages:messages, max_tokens:800, temperature:0.7 })
+  }, 15000).then(function(r){ if (!r.ok) throw new Error("http "+r.status); return r.json(); })
+  .then(function(j){
+    var t = j && j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content;
+    return t ? String(t).trim() : null;
+  });
+}
+function askFreeAI(){
+  if (brainMode==="offline") return Promise.resolve(null);
+  if (!hasAnyKey()) return Promise.resolve(null);
+  var msgs = buildHistory(), sys = sysPrompt();
+  var order = ["gemini","groq","openrouter"];
+  var chain = Promise.resolve(null);
+  order.forEach(function(id){
+    chain = chain.then(function(res){
+      if (res) return res;
+      var key = freeKeys[id];
+      if (!key) return null;
+      var call;
+      if (id==="gemini") call = callGemini(key, msgs, sys);
+      else if (id==="groq") call = callChatStyle(key, msgs, sys, "https://api.groq.com/openai/v1/chat/completions", "llama-3.3-70b-versatile");
+      else call = callChatStyle(key, msgs, sys, "https://openrouter.ai/api/v1/chat/completions", "meta-llama/llama-3.3-70b-instruct:free");
+      return call.then(function(t){
+        return t ? { text:cleanAI(t), name:PNAMES[id], label:"⚡ "+PNAMES[id], id:id } : null;
+      }).catch(function(){ return null; });
+    });
+  });
+  return chain;
+}
+
+/* ================= FREE AI SETTINGS UI ================= */
+function updateFreeChip(){
+  var chip = $("freeChip"); if (!chip) return;
+  if (brainMode==="offline"){ chip.textContent = "Free AI: Offline mode me band hai"; chip.classList.remove("on"); return; }
+  var first = ["gemini","groq","openrouter"].filter(function(id){ return !!freeKeys[id]; })[0];
+  if (first){ chip.textContent = "⚡ Free AI: " + PNAMES[first] + " ready (failover ON)"; chip.classList.add("on"); }
+  else if (lsGet("freekeys", null) && !sessionPass){ chip.textContent = "Free AI: key encrypt-safe hai — active karne ke liye dobara login karo"; chip.classList.remove("on"); }
+  else { chip.textContent = "Free AI: key nahi hai — Settings se jodo"; chip.classList.remove("on"); }
+}
+function renderFreeAI(){
+  ["gemini","groq","openrouter"].forEach(function(id){
+    var st = $("fk-"+id+"-status"), inp = $("fk-"+id+"-input"), k = freeKeys[id];
+    if (st){
+      if (k){ st.textContent = "Connected ••••" + k.slice(-4); st.classList.add("on"); }
+      else { st.textContent = "Not connected"; st.classList.remove("on"); }
+    }
+    if (inp){ inp.value = ""; inp.placeholder = k ? "Key save hai (••••"+k.slice(-4)+") — badalna ho to nayi key paste karo" : "Apni free API key yahan paste karo"; }
+  });
+  updateFreeChip();
+}
+function saveProviderKey(id){
+  var inp = $("fk-"+id+"-input");
+  var v = inp ? inp.value.trim() : "";
+  if (!sessionPass){ addMsg("sys","Mr, keys abhi locked hain — ek baar Logout karke dobara login karo, phir key save hogi."); return; }
+  if (v.length < 12){ var st = $("fk-"+id+"-status"); if (st){ st.textContent = "Key bahut chhoti lag rahi hai — poori key paste karo"; st.classList.remove("on"); } return; }
+  freeKeys[id] = v; if (inp) inp.value = "";
+  encryptKeys().then(function(){
+    renderFreeAI();
+    addMsg("sys", PNAMES[id] + " ki key save ho gayi, Mr — encrypt hokar sirf isi phone me rahegi. Ab chat me sawal puchho, jawab '" + PNAMES[id] + "' label ke saath aayega.");
+  });
+}
+function disconnectProvider(id){
+  if (!freeKeys[id]){ renderFreeAI(); return; }
+  freeKeys[id] = "";
+  encryptKeys().then(function(){ renderFreeAI(); addMsg("sys", PNAMES[id] + " disconnect ho gaya, Mr."); });
+}
+
+/* ================= LONG-TERM MEMORY UI ================= */
+function renderMemory(){
+  var c = $("memCount"); if (c) c.textContent = "(" + memories.length + ")";
+  var box = $("memList"); if (!box) return;
+  box.innerHTML = "";
+  if (!memories.length){ box.innerHTML = '<p class="sub" style="text-align:left">Abhi koi yaad save nahi hai, Mr.</p>'; return; }
+  memories.forEach(function(m){
+    var row = document.createElement("div"); row.className = "noteitem";
+    row.innerHTML = '<div class="tx"><div class="t">'+esc(m.text)+'</div><div class="d">'+esc(m.at||"")+'</div></div>';
+    var del = document.createElement("button"); del.className = "del"; del.textContent = "✕"; del.setAttribute("aria-label","Yaad delete karo");
+    del.addEventListener("click", function(){ memories = memories.filter(function(x){ return x.id!==m.id; }); lsSet("memories", memories); renderMemory(); });
+    row.appendChild(del); box.appendChild(row);
+  });
+}
+function saveMemoryFact(fact){
+  memories.unshift({ id:Date.now(), text:fact, at:new Date().toLocaleString("en-IN") });
+  lsSet("memories", memories); renderMemory();
+}
+function askMemoryConfirm(fact){
+  var log = $("chatLog"); if (!log) return;
+  var wrap = document.createElement("div");
+  wrap.className = "msg sys";
+  wrap.innerHTML = "Ye baat yaad karu, Mr?<br><i>" + esc(fact) + "</i>";
+  var row = document.createElement("div"); row.className = "memconfirm";
+  var yes = document.createElement("button"); yes.className = "main"; yes.textContent = "Haan, yaad karo";
+  var no = document.createElement("button"); no.textContent = "Nahi";
+  yes.addEventListener("click", function(){ saveMemoryFact(fact); wrap.innerHTML = "Yaad kar liya, Mr ✓ — Settings → Memory me kabhi bhi dekh ya delete kar sakte ho."; });
+  no.addEventListener("click", function(){ wrap.remove(); });
+  row.appendChild(yes); row.appendChild(no); wrap.appendChild(row);
+  log.appendChild(wrap); log.scrollTop = log.scrollHeight;
+}
+function maybeSuggestMemory(text){
+  var fact = text.trim();
+  if (fact.length < 12 || fact.length > 140) return;
+  if (/note karo|remind|yaad rakho|kholo|joke|shayari/i.test(fact)) return;
+  if (!/(mera|meri|mujhe|main)\b/i.test(fact)) return;
+  if (!/(pasand|birthday|janamdin|rehta|rehti|kaam|naukri|sheher|gaon|favorite|favourite|hobby|shauq|khana|rang|film|gaana)/i.test(fact)) return;
+  var dup = memories.some(function(m){ return m.text.toLowerCase() === fact.toLowerCase(); });
+  if (dup) return;
+  askMemoryConfirm(fact.slice(0,200));
+}
+
+/* ================= GOAL MODE ================= */
+function wait(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
+function splitSteps(text){
+  var parts = text.split(/\s*(?:;|,|\baur phir\b|\bphir\b|\buske baad\b|\buske bad\b|\biske baad\b|\band then\b)\s*/i)
+    .map(function(s){ return s.trim(); }).filter(function(s){ return s.length > 2; });
+  if (parts.length < 2) return null;
+  var act = parts.filter(function(s){ return /(karo|kar do|kholo|batao|dikhao|lagao|sunao|save|set karo|search|likho|banao|chalao|dhundho|note|remind|joke|shayari|\?)/i.test(s); });
+  return act.length >= 2 ? parts.slice(0,6) : null;
+}
+function detectGoal(text){
+  var t = text.toLowerCase();
+  if (/^\s*goal\s*[:\-]/.test(t)) return splitSteps(text.replace(/^\s*goal\s*[:\-]\s*/i, ""));
+  if (/(phir|uske baad|uske bad|iske baad)/.test(t)) return splitSteps(text);
+  return null;
+}
+function execStep(step){
+  return wait(250).then(function(){
+    var bn = notes.length, br = reminders.length, r = null;
+    try { r = brain(step); } catch(e){ return { st:"fail", note:"Local Brain me gadbad ho gayi" }; }
+    if (notes.length > bn) return { st:"ok", note:"Note save ho gaya", ans:r.text };
+    if (reminders.length > br) return { st:"ok", note:"Reminder set ho gaya", ans:r.text };
+    if (r && !r.fallback){
+      if (r.link) return { st:"ok", note:"Link ready hai (neeche button hai)", ans:r.text, link:r.link };
+      if (/plugin off hai|nahi kholungi|nahi kholti/.test(r.text)) return { st:"warn", note:r.text.slice(0,160) };
+      return { st:"ok", note:"", ans:r.text };
+    }
+    return askFreeAI().then(function(fa){
+      if (fa) return { st:"ok", note:"Free AI — " + fa.name, ans:fa.text };
+      if (r && r.link) return { st:"warn", note:"Pakka jawab nahi mila — Google search ka link diya hai", ans:r.text, link:r.link };
+      return { st:"fail", note:"Local Brain me jawab nahi mila aur Free AI bhi available nahi tha" };
+    });
+  });
+}
+function runGoal(steps){
+  setState("thinking", settings.name + " goal par kaam kar rahi hai…");
+  var gm = { who:"ai", text:"", t:stamp(), goal:true };
+  chat.push(gm); saveAll();
+  var div = renderMsg(gm);
+  var results = steps.map(function(s){ return { step:s, st:"wait", note:"" }; });
+  var icons = { wait:"⬜", run:"⏳", ok:"✅", warn:"⚠️", fail:"❌" };
+  function draw(){
+    gm.text = "🎯 Goal Mode — plan ban gaya, Mr:\n" + results.map(function(x, i){
+      return (i+1) + ". " + icons[x.st] + " " + x.step + (x.note ? "\n    → " + x.note : "");
+    }).join("\n");
+    if (div){ div.innerHTML = esc(gm.text) + '<span class="tm">' + esc(gm.t||"") + '</span>'; }
+    var log = $("chatLog"); if (log) log.scrollTop = log.scrollHeight;
+    saveAll();
+  }
+  draw();
+  var chain = Promise.resolve();
+  results.forEach(function(x){
+    chain = chain.then(function(){
+      x.st = "run"; draw();
+      return execStep(x.step).then(function(res){
+        x.st = res.st;
+        x.note = res.note || "";
+        if (res.ans) x.note = (x.note ? x.note + " — " : "") + String(res.ans).slice(0,220);
+        if (res.link) addMsg("ai", "Goal step ka link, Mr:", res.link);
+        draw();
+        return wait(300);
+      });
+    });
+  });
+  chain.then(function(){
+    var ok = results.filter(function(x){ return x.st==="ok"; }).length;
+    var warn = results.filter(function(x){ return x.st==="warn"; }).length;
+    var fail = results.filter(function(x){ return x.st==="fail"; }).length;
+    var sum = "🎯 Goal khatm, Mr — " + ok + " step ✅ pure hue" +
+      (warn ? ", " + warn + " step ⚠️ aadhe/skip hue" : "") +
+      (fail ? ", " + fail + " step ❌ nahi ho paye" : "") +
+      ". Kul " + results.length + " steps the.";
+    addMsg("ai", sum);
+    setMood(fail ? "caring" : "happy");
+    setState("idle","Idle — avatar par tap karke bolo, Mr");
+    speak("Goal khatm Mr. " + ok + " steps pure hue.");
+    busy = false;
+  });
 }
 
 /* ================= HANDLE USER ================= */
@@ -823,20 +1160,72 @@ function handleUser(text, fromVoice){
   text = (text||"").trim();
   if (!text || busy) return;
   busy = true;
+  lastAct = Date.now();
   addMsg("me", text);
   $("msgInput").value = ""; autoGrow();
   setState("thinking", settings.name+" soch rahi hai…"); setMood("thinking");
+
+  /* --- long-term memory command: sirf "yaad rakho" par hi save --- */
+  var mm = text.match(/yaad rakho(?:\s+ki)?\s*[:\-]?\s*(.+)/i);
+  if (mm && mm[1] && mm[1].trim().length > 1){
+    var fact = mm[1].trim().slice(0,200);
+    setTimeout(function(){
+      saveMemoryFact(fact);
+      addMsg("ai", "Yaad kar liya, Mr: \"" + fact + "\" — ye baat ab meri Long-Term Memory me hai aur Free AI ke jawabon me use hogi. Settings → Memory me dekh ya delete kar sakte ho.");
+      setMood("happy");
+      setState("idle","Idle — avatar par tap karke bolo, Mr");
+      speak("Yaad kar liya, Mr.");
+      busy = false;
+    }, 220);
+    return;
+  }
+
+  /* --- goal mode: multi-step request --- */
+  var steps = detectGoal(text);
+  if (steps){ runGoal(steps); return; }
+
   var delay = brainMode==="fast" ? 60 : 260;
   setTimeout(function(){
     var r;
     try { r = brain(text); } catch(e){ r = { text:"Mr, kuchh gadbad ho gayi mere Local Brain me — ek baar phir bolkar dekho.", mood:"surprised" }; }
     /* list commands open the notes sheet too */
     if (/meri notes|notes dikhao|reminder dikhao|mere reminder/.test(text.toLowerCase())){ renderNotesSheet(); }
+
+    /* Local Brain ke paas pakka jawab nahi → Free AI failover (Offline mode me kabhi nahi) */
+    if (r.fallback && brainMode!=="offline"){
+      if (hasAnyKey()){
+        askFreeAI().then(function(fa){
+          if (fa){
+            var plan = null;
+            if (text.length > 30 || fa.text.length > 160){
+              plan = "Samjha: Mr ne poocha — \"" + text.slice(0,70) + (text.length>70 ? "…" : "") + "\"\n" +
+                     "Plan: pehle Local Brain ke local commands (note, reminder, hisaab, links, jaankari) check kiye — wahan pakka jawab nahi mila, isliye Free AI me " + fa.name + " se jawab liya.\n" +
+                     "Jawab: upar diya gaya hai, Mr.";
+            }
+            addMsgFull(fa.text, null, fa.label, plan);
+            setMood("happy");
+            setState("idle","Idle — avatar par tap karke bolo, Mr");
+            speak(fa.text);
+            busy = false;
+          } else {
+            r.text += "\n\nℹ️ Free AI abhi jawab nahi de paya (net ya daily limit ki dikkat ho sakti hai) — ye Local Brain ka jawab hai, Mr.";
+            addMsg("ai", r.text, r.link);
+            if (r.mood) setMood(r.mood);
+            setState("idle","Idle — avatar par tap karke bolo, Mr");
+            speak(r.text);
+            busy = false;
+          }
+        });
+        return;
+      }
+      r.text += "\n\nℹ️ Free AI key nahi judi hai, isliye Local Brain ne jawab diya — Settings me Free AI Connect se free key jod do, Mr.";
+    }
     addMsg("ai", r.text, r.link);
     if (r.mood) setMood(r.mood);
     setState("idle","Idle — avatar par tap karke bolo, Mr");
     speak(r.text);
     busy = false;
+    maybeSuggestMemory(text);
   }, delay);
 }
 function autoGrow(){ var el=$("msgInput"); el.style.height="auto"; el.style.height=Math.min(el.scrollHeight,96)+"px"; }
@@ -921,7 +1310,9 @@ function downloadFile(){
     var log = clone.querySelector("#chatLog"); if (log) log.innerHTML = "";
     clone.querySelectorAll(".sheet.open").forEach(function(s){ s.classList.remove("open"); });
     var bd = clone.querySelector("#backdrop"); if (bd) bd.classList.remove("open");
-    var app = clone.querySelector("#app"); if (app && !passHash) app.classList.add("hidden");
+    clone.querySelectorAll(".fk-input").forEach(function(i){ i.value = ""; i.removeAttribute("value"); });
+    clone.querySelectorAll('input[type="password"]').forEach(function(i){ i.value = ""; i.removeAttribute("value"); });
+    var app = clone.querySelector("#app"); if (app && !hasPass()) app.classList.add("hidden");
     var html = "<!doctype html>\n" + clone.outerHTML;
     var blob = new Blob([html], { type:"text/html" });
     var a = document.createElement("a");
@@ -935,12 +1326,158 @@ function downloadFile(){
   }
 }
 
+/* ================= SECURITY (WebCrypto: PBKDF2 + AES-GCM) ================= */
+function subtleOK(){ return !!(window.crypto && crypto.subtle && crypto.subtle.deriveBits && window.TextEncoder); }
+function b64FromBuf(buf){
+  var u = new Uint8Array(buf), s = "", i;
+  for (i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000));
+  return btoa(s);
+}
+function bufFromB64(s){
+  var bin = atob(s), u = new Uint8Array(bin.length);
+  for (var i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
+  return u;
+}
+function pbkdf2Bits(pw, saltU8, iter, bits){
+  return crypto.subtle.importKey("raw", new TextEncoder().encode(pw), "PBKDF2", false, ["deriveBits"])
+    .then(function(k){ return crypto.subtle.deriveBits({ name:"PBKDF2", salt:saltU8, iterations:iter, hash:"SHA-256" }, k, bits); });
+}
+function makePassRecord(pw){
+  if (subtleOK()){
+    var salt = crypto.getRandomValues(new Uint8Array(16)), iter = 150000;
+    return pbkdf2Bits(pw, salt, iter, 256).then(function(bits){
+      return { v:2, s:b64FromBuf(salt), i:iter, h:b64FromBuf(bits) };
+    });
+  }
+  var rnd = "", i, h;
+  for (i = 0; i < 16; i++) rnd += Math.floor(Math.random()*65535).toString(16);
+  h = rnd + "::" + pw;
+  for (i = 0; i < 8000; i++) h = fallbackHash(h);
+  return Promise.resolve({ v:2, fb:1, s:rnd, i:8000, h:h });
+}
+function verifyPassRecord(pw, rec){
+  if (!rec) return Promise.resolve(false);
+  if (rec.fb){
+    var h = rec.s + "::" + pw, i;
+    for (i = 0; i < (rec.i || 8000); i++) h = fallbackHash(h);
+    return Promise.resolve(h === rec.h);
+  }
+  if (!subtleOK()) return Promise.resolve(false);
+  return pbkdf2Bits(pw, bufFromB64(rec.s), rec.i || 150000, 256)
+    .then(function(bits){ return b64FromBuf(bits) === rec.h; })
+    .catch(function(){ return false; });
+}
+function verifyCurrentPass(pw){
+  if (passV2) return verifyPassRecord(pw, passV2);
+  if (passHash) return sha256(pw).then(function(h){ return h === passHash; });
+  return Promise.resolve(false);
+}
+function deriveAesKey(pw, saltU8){
+  return crypto.subtle.importKey("raw", new TextEncoder().encode(pw), "PBKDF2", false, ["deriveKey"])
+    .then(function(k){ return crypto.subtle.deriveKey({ name:"PBKDF2", salt:saltU8, iterations:100000, hash:"SHA-256" }, k, { name:"AES-GCM", length:256 }, false, ["encrypt","decrypt"]); });
+}
+function encryptKeys(){
+  if (!sessionPass) return Promise.resolve();
+  var plain = JSON.stringify(freeKeys);
+  if (subtleOK() && crypto.subtle.deriveKey){
+    var salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12));
+    return deriveAesKey(sessionPass, salt)
+      .then(function(key){ return crypto.subtle.encrypt({ name:"AES-GCM", iv:iv }, key, new TextEncoder().encode(plain)); })
+      .then(function(ct){ lsSet("freekeys", { v:2, s:b64FromBuf(salt), iv:b64FromBuf(iv), d:b64FromBuf(ct) }); })
+      .catch(function(){});
+  }
+  /* WebCrypto na mile to password-hash keystream se band karke save (plain text kabhi nahi) */
+  var stream = "", c = 0, bin = "", i;
+  while (stream.length < plain.length) stream += fallbackHash(sessionPass + "::keystream::" + (c++));
+  for (i = 0; i < plain.length; i++) bin += String.fromCharCode(plain.charCodeAt(i) ^ stream.charCodeAt(i % stream.length));
+  lsSet("freekeys", { v:2, x:1, d:btoa(bin) });
+  return Promise.resolve();
+}
+function decryptKeys(pw){
+  var blob = lsGet("freekeys", null);
+  freeKeys = { gemini:"", groq:"", openrouter:"" };
+  if (!blob) return Promise.resolve();
+  if (blob.x){
+    try{
+      var bin = atob(blob.d), stream = "", c = 0, out = "", i;
+      while (stream.length < bin.length) stream += fallbackHash(pw + "::keystream::" + (c++));
+      for (i = 0; i < bin.length; i++) out += String.fromCharCode(bin.charCodeAt(i) ^ stream.charCodeAt(i % stream.length));
+      var o = JSON.parse(out);
+      if (o) freeKeys = Object.assign({ gemini:"", groq:"", openrouter:"" }, o);
+    }catch(e){}
+    return Promise.resolve();
+  }
+  if (!(subtleOK() && crypto.subtle.deriveKey)) return Promise.resolve();
+  return deriveAesKey(pw, bufFromB64(blob.s))
+    .then(function(key){ return crypto.subtle.decrypt({ name:"AES-GCM", iv:bufFromB64(blob.iv) }, key, bufFromB64(blob.d)); })
+    .then(function(pt){
+      var o = JSON.parse(new TextDecoder().decode(pt));
+      if (o) freeKeys = Object.assign({ gemini:"", groq:"", openrouter:"" }, o);
+    })
+    .catch(function(){});
+}
+
+/* --- login lockout: 5 galat try → 5 minute lock --- */
+function lockRemaining(){ return Math.max(0, (lockState.until || 0) - Date.now()); }
+function updateLockUI(){
+  if (!$("auth") || $("auth").classList.contains("hidden")) return;
+  var rem = lockRemaining();
+  if (rem > 0){
+    var s = Math.ceil(rem / 1000), mm = Math.floor(s / 60), ss = ("0" + (s % 60)).slice(-2);
+    $("authErr").textContent = "Bahut galat try ho gaye, Mr — suraksha ke liye lock hai. " + mm + ":" + ss + " bache hain.";
+    $("btnLogin").disabled = true;
+  } else if ($("btnLogin").disabled){
+    $("btnLogin").disabled = false;
+    if (/suraksha ke liye lock/.test($("authErr").textContent)) $("authErr").textContent = "";
+  }
+}
+setInterval(updateLockUI, 1000);
+function loginFail(){
+  lockState.fails = (lockState.fails || 0) + 1;
+  if (lockState.fails >= 5){
+    lockState.until = Date.now() + 5 * 60000;
+    lockState.fails = 0;
+    lsSet("lock", lockState);
+    updateLockUI();
+    return;
+  }
+  lsSet("lock", lockState);
+  $("authErr").textContent = "Galat password hai, Mr. Phir se try karo — " + (5 - lockState.fails) + " try bache hain, phir 5 minute ka lock lagega.";
+}
+function loginSuccess(pw){
+  lockState = { fails:0, until:0 };
+  lsSet("lock", lockState);
+  sessionPass = pw;
+  $("authErr").textContent = "";
+  $("loginPass").value = "";
+  decryptKeys(pw).then(function(){ showApp(); });
+}
+
+/* --- auto-lock: 10 minute koi activity nahi → login screen --- */
+["pointerdown","keydown","touchstart"].forEach(function(ev){
+  document.addEventListener(ev, function(){ lastAct = Date.now(); }, { passive:true });
+});
+function doAutoLock(){
+  freeKeys = { gemini:"", groq:"", openrouter:"" };
+  sessionPass = null;
+  try{ sessionStorage.removeItem(P + "unlocked"); }catch(e){}
+  closeSheets();
+  stopListen();
+  try{ speechSynthesis.cancel(); }catch(e){}
+  showAuth();
+  $("authErr").textContent = "Auto-Lock: 10 minute koi activity nahi thi, Mr — suraksha ke liye dobara password dalo.";
+}
+setInterval(function(){
+  if ($("app").classList.contains("hidden")) return;
+  if (Date.now() - lastAct > 10 * 60000) doAutoLock();
+}, 20000);
+
 /* ================= AUTH ================= */
 function showApp(){
   $("auth").classList.add("hidden");
   $("app").classList.remove("hidden");
   try{ sessionStorage.setItem(P+"unlocked","1"); }catch(e){}
-  applySettingsUI(); renderChat(); renderPlugins();
+  applySettingsUI(); renderChat(); renderPlugins(); renderFreeAI(); renderMemory();
   if (!chat.length){
     addMsg("ai","Namaste Mr! Main "+settings.name+" hoon — aapki Super AI, ab poori offline. Avatar par tap karke bolo, ya likhkar bhejo. Note, reminder, hisaab, joke — sab bina net chalega.");
     setMood("happy");
@@ -950,22 +1487,42 @@ function showApp(){
 function showAuth(){
   $("app").classList.add("hidden");
   $("auth").classList.remove("hidden");
-  $("setupBox").classList.toggle("hidden", !!passHash);
-  $("loginBox").classList.toggle("hidden", !passHash);
+  $("setupBox").classList.toggle("hidden", hasPass());
+  $("loginBox").classList.toggle("hidden", !hasPass());
   $("authTitle").textContent = (settings.name||"Riya") + " — Super AI";
+  updateLockUI();
 }
 $("btnSetup").addEventListener("click", function(){
   var p1 = $("setPass1").value, p2 = $("setPass2").value;
   if (p1.length < 4){ $("authErr").textContent = "Password kam se kam 4 akshar ka rakho, Mr."; return; }
   if (p1 !== p2){ $("authErr").textContent = "Dono password ek jaise nahi hain, Mr — phir se likho."; return; }
-  sha256(p1).then(function(h){ passHash = h; lsSet("passHash", h); $("authErr").textContent=""; showApp(); });
+  makePassRecord(p1).then(function(rec){
+    passV2 = rec; lsSet("passV2", rec);
+    if (passHash){ lsDel("passHash"); passHash = ""; }
+    sessionPass = p1;
+    $("authErr").textContent = "";
+    showApp();
+  });
 });
 $("btnLogin").addEventListener("click", function(){
+  if (lockRemaining() > 0){ updateLockUI(); return; }
   var p = $("loginPass").value;
-  sha256(p).then(function(h){
-    if (h === passHash){ $("authErr").textContent=""; $("loginPass").value=""; showApp(); }
-    else $("authErr").textContent = "Galat password hai, Mr. Phir se try karo.";
-  });
+  if (!p){ $("authErr").textContent = "Password likho, Mr."; return; }
+  $("btnLogin").disabled = true;
+  var done = function(){ if (lockRemaining() <= 0) $("btnLogin").disabled = false; };
+  if (passV2){
+    verifyPassRecord(p, passV2).then(function(ok){ done(); if (ok) loginSuccess(p); else loginFail(); });
+  } else if (passHash){
+    /* purana single SHA-256 hash mila → ek baar verify karke PBKDF2 par upgrade */
+    sha256(p).then(function(h){
+      if (h === passHash){
+        makePassRecord(p).then(function(rec){
+          passV2 = rec; lsSet("passV2", rec); lsDel("passHash"); passHash = "";
+          done(); loginSuccess(p);
+        });
+      } else { done(); loginFail(); }
+    });
+  } else done();
 });
 $("loginPass").addEventListener("keydown", function(e){ if (e.key==="Enter") $("btnLogin").click(); });
 $("setPass2").addEventListener("keydown", function(e){ if (e.key==="Enter") $("btnSetup").click(); });
@@ -987,6 +1544,7 @@ function applySettingsUI(){
   $("coreMode").textContent = brainMode==="smart" ? "Smart" : brainMode==="fast" ? "Fast" : "Offline (Local Only)";
   $("coreNet").textContent = brainMode==="offline" ? "Local Only" : "Offline Ready";
   $("hdrStatus").textContent = brainMode==="offline" ? "Offline mode — sirf local jawab, Mr" : "Local Brain ready hai, Mr";
+  updateFreeChip();
 }
 $("btnSaveSettings").addEventListener("click", function(){
   var nm = $("setName").value.trim();
@@ -1004,9 +1562,20 @@ $("btnSaveSettings").addEventListener("click", function(){
   }
   if (newP){
     if (newP.length < 4){ $("setErr").textContent = "Naya password kam se kam 4 akshar ka rakho, Mr."; return; }
-    sha256(oldP).then(function(h){
-      if (h !== passHash){ $("setErr").textContent = "Purana password galat hai, Mr — password nahi badla."; return; }
-      sha256(newP).then(function(h2){ passHash = h2; lsSet("passHash", h2); finish("Settings save ho gayi aur password bhi badal gaya, Mr."); });
+    verifyCurrentPass(oldP).then(function(ok){
+      if (!ok){ $("setErr").textContent = "Purana password galat hai, Mr — password nahi badla."; return; }
+      /* purane password se keys pehle kholo, phir naye password se dobara encrypt karo — kuchh nahi khoyega */
+      decryptKeys(oldP).then(function(){
+        makePassRecord(newP).then(function(rec){
+          passV2 = rec; lsSet("passV2", rec);
+          if (passHash){ lsDel("passHash"); passHash = ""; }
+          sessionPass = newP;
+          encryptKeys().then(function(){
+            renderFreeAI();
+            finish("Settings save ho gayi aur password bhi badal gaya, Mr — Free AI keys naye password se dobara encrypt ho gayi hain.");
+          });
+        });
+      });
     });
   } else finish();
 });
@@ -1038,20 +1607,32 @@ $("btnNotes").addEventListener("click", function(){
   renderNotesSheet(); openSheet("notesSheet");
 });
 $("btnInfo").addEventListener("click", function(){ openSheet("infoSheet"); });
-$("btnSettings").addEventListener("click", function(){ applySettingsUI(); openSheet("settingsSheet"); });
+$("btnSettings").addEventListener("click", function(){ applySettingsUI(); renderFreeAI(); renderMemory(); openSheet("settingsSheet"); });
+$("freeChip").addEventListener("click", function(){
+  renderFreeAI(); renderMemory(); openSheet("settingsSheet");
+  setTimeout(function(){ var el = $("freeAiSection"); if (el && el.scrollIntoView) el.scrollIntoView({ block:"start" }); }, 360);
+});
+document.querySelectorAll("[data-save]").forEach(function(b){
+  b.addEventListener("click", function(){ saveProviderKey(b.getAttribute("data-save")); });
+});
+document.querySelectorAll("[data-disc]").forEach(function(b){
+  b.addEventListener("click", function(){ disconnectProvider(b.getAttribute("data-disc")); });
+});
 $("btnCloseInfo").addEventListener("click", closeSheets);
 $("btnCloseSettings").addEventListener("click", closeSheets);
 $("backdrop").addEventListener("click", closeSheets);
 $("btnDownload").addEventListener("click", downloadFile);
 $("btnDownload2").addEventListener("click", downloadFile);
 $("btnLogout").addEventListener("click", function(){
+  freeKeys = { gemini:"", groq:"", openrouter:"" };
+  sessionPass = null;
   try{ sessionStorage.removeItem(P+"unlocked"); }catch(e){}
   closeSheets(); showAuth();
 });
 $("btnWipe").addEventListener("click", function(){
   var btn = this;
   if (btn.getAttribute("data-arm")==="1"){
-    ["settings","plugins","brainMode","chat","notes","reminders","passHash"].forEach(lsDel);
+    ["settings","plugins","brainMode","chat","notes","reminders","passHash","passV2","freekeys","memories","lock"].forEach(lsDel);
     try{ sessionStorage.removeItem(P+"unlocked"); }catch(e){}
     location.reload();
   } else {
@@ -1067,7 +1648,7 @@ document.addEventListener("keydown", function(e){ if (e.key==="Escape") closeShe
   $("avA").src = AV.hero;
   var unlocked = false;
   try{ unlocked = sessionStorage.getItem(P+"unlocked")==="1"; }catch(e){}
-  if (passHash && unlocked) showApp();
+  if (hasPass() && unlocked) showApp();
   else showAuth();
 })();
 </script>
