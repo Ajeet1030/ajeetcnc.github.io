@@ -607,91 +607,71 @@ SCENES.forEach(function(scene){
 });
 
 /* ---------------- photo upload ---------------- */
-/* Photo ko 2048x1024 equirect canvas par is tarah sajana ki wo background
-   ke saath apne aap ghul jaaye — koi alag blur band ya photo ka saaf
-   rectangle kinara na dikhe:
-   1) Background = photo hi, poora canvas cover karke, phir right kinara
-      left kinare ka mirror (sphere ka peeche wala seam bina line ke jude),
-      upar se strong blur + upar-neeche (poles) halka andhera.
-   2) Background ko photo ke kinare ke average rang se halka tint karo,
-      taaki tone seam par apne aap match ho.
-   3) Photo beech me asli ratio ke saath, chaaron kinare feather (soft
-      alpha mask) — border background me dissolve ho jaata hai. */
+/* Photo ko 2048x1024 equirect canvas par SIMPLE tareeke se sajana —
+   koi blur nahi, koi band nahi:
+   1) Photo ka average (dominant) rang nikalo (32x32 downscale ka average).
+   2) Background = usi rang ka saaf vertical gradient — beech (horizon)
+      par halka roshan shade, upar-neeche (poles) ki taraf gehra shade.
+      Studio backdrop jaisa, aur rang photo se khud aata hai isliye
+      background photo ke saath apne aap match ho jaata hai.
+   3) Photo beech me asli ratio ke saath, neeche soft drop shadow aur
+      kinare sirf 2-3% feather — chipki hui na lage, band bhi na bane. */
 function composePhoto(img){
   var W = 2048, H = 1024;
 
-  /* --- photo ke kinare ka average rang (tone match ke liye) --- */
-  var edge = { r: 128, g: 128, b: 128 };
+  /* --- photo ka average (dominant) rang --- */
+  var avg = { r: 128, g: 128, b: 128 };
   try {
     var sc = document.createElement('canvas');
-    sc.width = 48; sc.height = 48;
+    sc.width = 32; sc.height = 32;
     var sctx = sc.getContext('2d');
-    sctx.drawImage(img, 0, 0, 48, 48);
-    var px = sctx.getImageData(0, 0, 48, 48).data;
-    var sr = 0, sg = 0, sb = 0, n = 0, i, o;
-    for (i = 0; i < 48; i++){
-      o = i * 4;                        sr += px[o]; sg += px[o + 1]; sb += px[o + 2]; n++;
-      o = (47 * 48 + i) * 4;            sr += px[o]; sg += px[o + 1]; sb += px[o + 2]; n++;
+    sctx.drawImage(img, 0, 0, 32, 32);
+    var px = sctx.getImageData(0, 0, 32, 32).data;
+    var sr = 0, sg = 0, sb = 0, n = 0, i;
+    for (i = 0; i < px.length; i += 4){
+      sr += px[i]; sg += px[i + 1]; sb += px[i + 2]; n++;
     }
-    for (i = 1; i < 47; i++){
-      o = (i * 48) * 4;                 sr += px[o]; sg += px[o + 1]; sb += px[o + 2]; n++;
-      o = (i * 48 + 47) * 4;            sr += px[o]; sg += px[o + 1]; sb += px[o + 2]; n++;
-    }
-    if (n) edge = { r: Math.round(sr / n), g: Math.round(sg / n), b: Math.round(sb / n) };
+    if (n) avg = { r: Math.round(sr / n), g: Math.round(sg / n), b: Math.round(sb / n) };
   } catch(e){}
 
-  /* --- background: photo cover-fit + right kinara left ka mirror --- */
-  var bg = document.createElement('canvas');
-  bg.width = W; bg.height = H;
-  var bctx = bg.getContext('2d');
-  var cs = Math.max(W / img.width, H / img.height);
-  var cw = img.width * cs, ch = img.height * cs;
-  bctx.drawImage(img, (W - cw) / 2, (H - ch) / 2, cw, ch);
-  var strip = 288;
-  var tmp = document.createElement('canvas');
-  tmp.width = W; tmp.height = H;
-  tmp.getContext('2d').drawImage(bg, 0, 0);
-  bctx.save();
-  bctx.translate(W, 0); bctx.scale(-1, 1);
-  bctx.drawImage(tmp, 0, 0, strip, H, 0, 0, strip, H);
-  bctx.restore();
+  /* rang ko halka (f>1, safed ki taraf) ya gehra (f<1) karne wala helper */
+  function shade(col, f){
+    function cl(v){ return Math.max(0, Math.min(255, Math.round(v))); }
+    if (f >= 1){
+      var t = f - 1;
+      return 'rgb(' + cl(col.r + (255 - col.r) * t) + ',' +
+                      cl(col.g + (255 - col.g) * t) + ',' +
+                      cl(col.b + (255 - col.b) * t) + ')';
+    }
+    return 'rgb(' + cl(col.r * f) + ',' + cl(col.g * f) + ',' + cl(col.b * f) + ')';
+  }
 
-  /* --- main canvas: blurred background + tint + pole gradient --- */
+  /* --- main canvas: simple gradient backdrop (koi blur nahi) --- */
   var c = document.createElement('canvas');
   c.width = W; c.height = H;
   var ctx = c.getContext('2d');
-  try { ctx.filter = 'blur(56px) brightness(0.82)'; } catch(e){}
-  ctx.drawImage(bg, -70, -70, W + 140, H + 140);
-  try { ctx.filter = 'none'; } catch(e){}
-  ctx.save();
-  try { ctx.globalCompositeOperation = 'soft-light'; } catch(e){}
-  ctx.globalAlpha = 0.55;
-  ctx.fillStyle = 'rgb(' + edge.r + ',' + edge.g + ',' + edge.b + ')';
-  ctx.fillRect(0, 0, W, H);
-  ctx.restore();
-  var vg = ctx.createLinearGradient(0, 0, 0, H);
-  vg.addColorStop(0, 'rgba(0,0,0,0.5)');
-  vg.addColorStop(0.28, 'rgba(0,0,0,0)');
-  vg.addColorStop(0.72, 'rgba(0,0,0,0)');
-  vg.addColorStop(1, 'rgba(0,0,0,0.5)');
-  ctx.fillStyle = vg;
+  var g = ctx.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, shade(avg, 0.45));   /* upar — gehra */
+  g.addColorStop(0.5, shade(avg, 1.18)); /* beech (horizon) — halka roshan */
+  g.addColorStop(1, shade(avg, 0.45));   /* neeche — gehra */
+  ctx.fillStyle = g;
   ctx.fillRect(0, 0, W, H);
 
-  /* --- photo beech me, chaaron kinare feather --- */
+  /* --- photo beech me, kinare halki feather (2-3%) --- */
   var scale = Math.min(W / img.width, H / img.height);
   var w = Math.round(img.width * scale), h = Math.round(img.height * scale);
   var pc = document.createElement('canvas');
   pc.width = w; pc.height = h;
   var pctx = pc.getContext('2d');
   pctx.drawImage(img, 0, 0, w, h);
-  var fx = Math.max(8, Math.round(w * 0.10));
-  var fy = Math.max(8, Math.round(h * 0.10));
+  var fx = Math.max(3, Math.round(w * 0.025));
+  var fy = Math.max(3, Math.round(h * 0.025));
   pctx.globalCompositeOperation = 'destination-out';
   function feather(x0, y0, x1, y1){
-    var g = pctx.createLinearGradient(x0, y0, x1, y1);
-    g.addColorStop(0, 'rgba(0,0,0,1)');
-    g.addColorStop(1, 'rgba(0,0,0,0)');
-    pctx.fillStyle = g;
+    var fg = pctx.createLinearGradient(x0, y0, x1, y1);
+    fg.addColorStop(0, 'rgba(0,0,0,1)');
+    fg.addColorStop(1, 'rgba(0,0,0,0)');
+    pctx.fillStyle = fg;
     pctx.fillRect(Math.min(x0, x1), Math.min(y0, y1),
                   Math.abs(x1 - x0) || w, Math.abs(y1 - y0) || h);
   }
@@ -700,7 +680,14 @@ function composePhoto(img){
   feather(0, 0, fx, 0);          /* baayein */
   feather(w, 0, w - fx, 0);      /* daayein */
   pctx.globalCompositeOperation = 'source-over';
+
+  /* soft drop shadow ke saath photo backdrop par rakho */
+  ctx.save();
+  ctx.shadowColor = 'rgba(0,0,0,0.45)';
+  ctx.shadowBlur = 48;
+  ctx.shadowOffsetY = 18;
   ctx.drawImage(pc, (W - w) / 2, (H - h) / 2);
+  ctx.restore();
   return c;
 }
 
