@@ -384,6 +384,85 @@
       }
       .privacy-note strong { color: var(--text); }
       .change-row { margin-top: 14px; }
+      /* ---------- Text inputs (AI / Yaadein) ---------- */
+      .text-input {
+        width: 100%;
+        font: inherit;
+        font-size: 15.5px;
+        color: var(--text);
+        background: var(--card-solid);
+        border: 1px solid var(--hairline);
+        border-radius: 14px;
+        padding: 12px 14px;
+        margin: 0;
+        resize: vertical;
+      }
+      .text-input::placeholder { color: var(--sub); }
+      .text-input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+      .key-actions { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+      .key-actions .btn { flex: 1 1 auto; width: auto; }
+      /* ---------- Quick question chips ---------- */
+      .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 2px 0 12px; }
+      .chip {
+        appearance: none;
+        font: inherit;
+        font-size: 13.5px;
+        font-weight: 600;
+        color: var(--accent);
+        background: rgba(0, 113, 227, 0.1);
+        border: 1px solid rgba(0, 113, 227, 0.25);
+        border-radius: 999px;
+        padding: 8px 14px;
+        min-height: 38px;
+        cursor: pointer;
+        transition: background 0.15s ease, transform 0.1s ease;
+      }
+      .chip:active { transform: scale(0.96); background: rgba(0, 113, 227, 0.2); }
+      /* ---------- AI answer ---------- */
+      .ai-answer {
+        white-space: pre-wrap;
+        word-break: break-word;
+        font-size: 15px;
+        line-height: 1.55;
+        background: rgba(52, 199, 89, 0.1);
+        border: 1px solid rgba(52, 199, 89, 0.35);
+        border-radius: 14px;
+        padding: 13px 15px;
+        margin-top: 12px;
+      }
+      /* ---------- Yaadein (notes) ---------- */
+      .notes-list { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+      .note-item {
+        display: flex; gap: 10px; align-items: flex-start;
+        background: rgba(120, 120, 128, 0.08);
+        border: 1px solid var(--hairline);
+        border-radius: 14px;
+        padding: 11px 13px;
+      }
+      .note-item .nt { flex: 1; font-size: 14.5px; line-height: 1.45; white-space: pre-wrap; word-break: break-word; }
+      .note-item .nd { display: block; font-size: 12px; color: var(--sub); margin-top: 3px; }
+      .note-del {
+        appearance: none; border: none; cursor: pointer;
+        background: rgba(255, 59, 48, 0.12);
+        color: #ff3b30;
+        font: inherit; font-size: 13px; font-weight: 700;
+        border-radius: 10px;
+        min-width: 40px; min-height: 40px;
+        flex: 0 0 auto;
+      }
+      .note-del:active { transform: scale(0.94); }
+      /* ---------- Glasses tools info ---------- */
+      .tool-stack { display: flex; flex-direction: column; gap: 12px; }
+      .tool-card {
+        border: 1px solid var(--hairline);
+        border-radius: 18px;
+        padding: 15px;
+        background: rgba(120, 120, 128, 0.06);
+      }
+      .tool-card h3 { margin: 0 0 5px; font-size: 16.5px; font-weight: 700; }
+      .tool-card p { margin: 0 0 8px; font-size: 14px; line-height: 1.5; color: var(--text); }
+      .tool-card .tool-need { font-size: 13px; color: var(--sub); margin-bottom: 12px; }
+      .tool-card .btn { width: auto; }
       @media (max-width: 380px) {
         .card { padding: 16px; border-radius: 22px; }
         .app-header h1 { font-size: 24px; }
@@ -538,6 +617,85 @@
         </ol>
         <div class="note-box">
           Instagram kabhi-kabhi ye feature band kar deta hai — guarantee nahi, lekin photo bilkul asli glasses jaisi taiyaar hoti hai.
+        </div>
+      </section>
+
+      <!-- 7 · AI Se Puchho -->
+      <section class="card" id="aiCard" aria-label="AI Se Puchho">
+        <h2>🤖 AI Se Puchho</h2>
+        <p class="sub">Upar wali photo ke baare me kuch bhi puchho — AI photo dekh kar aasan Hinglish me jawab dega. Iske liye apni khud ki FREE Gemini key lagti hai (ek baar paste karo, sirf tumhare phone par save rehti hai).</p>
+
+        <div class="ctl-head">
+          <label for="aiKeyInput">Gemini API Key</label>
+          <span class="ctl-val" id="aiKeyState">Key nahi lagi</span>
+        </div>
+        <input class="text-input" type="password" id="aiKeyInput" placeholder="Yahan apni free Gemini key paste karo" autocomplete="off" autocapitalize="off" spellcheck="false" />
+        <div class="key-actions">
+          <button class="btn primary small-btn" id="aiKeySaveBtn" type="button">Key Save Karo</button>
+          <button class="btn secondary small-btn" id="aiKeyClearBtn" type="button">Key Bhool Jao</button>
+        </div>
+        <p class="status" id="aiKeyStatus" role="status"></p>
+        <div class="note-box" id="aiKeyHelp">
+          <strong>Free key kahan se milegi?</strong><br />
+          1) Browser me <strong>aistudio.google.com/apikey</strong> kholo<br />
+          2) <strong>Create API Key</strong> dabao — bilkul free hai, card nahi lagta<br />
+          3) Key copy karke upar wale box me paste karo aur <strong>Key Save Karo</strong> dabao
+        </div>
+
+        <div style="margin-top:16px">
+          <div class="ctl-head"><label>Jaldi sawal (tap karo)</label></div>
+          <div class="chips">
+            <button class="chip" type="button" data-q="Is photo me kya kya dikh raha hai? Short me batao.">Is photo me kya hai?</button>
+            <button class="chip" type="button" data-q="Is photo me jo bhi text, menu ya board dikh raha hai, use padho aur aasan bhasha me samjhao.">Menu/Text padho</button>
+            <button class="chip" type="button" data-q="Is photo me main cheez kya hai? Ye kya hai — iske baare me 2-3 line batao.">Ye kya cheez hai?</button>
+            <button class="chip" type="button" data-q="Is photo ke liye ek badhiya Instagram caption banao — Hinglish me, 4-5 hashtags ke saath.">Instagram caption banao</button>
+          </div>
+          <textarea class="text-input" id="aiQuestion" rows="2" placeholder="Apna sawal yahan likho…"></textarea>
+          <div style="margin-top:12px">
+            <button class="btn primary" id="aiAskBtn" type="button">AI Se Puchho</button>
+          </div>
+          <p class="status" id="aiStatus" role="status"></p>
+          <div class="ai-answer" id="aiAnswer" hidden></div>
+        </div>
+
+        <p class="status" style="margin-top:12px">🔒 Tumhari key aur photo sirf tumhare phone se seedha Google ko jati hai — hamara koi server nahi, hum kuch nahi dekhte.</p>
+      </section>
+
+      <!-- 8 · Yaadein -->
+      <section class="card" id="notesCard" aria-label="Yaadein">
+        <h2>📝 Yaadein</h2>
+        <p class="sub">Jo baat yaad rakhni hai, yahan likh do — jaise "Gaadi level 3, pillar B12 par khadi hai". Ye notes sirf is phone par rehte hain.</p>
+        <textarea class="text-input" id="noteInput" rows="2" placeholder="Apni yaad yahan likho…"></textarea>
+        <div style="margin-top:12px">
+          <button class="btn primary" id="noteSaveBtn" type="button">Yaad Rakho</button>
+        </div>
+        <p class="status" id="noteStatus" role="status"></p>
+        <div class="notes-list" id="notesList"></div>
+        <p class="status" id="notesEmpty">Abhi koi yaad save nahi hai.</p>
+      </section>
+
+      <!-- 9 · Asli Glasses ke Tools -->
+      <section class="card" id="toolsCard" aria-label="Asli Glasses ke Tools">
+        <h2>ℹ️ Asli Glasses ke Tools</h2>
+        <p class="sub">Ye alag projects hain, asli Ray-Ban Meta glasses par chalte hain — ye website unse judi nahi hai. Agar tumhare paas asli glasses hain, to ye teen kaam ke hain:</p>
+        <div class="tool-stack">
+          <div class="tool-card">
+            <h3>Visor</h3>
+            <p>Meta AI app ki jagah lene wala free Android app. Glasses ki photo/video seedha phone me aati hai — koi Meta server nahi, koi tracking nahi. Privacy sabse strong.</p>
+            <p class="tool-need">Chahiye: Asli Meta glasses + Android 12 ya upar ka phone</p>
+            <a class="btn secondary small-btn" href="https://github.com/macedonga/visor" target="_blank" rel="noopener">GitHub par dekho</a>
+          </div>
+          <div class="tool-card">
+            <h3>Ronie Go — Smart Glasses AI Agent</h3>
+            <p>Glasses ko Jarvis jaisa agent banata hai — jo tum dekh rahe ho, dekh kar Hindi, English ya Hinglish me jawab deta hai, TV aur laptop chalata hai aur tumhari baatein yaad rakhta hai.</p>
+            <p class="tool-need">Chahiye: Ray-Ban Meta glasses + Android 14 ya upar + free Gemini key + thoda sa setup</p>
+            <a class="btn secondary small-btn" href="https://github.com/raunakpatil/smart-glasses-ai-agent" target="_blank" rel="noopener">GitHub par dekho</a>
+          </div>
+          <div class="tool-card">
+            <h3>Meta AI (Official App)</h3>
+            <p>Meta ka apna official app — glasses ka setup, photo sync aur "Hey Meta" assistant isi se chalta hai. Sabse aasan tareeka hai, lekin tumhara data Meta ke server par jata hai.</p>
+            <p class="tool-need">Chahiye: Asli Meta glasses + Meta account — Play Store se free milta hai</p>
+          </div>
         </div>
       </section>
 
@@ -1248,6 +1406,208 @@
           }
         }, 1000);
       });
+
+      /* ---------- 🤖 AI Se Puchho — Gemini (user ki apni FREE key) ----------
+         Key sirf is phone ke localStorage me rehti hai. Sawal poochhne par
+         photo + sawal seedha is phone se Google Gemini API ko jata hai —
+         beech me hamara koi server nahi hai. */
+      var GEMINI_MODELS = ["gemini-3.5-flash", "gemini-3.5-flash-lite", "gemini-flash-lite-latest"];
+      var KEY_STORE = "mrb_gemini_key";
+      var aiKeyInput = $("aiKeyInput"),
+          aiKeyState = $("aiKeyState"),
+          aiKeyStatus = $("aiKeyStatus"),
+          aiKeyHelp = $("aiKeyHelp"),
+          aiQuestion = $("aiQuestion"),
+          aiAskBtn = $("aiAskBtn"),
+          aiStatus = $("aiStatus"),
+          aiAnswer = $("aiAnswer");
+
+      function savedKey() {
+        try { return localStorage.getItem(KEY_STORE) || ""; } catch (e) { return ""; }
+      }
+      function refreshKeyUI() {
+        var k = savedKey();
+        if (k) {
+          aiKeyState.textContent = "Key lagi hai ✓ (…" + k.slice(-4) + ")";
+          aiKeyHelp.hidden = true;
+          aiKeyInput.value = "";
+          aiKeyInput.placeholder = "Key save hai — badalni ho to nayi paste karo";
+        } else {
+          aiKeyState.textContent = "Key nahi lagi";
+          aiKeyHelp.hidden = false;
+          aiKeyInput.placeholder = "Yahan apni free Gemini key paste karo";
+        }
+      }
+      $("aiKeySaveBtn").addEventListener("click", function () {
+        var k = aiKeyInput.value.replace(/\s+/g, "");
+        if (!k) { aiKeyStatus.textContent = "Pehle box me key paste karo."; return; }
+        try { localStorage.setItem(KEY_STORE, k); } catch (e) { /* private mode */ }
+        aiKeyStatus.textContent = "Key save ho gayi ✓ Ab neeche se sawal puchho.";
+        refreshKeyUI();
+      });
+      $("aiKeyClearBtn").addEventListener("click", function () {
+        try { localStorage.removeItem(KEY_STORE); } catch (e) { /* ignore */ }
+        aiKeyStatus.textContent = "Key hata di gayi — phone se saaf ho gayi.";
+        refreshKeyUI();
+      });
+      var chipBtns = document.querySelectorAll("#aiCard .chip");
+      chipBtns.forEach(function (chip) {
+        chip.addEventListener("click", function () {
+          aiQuestion.value = chip.getAttribute("data-q") || chip.textContent;
+          aiQuestion.focus();
+        });
+      });
+
+      function photoBase64ForAI() {
+        var maxEdge = 1024;
+        var scale = Math.min(1, maxEdge / Math.max(state.natW, state.natH));
+        var w = Math.max(2, Math.round(state.natW * scale));
+        var h = Math.max(2, Math.round(state.natH * scale));
+        var c = document.createElement("canvas");
+        c.width = w; c.height = h;
+        c.getContext("2d").drawImage(state.img, 0, 0, w, h);
+        var url = c.toDataURL("image/jpeg", 0.85);
+        return url.substring(url.indexOf(",") + 1);
+      }
+      function callGemini(model, key, prompt, b64) {
+        return fetch("https://generativelanguage.googleapis.com/v1beta/models/" + model + ":generateContent", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-goog-api-key": key },
+          body: JSON.stringify({
+            contents: [{ parts: [
+              { text: prompt },
+              { inline_data: { mime_type: "image/jpeg", data: b64 } }
+            ] }]
+          })
+        }).then(function (res) {
+          return res.json().catch(function () { return {}; }).then(function (data) {
+            return { status: res.status, data: data };
+          });
+        });
+      }
+      function geminiErrorText(status) {
+        if (status === 400 || status === 401 || status === 403) {
+          return "Key galat lag rahi hai — key check karke dobara save karo. (Free key: aistudio.google.com/apikey)";
+        }
+        if (status === 429) {
+          return "Free limit khatm ho gayi hai — thodi der baad phir try karo.";
+        }
+        return "AI se jawab nahi aaya (error " + status + ") — thodi der baad phir try karo.";
+      }
+      aiAskBtn.addEventListener("click", function () {
+        var key = savedKey();
+        if (!key) {
+          aiStatus.textContent = "Pehle upar apni free Gemini key save karo — bina key ke AI nahi chalega.";
+          aiKeyInput.focus();
+          return;
+        }
+        if (!state.img) {
+          aiStatus.textContent = "Pehle upar ek photo load karo, phir usi photo par sawal puchho.";
+          return;
+        }
+        var q = aiQuestion.value.replace(/^\s+|\s+$/g, "");
+        if (!q) q = "Is photo me kya kya dikh raha hai? Short me batao.";
+        var prompt = "Tum ek helpful assistant ho. Di gayi photo ko dhyaan se dekho aur sawal ka jawab aasan Hinglish (Roman script Hindi + thodi English) me do. Jawab chhota, saaf aur kaam ka rakho.\n\nSawal: " + q;
+        aiAskBtn.disabled = true;
+        aiAnswer.hidden = true;
+        aiStatus.textContent = "AI photo dekh raha hai…";
+        var b64;
+        try { b64 = photoBase64ForAI(); }
+        catch (e) {
+          aiAskBtn.disabled = false;
+          aiStatus.textContent = "Photo taiyaar nahi ho payi — dusri photo try karo.";
+          return;
+        }
+        var idx = 0;
+        function tryModel() {
+          var model = GEMINI_MODELS[idx];
+          callGemini(model, key, prompt, b64).then(function (r) {
+            if (r.status === 404 && idx < GEMINI_MODELS.length - 1) {
+              idx++; tryModel(); return;   /* model is key par nahi — agla try karo */
+            }
+            aiAskBtn.disabled = false;
+            if (r.status !== 200) { aiStatus.textContent = geminiErrorText(r.status); return; }
+            var parts = r.data && r.data.candidates && r.data.candidates[0] &&
+                        r.data.candidates[0].content && r.data.candidates[0].content.parts;
+            var text = "";
+            if (parts) {
+              for (var i = 0; i < parts.length; i++) { if (parts[i].text) text += parts[i].text; }
+            }
+            if (!text) {
+              aiStatus.textContent = "AI ne khaali jawab diya — sawal badal kar phir try karo.";
+              return;
+            }
+            aiStatus.textContent = "Jawab aa gaya ✓";
+            aiAnswer.textContent = text;
+            aiAnswer.hidden = false;
+          }).catch(function () {
+            aiAskBtn.disabled = false;
+            aiStatus.textContent = "Internet nahi chal raha lagta hai — connection check karke phir try karo.";
+          });
+        }
+        tryModel();
+      });
+      refreshKeyUI();
+
+      /* ---------- 📝 Yaadein — sirf is phone par (localStorage) ---------- */
+      var NOTES_STORE = "mrb_notes";
+      var noteInput = $("noteInput"),
+          noteStatus = $("noteStatus"),
+          notesList = $("notesList"),
+          notesEmpty = $("notesEmpty");
+      function loadNotes() {
+        try {
+          var v = JSON.parse(localStorage.getItem(NOTES_STORE) || "[]");
+          return (v && v.length !== undefined) ? v : [];
+        } catch (e) { return []; }
+      }
+      function storeNotes(list) {
+        try { localStorage.setItem(NOTES_STORE, JSON.stringify(list)); } catch (e) { /* ignore */ }
+      }
+      function renderNotes() {
+        var list = loadNotes();
+        notesList.innerHTML = "";
+        notesEmpty.hidden = list.length > 0;
+        list.forEach(function (note, i) {
+          var item = document.createElement("div");
+          item.className = "note-item";
+          var body = document.createElement("div");
+          body.className = "nt";
+          body.textContent = note.text;
+          var date = document.createElement("span");
+          date.className = "nd";
+          date.textContent = new Date(note.ts).toLocaleString("en-IN", {
+            day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit"
+          });
+          body.appendChild(date);
+          var del = document.createElement("button");
+          del.type = "button";
+          del.className = "note-del";
+          del.textContent = "✕";
+          del.setAttribute("aria-label", "Ye yaad delete karo");
+          del.addEventListener("click", function () {
+            var cur = loadNotes();
+            cur.splice(i, 1);
+            storeNotes(cur);
+            renderNotes();
+            noteStatus.textContent = "Yaad delete ho gayi.";
+          });
+          item.appendChild(body);
+          item.appendChild(del);
+          notesList.appendChild(item);
+        });
+      }
+      $("noteSaveBtn").addEventListener("click", function () {
+        var text = noteInput.value.replace(/^\s+|\s+$/g, "");
+        if (!text) { noteStatus.textContent = "Pehle kuch likho, phir Yaad Rakho dabao."; return; }
+        var list = loadNotes();
+        list.unshift({ text: text, ts: Date.now() });
+        storeNotes(list);
+        noteInput.value = "";
+        renderNotes();
+        noteStatus.textContent = "Yaad save ho gayi ✓ Sirf is phone par rahegi.";
+      });
+      renderNotes();
 
       /* initial */
       setBA(55);
