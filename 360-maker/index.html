@@ -607,6 +607,103 @@ SCENES.forEach(function(scene){
 });
 
 /* ---------------- photo upload ---------------- */
+/* Photo ko 2048x1024 equirect canvas par is tarah sajana ki wo background
+   ke saath apne aap ghul jaaye — koi alag blur band ya photo ka saaf
+   rectangle kinara na dikhe:
+   1) Background = photo hi, poora canvas cover karke, phir right kinara
+      left kinare ka mirror (sphere ka peeche wala seam bina line ke jude),
+      upar se strong blur + upar-neeche (poles) halka andhera.
+   2) Background ko photo ke kinare ke average rang se halka tint karo,
+      taaki tone seam par apne aap match ho.
+   3) Photo beech me asli ratio ke saath, chaaron kinare feather (soft
+      alpha mask) — border background me dissolve ho jaata hai. */
+function composePhoto(img){
+  var W = 2048, H = 1024;
+
+  /* --- photo ke kinare ka average rang (tone match ke liye) --- */
+  var edge = { r: 128, g: 128, b: 128 };
+  try {
+    var sc = document.createElement('canvas');
+    sc.width = 48; sc.height = 48;
+    var sctx = sc.getContext('2d');
+    sctx.drawImage(img, 0, 0, 48, 48);
+    var px = sctx.getImageData(0, 0, 48, 48).data;
+    var sr = 0, sg = 0, sb = 0, n = 0, i, o;
+    for (i = 0; i < 48; i++){
+      o = i * 4;                        sr += px[o]; sg += px[o + 1]; sb += px[o + 2]; n++;
+      o = (47 * 48 + i) * 4;            sr += px[o]; sg += px[o + 1]; sb += px[o + 2]; n++;
+    }
+    for (i = 1; i < 47; i++){
+      o = (i * 48) * 4;                 sr += px[o]; sg += px[o + 1]; sb += px[o + 2]; n++;
+      o = (i * 48 + 47) * 4;            sr += px[o]; sg += px[o + 1]; sb += px[o + 2]; n++;
+    }
+    if (n) edge = { r: Math.round(sr / n), g: Math.round(sg / n), b: Math.round(sb / n) };
+  } catch(e){}
+
+  /* --- background: photo cover-fit + right kinara left ka mirror --- */
+  var bg = document.createElement('canvas');
+  bg.width = W; bg.height = H;
+  var bctx = bg.getContext('2d');
+  var cs = Math.max(W / img.width, H / img.height);
+  var cw = img.width * cs, ch = img.height * cs;
+  bctx.drawImage(img, (W - cw) / 2, (H - ch) / 2, cw, ch);
+  var strip = 288;
+  var tmp = document.createElement('canvas');
+  tmp.width = W; tmp.height = H;
+  tmp.getContext('2d').drawImage(bg, 0, 0);
+  bctx.save();
+  bctx.translate(W, 0); bctx.scale(-1, 1);
+  bctx.drawImage(tmp, 0, 0, strip, H, 0, 0, strip, H);
+  bctx.restore();
+
+  /* --- main canvas: blurred background + tint + pole gradient --- */
+  var c = document.createElement('canvas');
+  c.width = W; c.height = H;
+  var ctx = c.getContext('2d');
+  try { ctx.filter = 'blur(56px) brightness(0.82)'; } catch(e){}
+  ctx.drawImage(bg, -70, -70, W + 140, H + 140);
+  try { ctx.filter = 'none'; } catch(e){}
+  ctx.save();
+  try { ctx.globalCompositeOperation = 'soft-light'; } catch(e){}
+  ctx.globalAlpha = 0.55;
+  ctx.fillStyle = 'rgb(' + edge.r + ',' + edge.g + ',' + edge.b + ')';
+  ctx.fillRect(0, 0, W, H);
+  ctx.restore();
+  var vg = ctx.createLinearGradient(0, 0, 0, H);
+  vg.addColorStop(0, 'rgba(0,0,0,0.5)');
+  vg.addColorStop(0.28, 'rgba(0,0,0,0)');
+  vg.addColorStop(0.72, 'rgba(0,0,0,0)');
+  vg.addColorStop(1, 'rgba(0,0,0,0.5)');
+  ctx.fillStyle = vg;
+  ctx.fillRect(0, 0, W, H);
+
+  /* --- photo beech me, chaaron kinare feather --- */
+  var scale = Math.min(W / img.width, H / img.height);
+  var w = Math.round(img.width * scale), h = Math.round(img.height * scale);
+  var pc = document.createElement('canvas');
+  pc.width = w; pc.height = h;
+  var pctx = pc.getContext('2d');
+  pctx.drawImage(img, 0, 0, w, h);
+  var fx = Math.max(8, Math.round(w * 0.10));
+  var fy = Math.max(8, Math.round(h * 0.10));
+  pctx.globalCompositeOperation = 'destination-out';
+  function feather(x0, y0, x1, y1){
+    var g = pctx.createLinearGradient(x0, y0, x1, y1);
+    g.addColorStop(0, 'rgba(0,0,0,1)');
+    g.addColorStop(1, 'rgba(0,0,0,0)');
+    pctx.fillStyle = g;
+    pctx.fillRect(Math.min(x0, x1), Math.min(y0, y1),
+                  Math.abs(x1 - x0) || w, Math.abs(y1 - y0) || h);
+  }
+  feather(0, 0, 0, fy);          /* upar */
+  feather(0, h, 0, h - fy);      /* neeche */
+  feather(0, 0, fx, 0);          /* baayein */
+  feather(w, 0, w - fx, 0);      /* daayein */
+  pctx.globalCompositeOperation = 'source-over';
+  ctx.drawImage(pc, (W - w) / 2, (H - h) / 2);
+  return c;
+}
+
 $('photoInput').addEventListener('change', function(){
   var file = this.files && this.files[0];
   this.value = '';
@@ -614,17 +711,7 @@ $('photoInput').addEventListener('change', function(){
   var url = URL.createObjectURL(file);
   var img = new Image();
   img.onload = function(){
-    var c = document.createElement('canvas');
-    c.width = 2048; c.height = 1024;
-    var ctx = c.getContext('2d');
-    /* soft stretched fill (blur jahan support ho) */
-    try { ctx.filter = 'blur(46px) brightness(0.75)'; } catch(e){}
-    ctx.drawImage(img, -80, -80, 2048 + 160, 1024 + 160);
-    try { ctx.filter = 'none'; } catch(e){}
-    /* photo beech me, asli ratio ke saath */
-    var scale = Math.min(2048 / img.width, 1024 / img.height);
-    var w = img.width * scale, h = img.height * scale;
-    ctx.drawImage(img, (2048 - w) / 2, (1024 - h) / 2, w, h);
+    var c = composePhoto(img);
     spinner.classList.add('on');
     spinnerText.textContent = '📸 Photo lag raha hai…';
     veil.style.opacity = '1';
