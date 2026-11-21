@@ -76,16 +76,17 @@ const APPS = {
   neuralguard:  { title:'NEURAL GUARD',                  icon:'🛡️', url:'https://theajeetbhai.github.io/ajeetcnc.github.io/neural-guard/' },
   maker360:     { title:'360 Image Maker',               icon:'🌐', url:'https://theajeetbhai.github.io/ajeetcnc.github.io/360-maker/' },
   ultracar:     { title:'Ultra Realistic Car Racing',    icon:'🚗', url:'https://theajeetbhai.github.io/ajeetcnc.github.io/ultra-car-racing/' },
+  metaray:      { title:'Meta Rayban AI',                icon:'🕶️', url:'https://theajeetbhai.github.io/ajeetcnc.github.io/meta-rayban/' },
   attendpro:    { title:'AttendPro',                     icon:'🕒', url:'https://theajeetbhai.github.io/ajeetcnc.github.io/attendpro/' },
   attendproweb: { title:'AttendPro Website',             icon:'🌐', url:'https://theajeetbhai.github.io/ajeetcnc.github.io/attendpro-website/' },
   personal:     { title:'Personal Website',              icon:'👤', url:'https://theajeetbhai.github.io/ajeetcnc.github.io/personal/' },
   github:       { title:'GitHub — @Theajeetbhai',        icon:'🐙', url:'https://github.com/Theajeetbhai' }
 };
 /* "🚀 My Apps, Games & Websites" group — desktop, Start panel aur More Apps me ek saath */
-const MY_APPS = ['uthja', 'thappad', 'gulel', 'bhaagbhai', 'carracing', 'riya', 'riyasuper', 'neuralguard', 'maker360', 'ultracar', 'attendpro', 'attendproweb', 'personal', 'github'];
+const MY_APPS = ['uthja', 'thappad', 'gulel', 'bhaagbhai', 'carracing', 'riya', 'riyasuper', 'neuralguard', 'maker360', 'ultracar', 'metaray', 'attendpro', 'attendproweb', 'personal', 'github'];
 const APP_ALIASES = { note:'notepad', notes:'notepad', calc:'calculator', cal:'calendar', file:'files', 'my files':'files', paint:'paint', task:'tasks', tasks:'tasks', 'social hub':'social', settings:'settings', browser:'browser', calendar:'calendar', calculator:'calculator', notepad:'notepad', games:'games', music:'music', video:'video', images:'images', pdf:'pdf',
   gallery:'images', photos:'images', photo:'images', tasveer:'images', tasveerein:'images', radio:'music', hisaab:'calculator', ganit:'calculator', game:'games', khel:'games', setting:'settings', folder:'files', 'file manager':'files', computer:'thispc', store:'appstore', dukaan:'appstore', 'recycle bin':'recycle', kachra:'recycle', backup:'backup', about:'about', 'app store':'appstore', 'task manager':'tasks', kaam:'tasks', paint:'paint',
-  'uth ja bhai':'uthja', 'thappad queen':'thappad', thappad:'thappad', 'gulel king':'gulel', gulel:'gulel', 'bhaag bhai':'bhaagbhai', bhaag:'bhaagbhai', 'car racing':'carracing', 'riya assistant':'riya', 'super ai':'riyasuper', 'neural guard':'neuralguard', '360':'maker360', '360 maker':'maker360', panorama:'maker360', 'ultra car racing':'ultracar', 'ultra racing':'ultracar', ultracar:'ultracar', attendpro:'attendpro', 'personal website':'personal', github:'github' };
+  'uth ja bhai':'uthja', 'thappad queen':'thappad', thappad:'thappad', 'gulel king':'gulel', gulel:'gulel', 'bhaag bhai':'bhaagbhai', bhaag:'bhaagbhai', 'car racing':'carracing', 'riya assistant':'riya', 'super ai':'riyasuper', 'neural guard':'neuralguard', '360':'maker360', '360 maker':'maker360', panorama:'maker360', 'ultra car racing':'ultracar', 'ultra racing':'ultracar', ultracar:'ultracar', 'meta rayban':'metaray', 'meta rayban ai':'metaray', rayban:'metaray', metaray:'metaray', 'rayban ai':'metaray', attendpro:'attendpro', 'personal website':'personal', github:'github' };
 
 
 /* ---------------- real SVG icons (emoji nahi) ---------------- */
