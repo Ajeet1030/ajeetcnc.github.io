@@ -351,17 +351,22 @@ function applyFiltersToViewer(){
   uploadTexture(filterCanvas);
 }
 
+function isPOT(n){ return n > 0 && (n & (n - 1)) === 0; }
 function uploadTexture(source){
   if (!gl) return;
   if (texture) gl.deleteTexture(texture);
   texture = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, texture);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+  /* WebGL1: non-power-of-two textures (hamare scenes 2240x1120 hain) par
+     REPEAT wrap aur mipmap allowed nahi — texture incomplete ho jata hai aur
+     viewer kaala dikhta hai. Isliye POT par hi REPEAT+mipmap, warna CLAMP+LINEAR. */
+  var pot = isPOT(source.width) && isPOT(source.height);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, pot ? gl.REPEAT : gl.CLAMP_TO_EDGE);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, pot ? gl.LINEAR_MIPMAP_LINEAR : gl.LINEAR);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, source);
-  gl.generateMipmap(gl.TEXTURE_2D);
+  if (pot) gl.generateMipmap(gl.TEXTURE_2D);
 }
 
 /* ---------------- sizing ---------------- */
